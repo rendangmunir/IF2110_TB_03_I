@@ -23,6 +23,11 @@ void START()
        ADV();
 }
 
+void STARTFILE(char filename[]) {
+       pita = fopen(filename, "r");
+       ADV();
+}
+
 void ADV()
 {
        /* Pita dimajukan satu karakter.
@@ -35,8 +40,8 @@ void ADV()
        /* Algoritma */
        retval = fscanf(pita, "%c", &currentChar);
        EOP = (currentChar == MARK);
-       if (EOP)
-       {
-              fclose(pita);
-       }
+       // if (EOP)
+       // {
+       //        fclose(pita);
+       // }
 }

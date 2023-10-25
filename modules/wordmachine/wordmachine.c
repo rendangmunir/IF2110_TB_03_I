@@ -14,13 +14,20 @@ void IgnoreBlanks() {
     }
 }
 
+void IgnoreEnters() {
+    while (currentChar == ENTER) {
+        ADV();
+    }
+}
+
 void STARTWORD() { 
     /* I.S. : currentChar sembarang
     F.S. : EndWord = true, dan currentChar = MARK;
             atau EndWord = false, currentWord adalah kata yang sudah diakuisisi,
-            currentChar karakter pertama sesudah karakter terakhir kata */
+            currentChar karakter pertama sesudah karakter terakhir kata */    
     START();
     IgnoreBlanks();
+    IgnoreEnters();
     if (currentChar == MARK) {
         EndWord = true;
     } else {
