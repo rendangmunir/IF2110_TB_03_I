@@ -1,24 +1,43 @@
 #include <stdio.h>
 #include "includeADT.h"
-#include "functions.c"
+#include "commands.c"
 
 int main() {
-    printf("Selamat datang di Burbir. Selamat berkicau!\n\n");
+    printf("Selamat datang di BurBir. Selamat berkicau!\n\n");
 
+    Word TUTUP_PROGRAM = {"TUTUP_PROGRAM", 13};
+    Pengguna PenggunaA = {
+            {"Tuan Kil", 8},
+            {"pass1", 5}
+        };
+    Pengguna PenggunaB = {
+            {"Tuan Man", 8},
+            {"pass2", 5} 
+    };
+    Pengguna PenggunaC = {
+            {"Tuan Bas", 8},
+            {"pass2", 5} 
+    };
+    ELMTPengguna(listUsers, 0) = PenggunaA;
+    ELMTPengguna(listUsers, 1) = PenggunaB;
+    ELMTPengguna(listUsers, 2) = PenggunaC;
+    listUsers.Neff = 3;
+    
     boolean runProgram = true;
-
     while (runProgram) {
         printf(">> ");
-        STARTWORD();
+        STARTSENTENCE();
 
         Word command = currentWord;
-        Word keluar = {"KELUAR", 6};
+        // printf("%d\n", indexOfUser(listUsers, command));
 
-        printWord(command);
-
-        if (WordEqual(command, keluar)) {
+        if (WordEqual(command, TUTUP_PROGRAM)) {
+            printf("Terimakasih sudah menggunakan BurBir! Semoga kita dipertemukan lagi!\n");
             runProgram = false; 
+        } else {
+            RunCommand(command);
         }
     }
+
     return 0;
 }
