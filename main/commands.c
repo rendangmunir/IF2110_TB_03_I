@@ -9,6 +9,7 @@ void ListPengguna();
 
 // Data
 Pengguna currentUser;
+boolean isLoggedIn;
 ListStatikPengguna listUsers;
 
 // Commands
@@ -24,7 +25,7 @@ void RunCommand(Word command) {
     if (WordEqual(command, DAFTAR)) {
         Daftar();
     } else if (WordEqual(command, MASUK)) {
-        // Masuk();
+        Masuk();
     } else if (WordEqual(command, KELUAR)) {
         // Keluar();
     } else if (WordEqual(command, LISTPENGGUNA)) {
@@ -37,32 +38,76 @@ void RunCommand(Word command) {
 }
 
 void Daftar() {
-    printf("\n\nMasukkan nama:\n");
-    STARTSENTENCE();
-
-    Word name = currentWord;
-    int userIndex = indexOfUser(listUsers, name);
-
-    Word pass;
-    if (userIndex != IDX_UNDEF_PENGGUNA) {
-        printf("Wah, sayang sekali nama tersebut sudah diambil!");
-        Daftar();
+    if (isLoggedIn) {
+        printf("\nAnda sudah masuk. Keluar terlebih dahulu untuk melakukan daftar.\n");
     } else {
-        do {
-            printf("\nMasukkan kata sandi:\n");
-            STARTSENTENCE();
+        printf("\n\nMasukkan nama:\n");
+        STARTSENTENCE();
 
-            pass = currentWord;
-            if (pass.Length > 20) {
-                printf("Kata sandi tidak boleh lebih dari 20 karakter!");
-            }
-        } while (pass.Length > 20);
+        Word name = currentWord;
+        int userIndex = indexOfUser(listUsers, name);
+
+        Word pass;
+        if (userIndex != IDX_UNDEF_PENGGUNA) {
+            printf("Wah, sayang sekali nama tersebut sudah diambil!");
+            Daftar();
+        } else {
+            do {
+                printf("\nMasukkan kata sandi:\n");
+                STARTSENTENCE();
+
+                pass = currentWord;
+                if (pass.Length > 20) {
+                    printf("Kata sandi tidak boleh lebih dari 20 karakter!");
+                }
+            } while (pass.Length > 20);
+            
+            Pengguna newUser = {name, pass};
+            insertLastPengguna(&listUsers, newUser);
+
+            printf("Pengguna telah berhasil terdaftar! Silahkan ketik MASUK; untuk menikmati fitur-fitur BurBir.\n");
+        }
+
     }
+}
 
-    Pengguna newUser = {name, pass};
-    insertLastPengguna(&listUsers, newUser);
+void Masuk() {
+    if (isLoggedIn) {
+        printf("\nWah Anda sudah masuk. Keluar dulu yuk!.\n");
+    } else {
+        printf("\n\nMasukkan nama:\n");
+        STARTSENTENCE();
 
-    printf("Pengguna telah berhasil terdaftar! Silahkan ketik MASUK; untuk menikmati fitur-fitur BurBir.\n");
+        Word name = currentWord;
+        int userIndex = indexOfUser(listUsers, name);
+        
+        Word pass, userPassword;
+        boolean correctPassword;
+        if (userIndex == IDX_UNDEF_PENGGUNA) {
+            printf("Wah, nama yang Anda cari tidak ada. Masukkan nama lain!");
+            Masuk();
+        } else {
+            Pengguna user = ELMTPengguna(listUsers, userIndex);
+            userPassword = user.Password;
+
+            do {
+                printf("\nMasukkan kata sandi:\n");
+                STARTSENTENCE();
+
+                pass = currentWord;
+                if (WordEqual(pass, userPassword)) {
+                    correctPassword = true;
+                } else {
+                    correctPassword = false;
+                    printf("Wah, kata sandi yang Anda masukkan belum tepat. Periksa kembali kata sandi Anda!");
+                }
+            } while (!correctPassword);
+
+            printf("Anda telah berhasil masuk dengan nama pengguna ");
+            printWord(user.Nama);
+            printf(". Mari menjelajahi BurBir bersama Ande-Ande Lumut!\n");
+        }
+    }
 }
 
 void ListPengguna() {

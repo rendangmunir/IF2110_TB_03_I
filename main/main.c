@@ -23,6 +23,7 @@ int main() {
     ELMTPengguna(listUsers, 2) = PenggunaC;
     listUsers.Neff = 3;
     
+    isLoggedIn = false;
     boolean runProgram = true;
     while (runProgram) {
         printf(">> ");
