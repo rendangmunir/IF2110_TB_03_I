@@ -26,6 +26,8 @@ void IgnoreBlanks();
    I.S. : currentChar sembarang
    F.S. : currentChar ≠ BLANK atau currentChar = MARK */
 
+void IgnoreEnters();
+
 void STARTWORD();
 /* I.S. : currentChar sembarang
    F.S. : EndWord = true, dan currentChar = MARK;
@@ -46,5 +48,11 @@ void CopyWord();
           currentChar = BLANK atau currentChar = MARK;
           currentChar adalah karakter sesudah karakter terakhir yang diakuisisi.
           Jika panjang kata melebihi NMax, maka sisa kata "dipotong" */
+
+// 1 - WordEqual
+boolean WordEqual(Word a, Word b);
+
+// 2 - PrintWord
+void printWord(Word w);
 
 #endif
