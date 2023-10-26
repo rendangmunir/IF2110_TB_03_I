@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include "includeADT.h"
-#include "functions.c"
 
 void Daftar();
 void Masuk();

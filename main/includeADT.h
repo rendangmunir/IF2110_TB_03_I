@@ -3,6 +3,9 @@
 
 #include "../modules/adt.h"
 
+#include "../modules/datetime/datetime.c"
+#include "../modules/datetime/time.c"
+
 #include "../modules/liststatik/liststatik.c"
 #include "../modules/liststatikpengguna/liststatikpengguna.c"
 
