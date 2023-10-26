@@ -12,12 +12,12 @@
 #include "../wordmachine/wordmachine.h"
 #include "../datetime/datetime.h"
 
-typedef struct kicauan {
+typedef struct Kicauan {
    int id;
-   // Word text;
-   // int likes;
-   // Word author;
-   // DATETIME datetime;
+   Word text;
+   int likes;
+   Word author;
+   DATETIME datetime;
 } Kicauan;
 
 /*  Kamus Umum */

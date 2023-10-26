@@ -1,11 +1,34 @@
 #include <stdio.h>
 #include "includeADT.h"
 
+// ================= Initialization =================
+// 1. Pengguna
 void Daftar();
 void Masuk();
 void Keluar();
 void TutupProgram();
 void ListPengguna();
+void Muat();
+
+// 2. Profil
+
+// 3. Teman
+
+// 4. Permintaan Pertemanan
+
+// 5. Kicauan
+void Kicau();
+void PrintKicauan();
+void SukaKicauan();
+void UbahKicauan();
+
+// 6. Balasan
+
+// 7. Draf Kicauan
+
+// 8. Utas
+
+// ================= Data =================
 
 // Data
 Pengguna currentUser;
@@ -14,6 +37,7 @@ boolean runProgram;
 
 // Data Structures
 ListStatikPengguna listUsers;
+ListDinKicauan listKicauan;
 
 // Commands
 void RunCommand(Word command) {
@@ -24,6 +48,7 @@ void RunCommand(Word command) {
     Word KELUAR = {"KELUAR", 6};
     Word TUTUP_PROGRAM = {"TUTUP_PROGRAM", 13};
     Word LISTPENGGUNA = {"LISTPENGGUNA", 12};
+    Word MUAT = {"MUAT", 4};
 
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
@@ -38,11 +63,15 @@ void RunCommand(Word command) {
     } else if (WordEqual(command, MASUK)) {
         Masuk();
     } else if (WordEqual(command, KELUAR)) {
-        // Keluar();
+        Keluar();
     } else if (WordEqual(command, LISTPENGGUNA)) {
         ListPengguna();
     } else if (WordEqual(command, TUTUP_PROGRAM)) {
         TutupProgram();
+    } else if (WordEqual(command, MUAT)) {
+        // Muat();
+    } else if (!isLoggedIn) {
+        printf("Perintah yang dimasukkan tidak dikenali atau Anda belum login! Silahkan jalankan perintah MASUK, DAFTAR, MUAT, atau TUTUP_PROGRAM.\n");
     }
 
     // 2. Profil
@@ -52,6 +81,9 @@ void RunCommand(Word command) {
     // 4. Permintaan Pertemanan
 
     // 5. Kicauan
+    else if (WordEqual(command, KICAU)) {
+        Kicau();
+    }
 
     // 6. Balasan
 
@@ -75,6 +107,14 @@ void printHeaders() {
         printf("\n");
     }
     printf(">> ");
+}
+
+void printTab(int count) {
+    int i;
+    for (i = 1; i < count; i++) {
+        printf("    ");
+    }
+    printf(" |   ");
 }
 
 // 1. Pengguna
@@ -154,6 +194,15 @@ void Masuk() {
     }
 }
 
+void Keluar() {
+    if (!isLoggedIn) {
+        printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
+    } else {
+        isLoggedIn = false;
+        printf("Anda berhasil logout. Sampai jumpa di pertemuan berikutnya!\n");
+    }
+}
+
 void TutupProgram() {
     printf("Terimakasih sudah menggunakan BurBir! Semoga kita dipertemukan lagi!\n");
     runProgram = false; 
@@ -169,3 +218,76 @@ void ListPengguna() {
         printf("\n");
     }
 }
+
+// 2. Profil
+
+// 3. Teman
+
+// 4. Permintaan Pertemanan
+
+// 5. Kicauan
+void PrintKicauan(Kicauan k) {
+    int id = k.id;
+    Word text = k.text;
+    int likes = k.likes;
+    Word author = k.author;
+    DATETIME datetime = k.datetime;
+    
+    printTab(1);
+    printf("ID = %d\n", id);
+    
+    printTab(1);
+    printWordNewline(author);
+
+    printTab(1);
+    TulisDATETIME(datetime);
+    printf("\n");
+
+    printTab(1);
+    printWordNewline(text);
+    
+    printTab(1);
+    printf("Disukai: %d\n", likes);
+}
+
+void Kicau() {
+    printf("Masukkan kicauan: \n");
+
+    STARTSENTENCE();
+    int len = currentWord.Length;
+    len = (len < 280) ? len : 280;
+    currentWord.Length = len;
+    printf("\n");
+    
+    int i;
+    int count = 0;
+    char currchar;
+    for (i = 0; i < len; i++) {
+        currchar = currentWord.TabWord[i];
+        count += (currchar != BLANK) ? 1 : 0; 
+    }
+
+    if (!count) {
+        printf("Kicauan tidak boleh hanya berisi spasi!\n");
+        Kicau();
+    } else {
+        int id = listLengthKicauan(listKicauan) + 1;
+        Word text = currentWord;
+        int likes = 0;
+        Word author = currentUser.Nama;
+        DATETIME datetime = GetDateTime();
+
+        Kicauan submittedKicauan = {id, text, likes, author, datetime};
+
+        printf("Selamat! kicauan telah diterbitkan!\nDetil kicauan:\n");
+        PrintKicauan(submittedKicauan);
+
+        insertLastKicauan(&listKicauan, submittedKicauan);
+    }
+}
+
+// 6. Balasan
+
+// 7. Draf Kicauan
+
+// 8. Utas
