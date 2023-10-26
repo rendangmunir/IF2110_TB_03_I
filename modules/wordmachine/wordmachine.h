@@ -7,9 +7,10 @@
 #include "boolean.h"
 #include "charmachine.h"
 
-#define NMax 50
+#define NMax 500
 #define BLANK ' '
 #define ENTER '\n'
+#define TAB '|   '
 
 typedef struct
 {

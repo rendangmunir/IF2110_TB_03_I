@@ -98,7 +98,7 @@ void TulisDATETIME(DATETIME D){
     int hour = Hour(Time(D));
     int min = Minute(Time(D));
     int sec = Second(Time(D));
-    printf("%d/%d/%d %d:%d:%d", d, m, y, hour, min, sec);
+    printf("%d/%d/%d %d:%d:%02d", d, m, y, hour, min, sec);
     /* I.S. : D sembarang */
     /* F.S. : Nilai D ditulis dg format DD/MM/YYYY HH:MM:SS */
     /* Proses : menulis nilai setiap komponen D ke layar dalam format DD/MM/YYYY HH:MM:SS

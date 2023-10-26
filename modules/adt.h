@@ -6,6 +6,8 @@
 
 #include "./datetime/datetime.h"
 
+#include "./listdinkicauan/listdinkicauan.h"
+
 #include "./wordmachine/wordmachine.h"
 #include "./wordmachine/charmachine.h"
 
