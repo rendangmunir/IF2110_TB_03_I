@@ -9,6 +9,8 @@
 #include "../modules/liststatik/liststatik.c"
 #include "../modules/liststatikpengguna/liststatikpengguna.c"
 
+#include "../modules/listdinkicauan/listdinkicauan.c"
+
 #include "../modules/wordmachine/wordmachine.c"
 #include "../modules/wordmachine/charmachine.c"
 

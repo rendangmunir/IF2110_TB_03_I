@@ -23,21 +23,17 @@ int main() {
     ELMTPengguna(listUsers, 2) = PenggunaC;
     listUsers.Neff = 3;
     
+    // Initialization
     isLoggedIn = false;
-    boolean runProgram = true;
+    runProgram = true;
+
+    // Main Program
     while (runProgram) {
-        printf(">> ");
-        STARTSENTENCE();
+        printHeaders();
+        STARTWORD();
 
         Word command = currentWord;
-        // printf("%d\n", indexOfUser(listUsers, command));
-
-        if (WordEqual(command, TUTUP_PROGRAM)) {
-            printf("Terimakasih sudah menggunakan BurBir! Semoga kita dipertemukan lagi!\n");
-            runProgram = false; 
-        } else {
-            RunCommand(command);
-        }
+        RunCommand(command);
     }
 
     return 0;

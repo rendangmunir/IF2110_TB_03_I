@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "liststatikpengguna.h": "c",
-        "charmachine.h": "c"
+        "charmachine.h": "c",
+        "datetime.h": "c",
+        "list": "c"
     }
 }

@@ -112,5 +112,10 @@ void printWord(Word w) {
     for (i = 0; i < w.Length; i++) {
         printf("%c", w.TabWord[i]);
     }
+}
+
+// 3 - printWordNewline
+void printWordNewline(Word w) {
+    printWord(w);
     printf("\n");
 }
