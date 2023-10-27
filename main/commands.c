@@ -3,9 +3,13 @@
 #include "includeADT.h"
 
 // ================= Initialization =================
-// 0. Misc. Functions
+// 0a. Misc. Functions
 void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
+
+// 0b. Inisialisasi
+void BacaDataPengguna(char* filepath);
+void BacaProfilPengguna();
 
 // 1. Pengguna
 void Daftar();
@@ -50,7 +54,7 @@ void Inisialisasi() {
     
     // Get folder name
     char dir[50];
-    scanf("%s", &dir);
+    scanf("%s", dir);
 
     // Concat folder name to relative path
     char prefix[] = "./config/";
@@ -62,6 +66,8 @@ void Inisialisasi() {
         printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
         Inisialisasi();
     } else {
+        BacaDataPengguna(filepath);
+
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
 }
@@ -124,7 +130,7 @@ void RunCommand(Word command) {
 
 // ================= Functions =================
 
-// 0. Additional Functions
+// 0a. Additional Functions
 void printHeaders() {
     printf("\n==================================================\n");
     if (isLoggedIn) {
@@ -166,6 +172,77 @@ boolean directoryExists(char* filepath) {
         return false;
     }
     return S_ISDIR(info.st_mode);
+}
+
+// 0b. Inisialisasi
+void BacaDataPengguna(char* filepath) {
+    char pengguna[120];
+    char file[] = "/pengguna.config";
+    concatStrings(filepath, file, pengguna);
+    printf("%s\n", pengguna);
+
+    // Parse file
+    STARTFILE(pengguna);
+    ADVNEWLINE();
+
+    int usersCount = WordToInt(currentWord);
+    printf("Usercount: %d\n", usersCount);
+    for (int i = 0; i < usersCount; i++) {
+        BacaProfilPengguna();
+    }
+}
+
+void BacaProfilPengguna() {
+    Pengguna p;
+    Word empty = {";", 1};
+    // 1 Nama
+    ADVNEWLINE();
+    Word nama = currentWord;
+
+    // 2 Password
+    ADVNEWLINE();
+    Word pass = currentWord;
+
+    // 3 Bio
+    ADVNEWLINE();
+    ADV();
+    Word bio = (currentChar == ENTER) ? empty : currentWord;
+    // ADV();
+
+    // Word bio;
+    // if (currentChar == ENTER) {
+    //     bio = empty;
+    // } else {
+    //     bio = currentWord;
+    // }
+
+    // 4 NoHP
+    ADVNEWLINE();
+    ADV();
+    int noHP = (currentChar == ENTER) ? 0 : WordToInt(currentWord);
+
+    // 5 Weton
+    ADVNEWLINE();
+    ADV();
+    Word weton = (currentChar == ENTER) ? empty : currentWord;
+
+    // 6 Jenis Akun
+    ADVNEWLINE();
+    ADV();
+    Word jenis = (currentChar == ENTER) ? empty : currentWord;
+
+    // 7-11 Foto Profil
+    for (int i = 0; i < 5; i++) {
+        ADVNEWLINE();
+    }
+
+    printWord(nama); printf("\n");
+    printWord(pass); printf("\n");
+    printWord(bio); printf("\n");
+    printf("%d", noHP); printf("\n");
+    printWord(weton); printf("\n");
+    printWord(jenis); printf("\n");
+
 }
 
 // 1. Pengguna

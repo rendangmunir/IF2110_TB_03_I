@@ -1,11 +1,16 @@
 #include <stdio.h>
-#include "includeADT.h"
+#include "../includeADT.h"
 
 int main() {
-    STARTFILE("../cfg/pengguna.config");
+    STARTFILE("./config/config-1/pengguna.config");
     while (currentChar != MARK) {
-        printf("%c", currentChar);
+        ADVNEWLINE();
         ADV();
+        if (currentChar == ENTER) {
+            printf("\n");
+        }
+        printWord(currentWord);
+        printf("(Length: %d)\n", currentWord.Length);
     }
 
     return 0;

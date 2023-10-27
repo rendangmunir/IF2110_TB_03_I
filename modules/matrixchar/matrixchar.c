@@ -55,7 +55,7 @@ void readMatrixChar(MatrixChar *m, int nRow, int nCol) {
     int i, j;
     for (i = 0; i < nRow; i++) {
         for (j = 0; j < nCol; j++) {
-            scanf("%d", &ELMT_MATRIXCHAR(*m, i, j));
+            scanf("%c", &ELMT_MATRIXCHAR(*m, i, j));
         }
     }
     /* I.S. isIdxValid(nRow,nCol) */

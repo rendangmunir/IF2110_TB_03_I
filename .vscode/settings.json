@@ -4,6 +4,7 @@
         "charmachine.h": "c",
         "datetime.h": "c",
         "list": "c",
-        "wordmachine.h": "c"
+        "wordmachine.h": "c",
+        "includeadt.h": "c"
     }
 }
