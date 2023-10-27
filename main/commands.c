@@ -18,7 +18,7 @@ void Muat();
 
 // 5. Kicauan
 void Kicau();
-void PrintKicauan();
+void DisplayKicauan();
 void SukaKicauan();
 void UbahKicauan();
 
