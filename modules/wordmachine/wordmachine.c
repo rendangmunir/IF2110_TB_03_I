@@ -20,6 +20,12 @@ void IgnoreEnters() {
     }
 }
 
+void IgnoreR() {
+    while (currentChar == '\r') {
+        ADV();
+    }
+}
+
 void STARTWORD() { 
     /* I.S. : currentChar sembarang
     F.S. : EndWord = true, dan currentChar = MARK;
@@ -118,4 +124,37 @@ void printWord(Word w) {
 void printWordNewline(Word w) {
     printWord(w);
     printf("\n");
+}
+
+// 4 - ADVNEWLINE
+void ADVNEWLINE() {
+    IgnoreEnters();
+    
+    int i = 0;
+    while (currentChar != ENTER && currentChar != '\r') {
+        currentWord.TabWord[i] = currentChar;
+        i += 1;
+        ADV();
+    }
+    IgnoreR();
+
+    currentWord.Length = (i < NMax) ? i : NMax;
+}
+
+// 5 - StrToInt
+int WordToInt(Word w) {
+    int mult = w.Length - 1;
+
+    int i, j;
+    int dec;
+    int sum = 0;
+    for (i = 0; i < w.Length; i++) {
+        dec = 1;
+        for (j = mult; j > i; j--) {
+            dec *= 10;
+        }
+        sum += (w.TabWord[i] - 48) * dec;
+    }
+
+    return sum;
 }

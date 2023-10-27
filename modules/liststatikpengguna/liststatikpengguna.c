@@ -177,7 +177,7 @@ int indexOfUser(ListStatikPengguna l, Word name) {
     if (found) {
         return i;
     } else {
-        return IDX_UNDEF;
+        return IDX_UNDEF_PENGGUNA;
     }
 }
 
