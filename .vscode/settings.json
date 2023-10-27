@@ -3,6 +3,7 @@
         "liststatikpengguna.h": "c",
         "charmachine.h": "c",
         "datetime.h": "c",
-        "list": "c"
+        "list": "c",
+        "wordmachine.h": "c"
     }
 }

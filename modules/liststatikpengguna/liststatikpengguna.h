@@ -2,7 +2,7 @@
 /* Berisi definisi dan semua primitif pemrosesan list integer statik dengan elemen positif */
 /* Penempatan elemen selalu rapat kiri */
 /* Banyaknya elemen didefinisikan secara implisit, memori list statik */
-// gcc -o  ./bin/mlistpos.exe  mlistpos.c liststatik.c -Iheader
+// gcc -o  ./bin/mlistpos.exe  mlistpos.c liststatikPengguna.c -Iheader
 
 #ifndef LISTSTATIKPENGGUNA_H
 #define LISTSTATIKPENGGUNA_H
@@ -10,6 +10,7 @@
 #include "boolean.h"
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
+#include "../matrixchar/matrixchar.h"
 
 // Tipe data Pengguna
 typedef struct {
@@ -19,7 +20,7 @@ typedef struct {
    int noHP;
    Word Weton;
    Word JenisAkun;
-   Matrix FotoProfil;
+   MatrixChar FotoProfil;
 } Pengguna;
 
 /*  Kamus Umum */
@@ -88,7 +89,7 @@ boolean isFullPengguna(ListStatikPengguna l);
 
 /* ********** BACA dan TULIS dengan INPUT/OUTPUT device ********** */
 /* *** Mendefinisikan isi List dari pembacaan *** */
-void readList(ListStatik *l);
+void readListPengguna(ListStatikPengguna *l);
 /* I.S. l sembarang */
 /* F.S. List l terdefinisi */
 /* Proses: membaca banyaknya elemen l dan mengisi nilainya */
@@ -98,7 +99,7 @@ void readList(ListStatik *l);
 /* 2. Jika 0 < n <= CAPACITYPENGGUNA; Lakukan n kali: 
           Baca elemen mulai dari indeks 0 satu per satu diakhiri enter */
 /*    Jika n = 0; hanya terbentuk List kosong */
-void printList(ListStatik l);
+void printListPengguna(ListStatikPengguna l);
 /* Proses : Menuliskan isi List dengan traversal, List ditulis di antara kurung 
    siku; antara dua elemen dipisahkan dengan separator "koma", tanpa tambahan 
    karakter di depan, di tengah, atau di belakang, termasuk spasi dan enter */
@@ -109,7 +110,7 @@ void printList(ListStatik l);
 
 /* ********** OPERATOR ARITMATIKA ********** */
 /* *** Aritmatika List : Penjumlahan, pengurangan, perkalian, ... *** */
-ListStatik plusMinusList(ListStatik l1, ListStatik l2, boolean plus);
+ListStatikPengguna plusMinusListPengguna(ListStatikPengguna l1, ListStatikPengguna l2, boolean plus);
 /* Prekondisi : l1 dan l2 berukuran sama dan tidak kosong */
 /* Jika plus = true, mengirimkan  l1+l2, yaitu setiap elemen l1 dan l2 pada 
        indeks yang sama dijumlahkan */
@@ -118,58 +119,58 @@ ListStatik plusMinusList(ListStatik l1, ListStatik l2, boolean plus);
 
 /* ********** OPERATOR RELASIONAL ********** */
 /* *** Operasi pembandingan List: *** */
-boolean isListEqual(ListStatik l1, ListStatik l2);
+boolean isListEqualPengguna(ListStatikPengguna l1, ListStatikPengguna l2);
 /* Mengirimkan true jika l1 sama dengan l2 yaitu jika ukuran l1 = l2 dan semua 
    elemennya sama */
 
 // /* ********** SEARCHING ********** */
 // /* ***  Perhatian : List boleh kosong!! *** */
-// int indexOf(ListStatik l, ElTypePengguna val);
+// int indexOf(ListStatikPengguna l, ElTypePengguna val);
 // /* Search apakah ada elemen List l yang bernilai val */
 // /* Jika ada, menghasilkan indeks i terkecil, dengan ELMT(l,i) = val */
 // /* Jika tidak ada atau jika l kosong, mengirimkan IDX_UNDEF_PENGGUNA */
 // /* Skema Searching yang digunakan bebas */
 
 // /* ********** NILAI EKSTREM ********** */
-// void extremeValues(ListStatik l, ElTypePengguna *max, ElTypePengguna *min);
+// void extremeValues(ListStatikPengguna l, ElTypePengguna *max, ElTypePengguna *min);
 // /* I.S. List l tidak kosong */
 // /* F.S. Max berisi nilai terbesar dalam l;
 //         Min berisi nilai terkecil dalam l */
 
 // /* ********** MENAMBAH ELEMEN ********** */
 // /* *** Menambahkan elemen terakhir *** */
-// void insertFirst(ListStatik *l, ElTypePengguna val);
+// void insertFirst(ListStatikPengguna *l, ElTypePengguna val);
 // /* Proses: Menambahkan val sebagai elemen pertama List */
 // /* I.S. List l boleh kosong, tetapi tidak penuh */
 // /* F.S. val adalah elemen pertama l yang baru */
 // /* *** Menambahkan elemen pada index tertentu *** */
-// void insertAt(ListStatik *l, ElTypePengguna val, IdxTypePengguna idx);
+// void insertAt(ListStatikPengguna *l, ElTypePengguna val, IdxTypePengguna idx);
 // /* Proses: Menambahkan val sebagai elemen pada index idx List */
 // /* I.S. List l tidak kosong dan tidak penuh, idx merupakan index yang valid di l */
 // /* F.S. val adalah elemen yang disisipkan pada index idx l */
 // /* *** Menambahkan elemen terakhir *** */
-// void insertLastPengguna(ListStatikPengguna *l, ElTypePengguna user); 
+// void insertLastPengguna(ListStatikPenggunaPengguna *l, ElTypePengguna user); 
 // /* Proses: Menambahkan val sebagai elemen terakhir List */
 // /* I.S. List l boleh kosong, tetapi tidak penuh */
 // /* F.S. val adalah elemen terakhir l yang baru */
 
 // /* ********** MENGHAPUS ELEMEN ********** */
 // /* *** Menghapus elemen pertama *** */
-// void deleteFirst(ListStatik *l, ElTypePengguna *val);
+// void deleteFirst(ListStatikPengguna *l, ElTypePengguna *val);
 // /* Proses : Menghapus elemen pertama List */
 // /* I.S. List tidak kosong */
 // /* F.S. val adalah nilai elemen pertama l sebelum penghapusan, */
 // /*      Banyaknya elemen List berkurang satu */
 // /*      List l mungkin menjadi kosong */
 // /* *** Menghapus elemen pada index tertentu *** */
-// void deleteAt(ListStatik *l, ElTypePengguna *val, IdxTypePengguna idx);
+// void deleteAt(ListStatikPengguna *l, ElTypePengguna *val, IdxTypePengguna idx);
 // /* Proses : Menghapus elemen pada index idx List */
 // /* I.S. List tidak kosong, idx adalah index yang valid di l */
 // /* F.S. val adalah nilai elemen pada index idx l sebelum penghapusan, */
 // /*      Banyaknya elemen List berkurang satu */
 // /*      List l mungkin menjadi kosong */
 // /* *** Menghapus elemen terakhir *** */
-// void deleteLast(ListStatik *l, ElTypePengguna *val);
+// void deleteLast(ListStatikPengguna *l, ElTypePengguna *val);
 // /* Proses : Menghapus elemen terakhir List */
 // /* I.S. List tidak kosong */
 // /* F.S. val adalah nilai elemen terakhir l sebelum penghapusan, */
@@ -177,7 +178,7 @@ boolean isListEqual(ListStatik l1, ListStatik l2);
 // /*      List l mungkin menjadi kosong */
 
 /* ********** SORTING ********** */
-void sortList(ListStatik *l, boolean asc);
+void sortListPengguna(ListStatikPengguna *l, boolean asc);
 /* I.S. l boleh kosong */
 /* F.S. Jika asc = true, l terurut membesar */
 /*      Jika asc = false, l terurut mengecil */

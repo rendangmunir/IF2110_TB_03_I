@@ -16,7 +16,7 @@
 #include "../modules/listdinkicauan/listdinkicauan.c"
 
 // 4. ADT Matriks
-#include "../modules/matrix/matrix.c"
+#include "../modules/matrixchar/matrixchar.c"
 
 // 5. ADT Mesin Kata
 #include "../modules/wordmachine/wordmachine.c"

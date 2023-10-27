@@ -1,7 +1,12 @@
 #include <stdio.h>
+#include <sys/stat.h>
 #include "includeADT.h"
 
 // ================= Initialization =================
+// 0. Misc. Functions
+void concatStrings(const char *str1, const char *str2, char *result);
+boolean directoryExists(char* filepath);
+
 // 1. Pengguna
 void Daftar();
 void Masuk();
@@ -40,6 +45,27 @@ ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
 
 // Commands
+void Inisialisasi() {
+    printf("Silahkan masukan folder konfigurasi untuk dimuat: ");
+    
+    // Get folder name
+    char dir[50];
+    scanf("%s", &dir);
+
+    // Concat folder name to relative path
+    char prefix[] = "./config/";
+    char filepath[100];
+    concatStrings(prefix, dir, filepath);
+
+    // Check if folder exists
+    if (!directoryExists(filepath)) {
+        printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
+        Inisialisasi();
+    } else {
+        printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
+    }
+}
+
 void RunCommand(Word command) {
     // ================= Variables =================
     // 1. Pengguna
@@ -115,6 +141,31 @@ void printTab(int count) {
         printf("    ");
     }
     printf(" |   ");
+}
+
+void concatStrings(const char *str1, const char *str2, char *result) {
+    int i = 0;
+    while (str1[i] != '\0') {
+        result[i] = str1[i];
+        i++;
+    }
+    
+    int j = 0;
+    while (str2[j] != '\0') {
+        result[i] = str2[j];
+        i++;
+        j++;
+    }
+    
+    result[i] = '\0';
+}
+
+boolean directoryExists(char* filepath) {
+    struct stat info;
+    if (stat(filepath, &info) != 0) {
+        return false;
+    }
+    return S_ISDIR(info.st_mode);
 }
 
 // 1. Pengguna

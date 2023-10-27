@@ -3,7 +3,10 @@
 #include "commands.c"
 
 int main() {
-    printf("Selamat datang di BurBir. Selamat berkicau!\n\n");
+    printf("Selamat datang di BurBir.\n");
+    printf("Aplikasi untuk studi kualitatif mengenai perilaku manusia dengan menggunakan metode (pengambilan data berupa) Focused Group Discussion kedua di zamannya.\n");
+
+    Inisialisasi();
 
     Word TUTUP_PROGRAM = {"TUTUP_PROGRAM", 13};
     Pengguna PenggunaA = {

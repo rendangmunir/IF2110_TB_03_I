@@ -10,10 +10,10 @@
 #define COL_CAP_MATRIXCHAR 100
 
 typedef int IdxType; /* Index baris, kolom */
-typedef char ElType;
+typedef char ElTypeMatrixChar;
 typedef struct
 {
-   ElType mem[ROW_CAP_MATRIXCHAR][COL_CAP_MATRIXCHAR];
+   ElTypeMatrixChar mem[ROW_CAP_MATRIXCHAR][COL_CAP_MATRIXCHAR];
    int rowEff; /* banyaknya/ukuran baris yg terdefinisi */
    int colEff; /* banyaknya/ukuran kolom yg terdefinisi */
 } MatrixChar;
@@ -44,7 +44,7 @@ IdxType getLastIdxColMatrixChar(MatrixChar m);
 /* Mengirimkan Index kolom terbesar m */
 boolean isIdxEffMatrixChar(MatrixChar m, IdxType i, IdxType j);
 /* Mengirimkan true jika i, j adalah Index efektif bagi m */
-ElType getElmtDiagonalMatrixChar(MatrixChar m, IdxType i);
+ElTypeMatrixChar getElmtDiagonalMatrixChar(MatrixChar m, IdxType i);
 /* Mengirimkan elemen m(i,i) */
 
 /* ********** Assignment  MatrixChar ********** */

@@ -19,29 +19,29 @@ boolean isMatrixCharIdxValid(int i, int j) {
 
 /* *** Selektor: Untuk sebuah matriks m yang terdefinisi: *** */
 IdxType getLastIdxRowMatrixChar(MatrixChar m) {
-    return (ROW_EFF(m) - 1);
+    return (ROW_EFF_MATRIXCHAR(m) - 1);
     /* Mengirimkan Index baris terbesar m */
 }
 IdxType getLastIdxColMatrixChar(MatrixChar m) {
-    return (COL_EFF(m) - 1);
+    return (COL_EFF_MATRIXCHAR(m) - 1);
     /* Mengirimkan Index kolom terbesar m */
 }
 boolean isIdxEffMatrixChar(MatrixChar m, IdxType i, IdxType j) {
-    return ((i >= 0) && (i <= getLastIdxRow(m)) && (j >= 0) && (j <= getLastIdxCol(m)));
+    return ((i >= 0) && (i <= getLastIdxRowMatrixChar(m)) && (j >= 0) && (j <= getLastIdxColMatrixChar(m)));
     /* Mengirimkan true jika i, j adalah Index efektif bagi m */
 }
-ElType getElmtDiagonalMatrixChar(MatrixChar m, IdxType i) {
+ElTypeMatrixChar getElmtDiagonalMatrixChar(MatrixChar m, IdxType i) {
     return ELMT_MATRIXCHAR(m, i, i);
     /* Mengirimkan elemen m(i,i) */
 }
 
 /* ********** Assignment  MatrixChar ********** */
 void copyMatrixChar(MatrixChar mIn, MatrixChar *mOut) {
-    createMatrixChar(ROW_EFF(mIn), COL_EFF(mIn), mOut);
+    createMatrixChar(ROW_EFF_MATRIXCHAR(mIn), COL_EFF_MATRIXCHAR(mIn), mOut);
 
     int i, j;
-    for (i = 0; i < ROW_EFF(mIn); i++) {
-        for (j = 0; j < COL_EFF(mIn); j++) {
+    for (i = 0; i < ROW_EFF_MATRIXCHAR(mIn); i++) {
+        for (j = 0; j < COL_EFF_MATRIXCHAR(mIn); j++) {
             ELMT_MATRIXCHAR(*mOut, i, j) = ELMT_MATRIXCHAR(mIn, i, j);
         }
     }
@@ -71,10 +71,10 @@ void readMatrixChar(MatrixChar *m, int nRow, int nCol) {
 void displayMatrixChar(MatrixChar m) {
     int i, j;
 
-    for (i = 0; i < ROW_EFF(m); i++) {
-        for (j = 0; j < COL_EFF(m); j++) {
+    for (i = 0; i < ROW_EFF_MATRIXCHAR(m); i++) {
+        for (j = 0; j < COL_EFF_MATRIXCHAR(m); j++) {
             printf("%d", ELMT_MATRIXCHAR(m, i, j));
-            printf("%s", (j == COL_EFF(m) - 1) ? "\n" : " ");
+            printf("%s", (j == COL_EFF_MATRIXCHAR(m) - 1) ? "\n" : " ");
         }
     }
     /* I.S. m terdefinisi */
@@ -90,13 +90,13 @@ void displayMatrixChar(MatrixChar m) {
 
 /* ********** KELOMPOK OPERASI RELASIONAL TERHADAP MatrixChar ********** */
 boolean isMatrixCharEqual(MatrixChar m1, MatrixChar m2) {
-    if ((ROW_EFF(m1) != ROW_EFF(m2)) || (COL_EFF(m1) != COL_EFF(m2))) {
+    if ((ROW_EFF_MATRIXCHAR(m1) != ROW_EFF_MATRIXCHAR(m2)) || (COL_EFF_MATRIXCHAR(m1) != COL_EFF_MATRIXCHAR(m2))) {
         return false;
     } else {
         int eq = true;
         int i, j;
-        for (i = 0; i < ROW_EFF(m1); i++) {
-            for (j = 0; j < COL_EFF(m1); j++) {
+        for (i = 0; i < ROW_EFF_MATRIXCHAR(m1); i++) {
+            for (j = 0; j < COL_EFF_MATRIXCHAR(m1); j++) {
                 if (ELMT_MATRIXCHAR(m1, i, j) != ELMT_MATRIXCHAR(m2, i, j)) {
                     return false;
                 }
@@ -113,29 +113,29 @@ boolean isMatrixCharNotEqual(MatrixChar m1, MatrixChar m2) {
     /* Mengirimkan true jika m1 tidak sama dengan m2 */
 }
 boolean isMatrixCharSizeEqual(MatrixChar m1, MatrixChar m2) {
-    return ((ROW_EFF(m1) == ROW_EFF(m2)) && (COL_EFF(m1) == COL_EFF(m2)));
+    return ((ROW_EFF_MATRIXCHAR(m1) == ROW_EFF_MATRIXCHAR(m2)) && (COL_EFF_MATRIXCHAR(m1) == COL_EFF_MATRIXCHAR(m2)));
     /* Mengirimkan true jika ukuran efektif matriks m1 sama dengan ukuran efektif m2 */
     /* yaitu RowEff(m1) = RowEff (m2) dan ColEff (m1) = ColEff (m2) */
 }
 
 /* ********** Operasi lain ********** */
 int countElmtMatrixChar(MatrixChar m) {
-    return (ROW_EFF(m) * COL_EFF(m));
+    return (ROW_EFF_MATRIXCHAR(m) * COL_EFF_MATRIXCHAR(m));
     /* Mengirimkan banyaknya elemen m */
 }
 
 /* ********** KELOMPOK TEST TERHADAP MatrixChar ********** */
 boolean isSquareMatrixChar(MatrixChar m) {
-    return (ROW_EFF(m) == COL_EFF(m));
+    return (ROW_EFF_MATRIXCHAR(m) == COL_EFF_MATRIXCHAR(m));
     /* Mengirimkan true jika m adalah matriks dg ukuran baris dan kolom sama */
 }
 boolean isSymmetricMatrixChar(MatrixChar m) {
-    if (!isSquare(m)) {
+    if (!isSquareMatrixChar(m)) {
         return false;
     } else {
         int i, j;
-        for (i = 0; i < ROW_EFF(m); i++) {
-            for (j = 0; j < COL_EFF(m); j++) {
+        for (i = 0; i < ROW_EFF_MATRIXCHAR(m); i++) {
+            for (j = 0; j < COL_EFF_MATRIXCHAR(m); j++) {
                 if (ELMT_MATRIXCHAR(m, i, j) != ELMT_MATRIXCHAR(m, j, i)) {
                     return false;
                 }
@@ -149,11 +149,11 @@ boolean isSymmetricMatrixChar(MatrixChar m) {
 
 MatrixChar transposeMatrixChar(MatrixChar m) {
     MatrixChar transpose;
-    createMatrixChar(COL_EFF(m), ROW_EFF(m), &transpose);
+    createMatrixChar(COL_EFF_MATRIXCHAR(m), ROW_EFF_MATRIXCHAR(m), &transpose);
 
     int i, j;
-    for (i = 0; i < ROW_EFF(transpose); i++) {
-        for (j = 0; j < COL_EFF(transpose); j++) {
+    for (i = 0; i < ROW_EFF_MATRIXCHAR(transpose); i++) {
+        for (j = 0; j < COL_EFF_MATRIXCHAR(transpose); j++) {
             ELMT_MATRIXCHAR(transpose, i, j) = ELMT_MATRIXCHAR(m, j, i);
         }
     }
@@ -166,8 +166,8 @@ void pTransposeMatrixChar(MatrixChar *m) {
     int i, j;
     MatrixChar copy;
     copyMatrixChar(*m, &copy);
-    for (i = 0; i < ROW_EFF(*m); i++) {
-        for (j = 0; j < COL_EFF(*m); j++) {
+    for (i = 0; i < ROW_EFF_MATRIXCHAR(*m); i++) {
+        for (j = 0; j < COL_EFF_MATRIXCHAR(*m); j++) {
             ELMT_MATRIXCHAR(*m, i, j) = ELMT_MATRIXCHAR(copy, j, i);
         }
     }
