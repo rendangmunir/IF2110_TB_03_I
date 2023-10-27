@@ -15,11 +15,11 @@
 typedef struct {
    Word Nama;
    Word Password;
-   // Word Bio;
-   // int noHP;
-   // Word Weton;
-   // Word JenisAkun;
-
+   Word Bio;
+   int noHP;
+   Word Weton;
+   Word JenisAkun;
+   Matrix FotoProfil;
 } Pengguna;
 
 /*  Kamus Umum */

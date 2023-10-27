@@ -1,13 +1,20 @@
 #ifndef ADT_H
 #define ADT_H
 
+// 1. ADT Sederhana
+#include "./datetime/datetime.h"
+
+// 2. ADT List Statik
 #include "./liststatik/liststatik.h"
 #include "./liststatikpengguna/liststatikpengguna.h"
 
-#include "./datetime/datetime.h"
-
+// 3. ADT List Dinamis
 #include "./listdinkicauan/listdinkicauan.h"
 
+// 4. ADT Matriks
+#include "./matrixchar/matrixchar.h"
+
+// 5. ADT Mesin Kata
 #include "./wordmachine/wordmachine.h"
 #include "./wordmachine/charmachine.h"
 
