@@ -1,7 +1,0 @@
-1
-(2)(3)
-((4(6969)))(3)
-
-deleteTree(1)
-deleteTree(2)
-deleteTree(4)

@@ -8,7 +8,7 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 
 // 0b. Inisialisasi
-void BacaDataConfig(char* filepath, int op, char* suffix);
+void BacaDataPengguna(char* filepath);
 void BacaProfilPengguna();
 
 // 1. Pengguna
@@ -20,6 +20,7 @@ void ListPengguna();
 void Muat();
 
 // 2. Profil
+void Ganti_Profil();
 
 // 3. Teman
 
@@ -69,7 +70,7 @@ void Inisialisasi() {
         printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
         Inisialisasi();
     } else {
-        BacaDataConfig(filepath, 1, "/pengguna.config");
+        BacaDataPengguna(filepath);
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -86,11 +87,15 @@ void RunCommand(Word command) {
     Word MUAT = {"MUAT", 4};
 
     // 2. Profil
+    Word GANTI_PROFIL = {"GANTI_PROFIL", 12};
+    Word LIHAT_PROFIL = {"LIHAT_PROFIL", 12};
+    Word ATUR_JENIS_AKUN = {"ATUR_JENIS_AKUN", 15};
+    Word UBAH_FOTO_PROFIL = {"UBAH_FOTO_PROFIL", 16};
 
     // 3. Teman
 
     // 4. Permintaan Pertemanan
-    
+
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
     Word KICAUAN = {"KICAUAN", 7};
@@ -125,6 +130,9 @@ void RunCommand(Word command) {
     }
 
     // 2. Profil
+    else if (WordEqual(command, GANTI_PROFIL)){
+        Ganti_Profil();
+    }
 
     // 3. Teman
 
@@ -201,41 +209,26 @@ boolean directoryExists(char* filepath) {
 }
 
 // 0b. Inisialisasi
-void BacaDataConfig(char* prefix, int op, char* suffix) {
-    char filepath[120];
-
-    concatStrings(prefix, suffix, filepath);
-    printf("%s\n", filepath);
+void BacaDataPengguna(char* filepath) {
+    char pengguna[120];
+    char file[] = "/pengguna.config";
+    concatStrings(filepath, file, pengguna);
+    printf("%s\n", pengguna);
 
     // Parse file
-    STARTFILE(filepath);
+    STARTFILE(pengguna);
     ADVNEWLINE();
 
-    int itemCount = WordToInt(currentWord);
-    // printf("Usercount: %d\n", itemCount);
-    for (int i = 0; i < itemCount; i++) {
-        switch (op) {
-        case 1:
-            BacaProfilPengguna();
-            break;
-        // case 2:
-        //     char suffix[] = "/kicauan.config";
-        //     break;
-        // case 3:
-        //     char suffix[] = "/balasan.config";
-        //     break;
-        // case 4:
-        //     char suffix[] = "/draf.config";
-        //     break;
-        // default:
-        //     char suffix[] = "/utas.config";
-        //     break;
-        }        
+    int usersCount = WordToInt(currentWord);
+    printf("Usercount: %d\n", usersCount);
+    for (int i = 0; i < usersCount; i++) {
+        BacaProfilPengguna();
     }
 }
 
 void BacaProfilPengguna() {
-    Word empty = {MARK, 1};
+    Pengguna p;
+    Word empty = {";", 1};
     // 1 Nama
     ADVNEWLINE();
     Word nama = currentWord;
@@ -265,13 +258,13 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
-    // printWord(nama); printf("\n");
-    // printWord(pass); printf("\n");
-    // printWord(bio); printf("\n");
-    // printWord(noHP); printf("\n");
-    // printWord(weton); printf("\n");
-    // printWord(jenis); printf("\n");
-    // displayMatrixChar(profilepic);
+    printWord(nama); printf("\n");
+    printWord(pass); printf("\n");
+    printWord(bio); printf("\n");
+    printWord(noHP); printf("\n");
+    printWord(weton); printf("\n");
+    printWord(jenis); printf("\n");
+    displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     insertLastPengguna(&listUsers, user);
 }
@@ -379,6 +372,64 @@ void ListPengguna() {
 }
 
 // 2. Profil
+
+void Ganti_Profil(){
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
+    }else{
+        printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
+        printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
+        printf("| No HP: %d\n", currentUser.noHP);
+        printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
+        Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
+
+        printf("Masukkan Bio Akun:\n");
+        STARTSENTENCE();
+
+        Word bio = currentWord;
+        currentUser.Bio=bio;
+        printf("\n");
+
+        boolean validnr=false;
+        while (!validnr)
+        {
+            printf("Masukkan No HP:\n");
+            STARTSENTENCE();
+            for (int i=0; i<currentWord.Length; i++){
+                if (currentWord.TabWord[i]>'0' && currentWord.TabWord[i]<'9'){
+                    validnr=true;
+                }
+            }
+            if (!validnr){
+                printf("\n");
+                printf("No HP tidak valid, Masukkan lagi yuk!\n");
+                printf("\n");
+            }
+        }
+        currentUser.noHP= (currentWord);
+        printf("\n");
+
+        boolean validwt=false;
+        while (!validwt)
+        {
+            printf("Masukkan Weton:\n");
+            STARTSENTENCE();
+
+            for (int i=0; i<4;i++){
+                if (WordEqual(currentWord,weton[i])){
+                    validwt=true;
+                }
+            }
+            if (!validwt){
+                printf("\n");
+                printf("Weton anda tidak valid\n");
+                printf("\n");
+            }
+        }
+        currentUser.Weton=currentWord;
+        printf("Profil anda sudah berhasil diperbarui!\n\n");
+    }
+}
 
 // 3. Teman
 

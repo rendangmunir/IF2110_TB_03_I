@@ -55,11 +55,8 @@ void readMatrixChar(MatrixChar *m, int nRow, int nCol) {
     int i, j;
     for (i = 0; i < nRow; i++) {
         for (j = 0; j < nCol; j++) {
-            ELMT_MATRIXCHAR(*m, i ,j) = currentChar;
-            ADV();
-            IgnoreBlanks();
+            scanf("%c", &ELMT_MATRIXCHAR(*m, i, j));
         }
-        ADV();
     }
     /* I.S. isIdxValid(nRow,nCol) */
     /* F.S. m terdefinisi nilai elemen efektifnya, berukuran nRow x nCol */
@@ -76,7 +73,7 @@ void displayMatrixChar(MatrixChar m) {
 
     for (i = 0; i < ROW_EFF_MATRIXCHAR(m); i++) {
         for (j = 0; j < COL_EFF_MATRIXCHAR(m); j++) {
-            printf("%c", ELMT_MATRIXCHAR(m, i, j));
+            printf("%d", ELMT_MATRIXCHAR(m, i, j));
             printf("%s", (j == COL_EFF_MATRIXCHAR(m) - 1) ? "\n" : " ");
         }
     }
