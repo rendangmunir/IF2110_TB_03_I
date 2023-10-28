@@ -20,6 +20,7 @@ void ListPengguna();
 void Muat();
 
 // 2. Profil
+void Ganti_Profil();
 
 // 3. Teman
 
@@ -82,6 +83,12 @@ void RunCommand(Word command) {
     Word LISTPENGGUNA = {"LISTPENGGUNA", 12};
     Word MUAT = {"MUAT", 4};
 
+    // 2. Profil
+    Word GANTI_PROFIL = {"GANTI_PROFIL", 12};
+    Word LIHAT_PROFIL = {"LIHAT_PROFIL", 12};
+    Word ATUR_JENIS_AKUN = {"ATUR_JENIS_AKUN", 15};
+    Word UBAH_FOTO_PROFIL = {"UBAH_FOTO_PROFIL", 16};
+
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
     Word KICAUAN = {"KICAUAN", 7};
@@ -107,6 +114,9 @@ void RunCommand(Word command) {
     }
 
     // 2. Profil
+    else if (WordEqual(command, GANTI_PROFIL)){
+        Ganti_Profil();
+    }
 
     // 3. Teman
 
@@ -234,6 +244,7 @@ void BacaProfilPengguna() {
     // 7-11 Foto Profil
     for (int i = 0; i < 5; i++) {
         ADVNEWLINE();
+        ADV();
     }
 
     printWord(nama); printf("\n");
@@ -348,6 +359,64 @@ void ListPengguna() {
 }
 
 // 2. Profil
+
+void Ganti_Profil(){
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
+    }else{
+        printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
+        printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
+        printf("| No HP: %d\n", currentUser.noHP);
+        printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
+        Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
+
+        printf("Masukkan Bio Akun:\n");
+        STARTSENTENCE();
+
+        Word bio = currentWord;
+        currentUser.Bio=bio;
+        printf("\n");
+
+        boolean validnr=false;
+        while (!validnr)
+        {
+            printf("Masukkan No HP:\n");
+            STARTSENTENCE();
+            for (int i=0; i<currentWord.Length; i++){
+                if (currentWord.TabWord[i]>'0' && currentWord.TabWord[i]<'9'){
+                    validnr=true;
+                }
+            }
+            if (!validnr){
+                printf("\n");
+                printf("No HP tidak valid, Masukkan lagi yuk!\n");
+                printf("\n");
+            }
+        }
+        currentUser.noHP=WordToInt(currentWord);
+        printf("\n");
+
+        boolean validwt=false;
+        while (!validwt)
+        {
+            printf("Masukkan Weton:\n");
+            STARTSENTENCE();
+
+            for (int i=0; i<4;i++){
+                if (WordEqual(currentWord,weton[i])){
+                    validwt=true;
+                }
+            }
+            if (!validwt){
+                printf("\n");
+                printf("Weton anda tidak valid\n");
+                printf("\n");
+            }
+        }
+        currentUser.Weton=currentWord;
+        printf("Profil anda sudah berhasil diperbarui!\n\n");
+    }
+}
 
 // 3. Teman
 
