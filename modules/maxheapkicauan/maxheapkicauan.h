@@ -1,7 +1,6 @@
 #ifndef MAXHEAPKICAUAN_H
 #define MAXHEAPKICAUAN_H
 
-#include "boolean.h"
 #include "../listdinkicauan/listdinkicauan.h"
 
 // Definisi Heap

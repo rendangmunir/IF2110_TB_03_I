@@ -21,6 +21,9 @@
 // X. ADT Tree
 #include "./treebalasan/treebalasan.h"
 
+// X. ADT Max Heap
+#include "./maxheapkicauan/maxheapkicauan.h"
+
 // X. ADT pcolor
 #include "./pcolor/pcolor.h"
 
