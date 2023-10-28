@@ -6,10 +6,13 @@
 // 0a. Misc. Functions
 void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
+void ADVUntil(char mark);
+DATETIME parseDATETIME();
 
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
+void BacaKicauan();
 
 // 1. Pengguna
 void Daftar();
@@ -71,6 +74,7 @@ void Inisialisasi() {
         Inisialisasi();
     } else {
         BacaDataConfig(filepath, 1, "/pengguna.config");
+        BacaDataConfig(filepath, 2, "/kicauan.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -208,12 +212,61 @@ boolean directoryExists(char* filepath) {
     return S_ISDIR(info.st_mode);
 }
 
+void ADVUntil(char mark) {
+    int i = 0;
+    while (currentChar != mark) {
+        currentWord.TabWord[i] = currentChar;
+        ADV();
+        i += 1;
+    }
+    ADV();
+    currentWord.Length = (i < NMax) ? i : NMax;
+}
+
+DATETIME parseDATETIME() {
+    DATETIME t;
+
+    // Day
+    ADVUntil('/');
+    int day = WordToInt(currentWord);
+
+    // Month
+    ADVUntil('/');
+    int month = WordToInt(currentWord);
+
+    // Year
+    ADVUntil(BLANK);
+    int year = WordToInt(currentWord);
+
+    // Hour
+    ADVUntil(':');
+    int hour = WordToInt(currentWord);
+
+    // Minutes
+    ADVUntil(':');
+    int min = WordToInt(currentWord);
+
+    // Seconds
+    int i = 0;
+    while (i < 2) {
+        currentWord.TabWord[i] = currentChar;
+        ADV();
+        i += 1;
+    }
+    currentWord.Length = (i < NMax) ? i : NMax;
+    int sec = WordToInt(currentWord);
+    ADV();
+
+    CreateDATETIME(&t, day, month, year, hour, min, sec);
+    return t;
+}
+
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix) {
     char filepath[120];
 
     concatStrings(prefix, suffix, filepath);
-    printf("%s\n", filepath);
+    // printf("%s\n", filepath);
 
     // Parse file
     STARTFILE(filepath);
@@ -226,9 +279,9 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         case 1:
             BacaProfilPengguna();
             break;
-        // case 2:
-        //     char suffix[] = "/kicauan.config";
-        //     break;
+        case 2:
+            BacaKicauan();
+            break;
         // case 3:
         //     char suffix[] = "/balasan.config";
         //     break;
@@ -243,7 +296,6 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
 }
 
 void BacaProfilPengguna() {
-    Pengguna p;
     Word empty = {";", 1};
     // 1 Nama
     ADVNEWLINE();
@@ -274,15 +326,44 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
-    printWord(nama); printf("\n");
-    printWord(pass); printf("\n");
-    printWord(bio); printf("\n");
-    printWord(noHP); printf("\n");
-    printWord(weton); printf("\n");
-    printWord(jenis); printf("\n");
-    displayMatrixChar(profilepic);
+    // printWord(nama); printf("\n");
+    // printWord(pass); printf("\n");
+    // printWord(bio); printf("\n");
+    // printWord(noHP); printf("\n");
+    // printWord(weton); printf("\n");
+    // printWord(jenis); printf("\n");
+    // displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     insertLastPengguna(&listUsers, user);
+}
+
+void BacaKicauan() {
+    // ID
+    ADVNEWLINE();
+    Word idWord = currentWord;
+    int id = WordToInt(idWord);
+
+    // Text
+    ADVNEWLINE();
+    Word text = currentWord;
+
+    // Likes
+    ADVNEWLINE();
+    Word likesWord = currentWord;
+    int likes = WordToInt(likesWord);
+
+    // Author
+    ADVNEWLINE();
+    Word author = currentWord;
+
+    // Datetime
+    DATETIME t = parseDATETIME();
+
+    printf("%d\n", id);
+    printWord(text); printf("\n");
+    printf("%d\n", likes);
+    printWord(author); printf("\n");
+    TulisDATETIME(t); printf("\n");
 }
 
 // 1. Pengguna
