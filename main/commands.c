@@ -21,6 +21,8 @@ void Muat();
 
 // 2. Profil
 void Ganti_Profil();
+void Lihat_Profil();
+void PrintFoto(Pengguna p);
 
 // 3. Teman
 
@@ -132,6 +134,8 @@ void RunCommand(Word command) {
     // 2. Profil
     else if (WordEqual(command, GANTI_PROFIL)){
         Ganti_Profil();
+    }else if (WordEqual(command, LIHAT_PROFIL)){
+        Lihat_Profil();
     }
 
     // 3. Teman
@@ -280,8 +284,9 @@ void BacaProfilPengguna() {
     printWord(noHP); printf("\n");
     printWord(weton); printf("\n");
     printWord(jenis); printf("\n");
-    displayMatrixChar(profilepic);
+    //displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
+    PrintFoto(user);
     insertLastPengguna(&listUsers, user);
 }
 
@@ -444,6 +449,59 @@ void Ganti_Profil(){
         }
         currentUser.Weton=currentWord;
         printf("Profil anda sudah berhasil diperbarui!\n\n");
+    }
+}
+void PrintFoto(Pengguna p){
+    MatrixChar M = p.FotoProfil;
+    for (int i=0; i<M.rowEff; i++){
+        for (int j=0; j<M.colEff; j=j+2){
+            if(M.mem[i][j]=='R'){
+                print_red(M.mem[i][j+1]);
+            }else if (M.mem[i][j]=='G'){
+                print_green(M.mem[i][j+1]);
+            }else{
+                print_blue(M.mem[i][j+1]);
+            }
+        }
+        printf("\n");
+    }
+}
+
+void PrintProfil(Pengguna p){
+    printf("| Nama: "); printWord(p.Nama); printf("\n");
+    printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
+    printf("| No HP: "); printWord(p.noHP); printf("\n");
+    printf("| Weton: "); printWord(p.Weton); printf("\n\n");
+    printf("Foto profil akun "); printWord(p.Nama); printf("\n");
+    PrintFoto(p); printf("\n");
+}
+
+void Lihat_Profil(){
+
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
+    }else{
+        STARTSENTENCE();
+
+        Word name = currentWord;
+        int userIndex = indexOfUser(listUsers, name);
+
+        if (WordEqual(currentWord, currentUser.Nama)){
+            PrintProfil(currentUser);
+        }else{
+            if (userIndex == IDX_UNDEF){
+                printf("Akun ini tidak terdaftar di BurBir!\n");
+            }else{
+                Pengguna user = ELMTPengguna(listUsers, userIndex);
+                Word Publik = {"Publik", 6};
+                if(WordEqual(user.JenisAkun, Publik)){
+                    PrintProfil(user);
+                }else{
+                    //cek apakah currentuser mengikuti user (Isfollowing(currentUser, user))
+                    PrintProfil(user); 
+                }
+            }
+        }
     }
 }
 
