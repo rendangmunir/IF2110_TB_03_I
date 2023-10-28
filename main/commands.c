@@ -48,6 +48,9 @@ void HapusBalasan();
 
 // 8. Utas
 
+// X. FYB
+void FYB();
+
 // ================= Data =================
 
 // Data
@@ -119,6 +122,9 @@ void RunCommand(Word command) {
 
     // 8. Utas
 
+    // X. FYB
+    Word FYB_STR = {"FYB", 3};
+
     // ================= Commands =================
     // 1. Pengguna
     if (WordEqual(command, DAFTAR)) {
@@ -170,6 +176,11 @@ void RunCommand(Word command) {
     // 7. Draf Kicauan
 
     // 8. Utas
+
+    // X. FYB
+    else if (WordEqual(command, FYB_STR)) {
+        FYB();
+    }
     
     else {
         printf("Perintah yang dimasukkan tidak dikenali! Mohon memasukkan ulang perintah anda.\n");
@@ -371,11 +382,15 @@ void BacaKicauan() {
     // Datetime
     DATETIME t = parseDATETIME();
 
-    printf("%d\n", id);
-    printWord(text); printf("\n");
-    printf("%d\n", likes);
-    printWord(author); printf("\n");
-    TulisDATETIME(t); printf("\n");
+    // printf("%d\n", id);
+    // printWord(text); printf("\n");
+    // printf("%d\n", likes);
+    // printWord(author); printf("\n");
+    // TulisDATETIME(t); printf("\n");
+
+    Kicauan k = {id, text, likes, author, t};
+
+    insertLastKicauan(&listKicauan, k);
 }
 
 // 1. Pengguna
@@ -539,6 +554,7 @@ void Ganti_Profil(){
         printf("Profil anda sudah berhasil diperbarui!\n\n");
     }
 }
+
 void PrintFoto(Pengguna p){
     MatrixChar M = p.FotoProfil;
     for (int i=0; i<M.rowEff; i++){
@@ -738,3 +754,16 @@ void Balas() {
 // 7. Draf Kicauan
 
 // 8. Utas
+
+// X. FYB
+void FYB() {
+    MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
+    HeapifyListKicauan(&h);
+
+    while (MaxHeapLengthKicauan(h) > 1) {
+        ElTypeKicauan root;
+        PopMaxHeap(&h, &root);
+
+        PrintKicauan(root);
+    }
+}
