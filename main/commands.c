@@ -8,7 +8,7 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 
 // 0b. Inisialisasi
-void BacaDataPengguna(char* filepath);
+void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
 
 // 1. Pengguna
@@ -33,6 +33,9 @@ void SukaKicauan();
 void UbahKicauan();
 
 // 6. Balasan
+void Balas();
+void DisplayBalasan();
+void HapusBalasan();
 
 // 7. Draf Kicauan
 
@@ -67,7 +70,7 @@ void Inisialisasi() {
         printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
         Inisialisasi();
     } else {
-        BacaDataPengguna(filepath);
+        BacaDataConfig(filepath, 1, "/pengguna.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -89,11 +92,24 @@ void RunCommand(Word command) {
     Word ATUR_JENIS_AKUN = {"ATUR_JENIS_AKUN", 15};
     Word UBAH_FOTO_PROFIL = {"UBAH_FOTO_PROFIL", 16};
 
+    // 3. Teman
+
+    // 4. Permintaan Pertemanan
+
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
     Word KICAUAN = {"KICAUAN", 7};
     Word SUKA_KICAUAN = {"SUKA_KICAUAN", 12};
     Word UBAH_KICAUAN = {"UBAH_KICAUAN", 12};
+
+    // 6. Balasan
+    Word BALAS = {"BALAS", 5};
+    Word BALASAN = {"BALASAN", 7};
+    Word HAPUS_BALASAN = {"HAPUS_BALASAN", 13};
+
+    // 7. Draf Kicauan
+
+    // 8. Utas
 
     // ================= Commands =================
     // 1. Pengguna
@@ -125,10 +141,18 @@ void RunCommand(Word command) {
     // 5. Kicauan
     else if (WordEqual(command, KICAU)) {
         Kicau();
+    } else if (WordEqual(command, KICAUAN)) {
+        DisplayKicauan();
     }
 
     // 6. Balasan
-
+    else if (WordEqual(command, BALAS)) {
+        // Balas();
+    } else if (WordEqual(command, BALASAN)) {
+        // DisplayBalasan();
+    } else if (WordEqual(command, HAPUS_BALASAN)) {
+        // HapusBalasan();
+    }
     // 7. Draf Kicauan
 
     // 8. Utas
@@ -185,20 +209,36 @@ boolean directoryExists(char* filepath) {
 }
 
 // 0b. Inisialisasi
-void BacaDataPengguna(char* filepath) {
-    char pengguna[120];
-    char file[] = "/pengguna.config";
-    concatStrings(filepath, file, pengguna);
-    printf("%s\n", pengguna);
+void BacaDataConfig(char* prefix, int op, char* suffix) {
+    char filepath[120];
+
+    concatStrings(prefix, suffix, filepath);
+    printf("%s\n", filepath);
 
     // Parse file
-    STARTFILE(pengguna);
+    STARTFILE(filepath);
     ADVNEWLINE();
 
-    int usersCount = WordToInt(currentWord);
-    printf("Usercount: %d\n", usersCount);
-    for (int i = 0; i < usersCount; i++) {
-        BacaProfilPengguna();
+    int itemCount = WordToInt(currentWord);
+    // printf("Usercount: %d\n", itemCount);
+    for (int i = 0; i < itemCount; i++) {
+        switch (op) {
+        case 1:
+            BacaProfilPengguna();
+            break;
+        // case 2:
+        //     char suffix[] = "/kicauan.config";
+        //     break;
+        // case 3:
+        //     char suffix[] = "/balasan.config";
+        //     break;
+        // case 4:
+        //     char suffix[] = "/draf.config";
+        //     break;
+        // default:
+        //     char suffix[] = "/utas.config";
+        //     break;
+        }        
     }
 }
 
@@ -215,45 +255,34 @@ void BacaProfilPengguna() {
 
     // 3 Bio
     ADVNEWLINE();
-    ADV();
-    Word bio = (currentChar == ENTER) ? empty : currentWord;
-    // ADV();
-
-    // Word bio;
-    // if (currentChar == ENTER) {
-    //     bio = empty;
-    // } else {
-    //     bio = currentWord;
-    // }
+    Word bio = (!currentWord.Length) ? empty : currentWord;
 
     // 4 NoHP
     ADVNEWLINE();
-    ADV();
-    int noHP = (currentChar == ENTER) ? 0 : WordToInt(currentWord);
+    // int noHP = (!currentWord.Length) ? 0 : WordToInt(currentWord);
+    Word noHP = (!currentWord.Length) ? empty : currentWord;
 
     // 5 Weton
     ADVNEWLINE();
-    ADV();
-    Word weton = (currentChar == ENTER) ? empty : currentWord;
+    Word weton = (!currentWord.Length) ? empty : currentWord;
 
     // 6 Jenis Akun
     ADVNEWLINE();
-    ADV();
-    Word jenis = (currentChar == ENTER) ? empty : currentWord;
+    Word jenis = (!currentWord.Length) ? empty : currentWord;
 
     // 7-11 Foto Profil
-    for (int i = 0; i < 5; i++) {
-        ADVNEWLINE();
-        ADV();
-    }
+    MatrixChar profilepic;
+    readMatrixChar(&profilepic, 5, 10);
 
     printWord(nama); printf("\n");
     printWord(pass); printf("\n");
     printWord(bio); printf("\n");
-    printf("%d", noHP); printf("\n");
+    printWord(noHP); printf("\n");
     printWord(weton); printf("\n");
     printWord(jenis); printf("\n");
-
+    displayMatrixChar(profilepic);
+    Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
+    insertLastPengguna(&listUsers, user);
 }
 
 // 1. Pengguna
@@ -430,6 +459,7 @@ void PrintKicauan(Kicauan k) {
     Word author = k.author;
     DATETIME datetime = k.datetime;
     
+    printf("\n");
     printTab(1);
     printf("ID = %d\n", id);
     
@@ -483,7 +513,20 @@ void Kicau() {
     }
 }
 
+void DisplayKicauan() {
+    int kicauanCount = listLengthKicauan(listKicauan);
+    for (int i = (kicauanCount - 1); i >= 0; i--) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        if (WordEqual(k.author, currentUser.Nama)) {
+            PrintKicauan(k);
+        }
+    }
+}
+
 // 6. Balasan
+void Balas() {
+    
+}
 
 // 7. Draf Kicauan
 

@@ -5,6 +5,12 @@
         "datetime.h": "c",
         "list": "c",
         "wordmachine.h": "c",
-        "includeadt.h": "c"
+        "includeadt.h": "c",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "type_traits": "cpp",
+        "cmath": "cpp",
+        "limits": "cpp",
+        "new": "cpp"
     }
 }
