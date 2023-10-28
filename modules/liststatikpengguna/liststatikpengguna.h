@@ -17,7 +17,7 @@ typedef struct {
    Word Nama;
    Word Password;
    Word Bio;
-   int noHP;
+   Word noHP;
    Word Weton;
    Word JenisAkun;
    MatrixChar FotoProfil;
