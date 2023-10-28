@@ -77,6 +77,6 @@ void PopMaxHeap(MaxHeapKicauan *h, ElTypeKicauan *root) {
     *root = ROOT_Heap(*h);
     swapMaxHeap(h, 1, (MaxHeapLengthKicauan(*h) - 1));
 
-    shrinkListKicauan(h, 1);
+    h->nEff += -1;
     Heapify(h, 1);
 }
