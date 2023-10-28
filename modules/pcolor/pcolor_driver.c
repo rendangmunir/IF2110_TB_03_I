@@ -8,6 +8,7 @@ Modified at: 23/10/2023
 
 #include <stdio.h>
 #include "pcolor.h"
+#include "pcolor.c"
 
 int main()
 {
