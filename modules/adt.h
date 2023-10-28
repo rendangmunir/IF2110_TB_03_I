@@ -18,4 +18,7 @@
 #include "./wordmachine/wordmachine.h"
 #include "./wordmachine/charmachine.h"
 
+// X. ADT Tree
+#include "./treebalasan/treebalasan.h"
+
 #endif

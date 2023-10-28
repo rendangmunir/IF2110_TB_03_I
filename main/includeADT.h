@@ -22,4 +22,7 @@
 #include "../modules/wordmachine/wordmachine.c"
 #include "../modules/wordmachine/charmachine.c"
 
+// X. ADT Tree
+#include "../modules/treebalasan/treebalasan.c"
+
 #endif

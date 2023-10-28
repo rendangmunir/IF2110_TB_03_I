@@ -2,9 +2,9 @@
 /* ADT pohon N-Ary */
 /* Representasi Address dengan pointer */
 
-#include "tree.h"
+#include "treebalasan.h"
 
-Address NewTreeNode(Infotype root)
+AddressBalasan NewTreeNodeBalasan(InfotypeBalasan root)
 /* Mengalokasikan sebuah Address t, bernilai Nil jika tidak berhasil */
 /* Mengirimkan Address hasil alokasi sebuah elemen bernilai root
    Jika alokasi berhasil, maka Address tidak Nil dan menghasilkan t
@@ -12,75 +12,75 @@ Address NewTreeNode(Infotype root)
    TREECOUNT(t) = 0, dan TREECAPACITY(t) = INITIAL 
    Jika alokasi gagal, maka mengirimkan Nil */
 {
-	Address t = (Address) malloc(sizeof(Node));
+	AddressBalasan t = (AddressBalasan) malloc(sizeof(NodeBalasan));
 
-	if (t != Nil) 
+	if (t != Nil_BALASAN) 
 	{
-		ROOT(t) = root;
-		SUBADDRESS(t) = (Address*) malloc(INITIAL * sizeof(Address*));
-		TREECOUNT(t) = 0;
-		TREECAPACITY(t) = INITIAL;
+		ROOT_BALASAN(t) = root;
+		SUBADDRESS_BALASAN(t) = (AddressBalasan*) malloc(INITIAL_BALASAN * sizeof(AddressBalasan*));
+		TREECOUNT_BALASAN(t) = 0;
+		TREECAPACITY_BALASAN(t) = INITIAL_BALASAN;
 	}
 
 	return t;
 }
 
-Tree NewTree(Infotype root, Tree child)
+TreeBalasan NewTreeBalasan(InfotypeBalasan root, TreeBalasan child)
 /* Jika alokasi berhasil, menghasilkan sebuah pohon dari root dan child;
    dan TREECOUNT bertambah satu jika child bukan Nil */
 /* Jika alokasi gagal, menghasilkan pohon kosong (Nil) */
 {
-	Address t = NewTreeNode(root);
-	if (t != Nil)
+	AddressBalasan t = NewTreeNodeBalasan(root);
+	if (t != Nil_BALASAN)
 	{
-		SUBTREE(t, TREECOUNT(t)) = child;
+		SUBTREE_BALASAN(t, TREECOUNT_BALASAN(t)) = child;
 
-		if (child != Nil)
-			TREECOUNT(t)++;
+		if (child != Nil_BALASAN)
+			TREECOUNT_BALASAN(t)++;
 	}
 	return t;
 }
 
-void CreateTree(Infotype root, Tree child, Tree *t)
+void CreateTreeBalasan(InfotypeBalasan root, TreeBalasan child, TreeBalasan *t)
 /* I.S. : Sembarang
    F.S. : Menghasilkan sebuah pohon t
    		  Jika alokasi berhasil, menghasilkan sebuah pohon dari root dan child;
    		  dan TREECOUNT bertambah satu jika child bukan Nil
    		  Jika alokasi gagal, menghasilkan pohon kosong (Nil) */
 {
-	*t = NewTreeNode(root);
-	if (*t != Nil)
+	*t = NewTreeNodeBalasan(root);
+	if (*t != Nil_BALASAN)
 	{
-		SUBTREE(*t, TREECOUNT(*t)) = child;
+		SUBTREE_BALASAN(*t, TREECOUNT_BALASAN(*t)) = child;
 
-		if (child != Nil)
-			TREECOUNT(*t)++;
+		if (child != Nil_BALASAN)
+			TREECOUNT_BALASAN(*t)++;
 	}
 }
 
-void ConnectChild(Tree child, Tree *t)
+void ConnectChildBalasan(TreeBalasan child, TreeBalasan *t)
 /* I.S. : t dan child terdefinisi
    F.S. : t terhubung dengan child dan TREECOUNT bertambah satu jika child bukan Nil */
 {
-	if (TREECOUNT(*t) == TREECAPACITY(*t))
-		ExpandCapacity(t);
+	if (TREECOUNT_BALASAN(*t) == TREECAPACITY_BALASAN(*t))
+		ExpandCapacityBalasan(t);
 
-	SUBTREE(*t, TREECOUNT(*t)) = child;
+	SUBTREE_BALASAN(*t, TREECOUNT_BALASAN(*t)) = child;
 
-	if (child != Nil)
-		TREECOUNT(*t)++;
+	if (child != Nil_BALASAN)
+		TREECOUNT_BALASAN(*t)++;
 }
 
-void ConnectParent(Tree parent, Tree *t)
+void ConnectParentBalasan(TreeBalasan parent, TreeBalasan *t)
 /* I.S. : t dan parent terdefinisi
 	F.S. : t menjadi child dari parent, ROOT(t) menjadi ROOT(parent) */
 {
-	ConnectChild(*t, &parent);
+	ConnectChildBalasan(*t, &parent);
 
 	*t = parent;
 }
 
-void DeallocateTree(Address t)
+void DeallocateTreeBalasan(AddressBalasan t)
 /* I.S. : t terdefinisi
    F.S. : t dikembalikan ke sistem
    Melakukan dealokasi/pengembalian Address t */
@@ -88,99 +88,99 @@ void DeallocateTree(Address t)
 	free(t);
 }
 
-boolean HasNoChild(Tree t)
+boolean HasNoChildBalasan(TreeBalasan t)
 /* Mengirimkan true jika t tidak memiliki child */
 {
-	if (TREECOUNT(t) == 0)
+	if (TREECOUNT_BALASAN(t) == 0)
 		return true;
 	return false;
 }
 
-boolean HasOneChild(Tree t)
+boolean HasOneChildBalasan(TreeBalasan t)
 /* Mengirimkan true jika t hanya memiliki 1 child */
 {
-	if (TREECOUNT(t) == 1)
+	if (TREECOUNT_BALASAN(t) == 1)
 		return true;
 	return false;
 }
 
 /***** Display Tree *****/
-void PrintTree(Tree t)
+void PrintTreeBalasan(TreeBalasan t)
 /* I.S. : t terdefinisi
    F.S. : Semua simpul t sudah dicetak secara preorder: root dan child(ren)
    		  Setiap pohon ditandai dengan tanda kurung buka dan tanda kurung tutup ()
    		  Pohon kosong ditandai dengan () */
 {
-	if (t == Nil) {
+	if (t == Nil_BALASAN) {
 		// printf("()");
 	} else {
 		printf("(");
-		printf("%d", ROOT(t));
+		printf("%d", ROOT_BALASAN(t));
 		int i;
-		for (i = 0; i < TREECOUNT(t); i++)
-			PrintTree(SUBTREE(t,i));
+		for (i = 0; i < TREECOUNT_BALASAN(t); i++)
+			PrintTreeBalasan(SUBTREE_BALASAN(t,i));
 		printf(")");
 	}
 }
 
-void ExpandCapacity(Tree *t)
+void ExpandCapacityBalasan(TreeBalasan *t)
 /* Proses: Memperbesar dua kali lipat capacity t */
 /* I.S. : t terdefinisi */
 /* F.S. : Ukuran SubTree menjadi dua kali lipat ukuran semula */
 {
-	TREECAPACITY(*t) *= 2;
+	TREECAPACITY_BALASAN(*t) *= 2;
 
-	Address *temp = SUBADDRESS(*t);
+	AddressBalasan *temp = SUBADDRESS_BALASAN(*t);
 
-	SUBADDRESS(*t) = (Address*) malloc(TREECAPACITY(*t) * sizeof(Address*));
-	TREECOUNT(*t) = 0;
+	SUBADDRESS_BALASAN(*t) = (AddressBalasan*) malloc(TREECAPACITY_BALASAN(*t) * sizeof(AddressBalasan*));
+	TREECOUNT_BALASAN(*t) = 0;
 	
 	int i;
-	for (i = 0; i < TREECAPACITY(*temp); i++)
-		SUBTREE(*t,i) = SUBTREE(*temp,i);
+	for (i = 0; i < TREECAPACITY_BALASAN(*temp); i++)
+		SUBTREE_BALASAN(*t,i) = SUBTREE_BALASAN(*temp,i);
 }
 
-void insertTree(Tree t, int parentID, Infotype child) {
+void insertTreeBalasan(TreeBalasan t, int parentID, InfotypeBalasan child) {
 	boolean found = false;
-	Tree c = NewTree(child, Nil);
+	TreeBalasan c = NewTreeBalasan(child, Nil_BALASAN);
 
-	insertTreeRecursion(t, parentID, c, &found);
+	insertTreeRecursionBalasan(t, parentID, c, &found);
 }
 
-void insertTreeRecursion(Tree t, int parentID, Tree child, boolean* f) {
-	if (t != Nil) {
+void insertTreeRecursionBalasan(TreeBalasan t, int parentID, TreeBalasan child, boolean* f) {
+	if (t != Nil_BALASAN) {
 		int i = 0;
 
-		if (ROOT(t).id == parentID) {
+		if (ROOT_BALASAN(t).id == parentID) {
 			*f = true;
-			ConnectChild(child, &t);
+			ConnectChildBalasan(child, &t);
 		}
 			// if (operation == 'd') printf("(%d: %d)", ROOT(t), *f);
 
-		while (i < TREECOUNT(t) && !(*f)) {
-			insertTreeRecursion(SUBTREE(t, i), parentID, child, f);
+		while (i < TREECOUNT_BALASAN(t) && !(*f)) {
+			insertTreeRecursionBalasan(SUBTREE_BALASAN(t, i), parentID, child, f);
 			i += 1;
 		}
 	}
 }
 
-void deleteTree(Tree* t, int parentID) {
+void deleteTreeBalasan(TreeBalasan* t, int parentID) {
 	boolean found = false;
 
-	deleteTreeRecursion(t, parentID, &found);
+	deleteTreeRecursionBalasan(t, parentID, &found);
 }
 
-void deleteTreeRecursion(Tree* t, int parentID, boolean* f) {
-	if (*t != Nil) {
+void deleteTreeRecursionBalasan(TreeBalasan* t, int parentID, boolean* f) {
+	if (*t != Nil_BALASAN) {
 		int i = 0;
 
-		if (ROOT(*t).id == parentID) {
+		if (ROOT_BALASAN(*t).id == parentID) {
 			*f = true;
-			*t = Nil;
+			*t = Nil_BALASAN;
 		}
 
-		while (!(*f) && i < TREECOUNT(*t)) {
-			deleteTreeRecursion(&SUBTREE(*t, i), parentID, f);
+		while (!(*f) && i < TREECOUNT_BALASAN(*t)) {
+			deleteTreeRecursionBalasan(&SUBTREE_BALASAN(*t, i), parentID, f);
 			i += 1;
 		}
 	}

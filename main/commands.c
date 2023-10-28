@@ -32,6 +32,9 @@ void SukaKicauan();
 void UbahKicauan();
 
 // 6. Balasan
+void Balas();
+void DisplayBalasan();
+void HapusBalasan();
 
 // 7. Draf Kicauan
 
@@ -82,11 +85,26 @@ void RunCommand(Word command) {
     Word LISTPENGGUNA = {"LISTPENGGUNA", 12};
     Word MUAT = {"MUAT", 4};
 
+    // 2. Profil
+
+    // 3. Teman
+
+    // 4. Permintaan Pertemanan
+    
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
     Word KICAUAN = {"KICAUAN", 7};
     Word SUKA_KICAUAN = {"SUKA_KICAUAN", 12};
     Word UBAH_KICAUAN = {"UBAH_KICAUAN", 12};
+
+    // 6. Balasan
+    Word BALAS = {"BALAS", 5};
+    Word BALASAN = {"BALASAN", 7};
+    Word HAPUS_BALASAN = {"HAPUS_BALASAN", 13};
+
+    // 7. Draf Kicauan
+
+    // 8. Utas
 
     // ================= Commands =================
     // 1. Pengguna
@@ -115,10 +133,18 @@ void RunCommand(Word command) {
     // 5. Kicauan
     else if (WordEqual(command, KICAU)) {
         Kicau();
+    } else if (WordEqual(command, KICAUAN)) {
+        DisplayKicauan();
     }
 
     // 6. Balasan
-
+    else if (WordEqual(command, BALAS)) {
+        Balas();
+    } else if (WordEqual(command, BALASAN)) {
+        DisplayBalasan();
+    } else if (WordEqual(command, HAPUS_BALASAN)) {
+        HapusBalasan();
+    }
     // 7. Draf Kicauan
 
     // 8. Utas
@@ -239,13 +265,13 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
-    printWord(nama); printf("\n");
-    printWord(pass); printf("\n");
-    printWord(bio); printf("\n");
-    printWord(noHP); printf("\n");
-    printWord(weton); printf("\n");
-    printWord(jenis); printf("\n");
-    displayMatrixChar(profilepic);
+    // printWord(nama); printf("\n");
+    // printWord(pass); printf("\n");
+    // printWord(bio); printf("\n");
+    // printWord(noHP); printf("\n");
+    // printWord(weton); printf("\n");
+    // printWord(jenis); printf("\n");
+    // displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     insertLastPengguna(&listUsers, user);
 }
@@ -366,6 +392,7 @@ void PrintKicauan(Kicauan k) {
     Word author = k.author;
     DATETIME datetime = k.datetime;
     
+    printf("\n");
     printTab(1);
     printf("ID = %d\n", id);
     
@@ -419,7 +446,20 @@ void Kicau() {
     }
 }
 
+void DisplayKicauan() {
+    int kicauanCount = listLengthKicauan(listKicauan);
+    for (int i = (kicauanCount - 1); i >= 0; i--) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        if (WordEqual(k.author, currentUser.Nama)) {
+            PrintKicauan(k);
+        }
+    }
+}
+
 // 6. Balasan
+void Balas() {
+    
+}
 
 // 7. Draf Kicauan
 
