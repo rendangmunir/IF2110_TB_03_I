@@ -25,4 +25,7 @@
 // X. ADT Tree
 #include "../modules/treebalasan/treebalasan.c"
 
+// X. ADT pcolor
+#include "../modules/pcolor/pcolor.c"
+
 #endif
