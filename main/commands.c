@@ -397,7 +397,7 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.noHP=WordToInt(currentWord);
+        currentUser.noHP= (currentWord);
         printf("\n");
 
         boolean validwt=false;
