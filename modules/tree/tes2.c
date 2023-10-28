@@ -9,8 +9,7 @@ int main() {
     insertTree(t, 2, 4);
     insertTree(t, 4, 6969);
 
-    deleteTree(&t, 4);
-
+    deleteTree(&t, 3);
     PrintTree(t);
 
     return 0;

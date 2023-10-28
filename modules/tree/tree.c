@@ -1,7 +1,6 @@
 /* File : tree.h */
 /* ADT pohon N-Ary */
 /* Representasi Address dengan pointer */
-/* ElType adalah Makanan */
 
 #include "tree.h"
 
@@ -112,12 +111,9 @@ void PrintTree(Tree t)
    		  Setiap pohon ditandai dengan tanda kurung buka dan tanda kurung tutup ()
    		  Pohon kosong ditandai dengan () */
 {
-	if (t == Nil)
-	{
-		printf("()");
-	}
-	else
-	{
+	if (t == Nil) {
+		// printf("()");
+	} else {
 		printf("(");
 		printf("%d", ROOT(t));
 		int i;
@@ -144,83 +140,82 @@ void ExpandCapacity(Tree *t)
 		SUBTREE(*t,i) = SUBTREE(*temp,i);
 }
 
-Tree* searchTree(Tree t, Infotype val) {
-	boolean found = false;
-	Tree* res = Nil;
-
-	searchTreeRecursion(t, val, &found, &res, '#', Nil);
-	return res;
-}
-
-void insertTree(Tree t, Infotype parent, Infotype child) {
+void insertTree(Tree t, int parentID, Infotype child) {
 	boolean found = false;
 	Tree c = NewTree(child, Nil);
 
-	insertTreeRecursion(t, parent, c, &found);
+	insertTreeRecursion(t, parentID, c, &found);
 }
 
-void insertTreeRecursion(Tree t, Infotype parent, Tree child, boolean* f) {
+void insertTreeRecursion(Tree t, int parentID, Tree child, boolean* f) {
 	if (t != Nil) {
 		int i = 0;
 
-		if (ROOT(t) == parent) {
+		if (ROOT(t).id == parentID) {
 			*f = true;
 			ConnectChild(child, &t);
 		}
 			// if (operation == 'd') printf("(%d: %d)", ROOT(t), *f);
 
 		while (i < TREECOUNT(t) && !(*f)) {
-			insertTreeRecursion(SUBTREE(t, i), parent, child, f);
+			insertTreeRecursion(SUBTREE(t, i), parentID, child, f);
 			i += 1;
 		}
 	}
 }
 
-void deleteTree(Tree* t, Infotype parent) {
+void deleteTree(Tree* t, int parentID) {
 	boolean found = false;
-	Tree* res = Nil;
 
-	deleteTreeRecursion(t, parent, &found);
+	deleteTreeRecursion(t, parentID, &found);
 }
 
-void deleteTreeRecursion(Tree* t, Infotype parent, boolean* f) {
+void deleteTreeRecursion(Tree* t, int parentID, boolean* f) {
 	if (*t != Nil) {
 		int i = 0;
 
-		if (ROOT(*t) == parent) {
+		if (ROOT(*t).id == parentID) {
 			*f = true;
 			*t = Nil;
 		}
 
-		while (i < TREECOUNT(*t) && !(*f) && (*t != Nil)) {
-			deleteTreeRecursion(&SUBTREE(*t, i), parent, f);
+		while (!(*f) && i < TREECOUNT(*t)) {
+			deleteTreeRecursion(&SUBTREE(*t, i), parentID, f);
 			i += 1;
 		}
 	}
 }
 
-void searchTreeRecursion(Tree t, Infotype val, boolean* f, Tree** treeResult, char operation, Tree node) {
-	if (t != Nil) {
-		int i = 0;
+// Tree* searchTree(Tree t, Infotype val) {
+// 	boolean found = false;
+// 	Tree* res = Nil;
 
-		if (operation == 'd') printf("%d\n", ROOT(t));
-		if (ROOT(t) == val) {
-			*f = true;
-			*treeResult = &t;
+// 	searchTreeRecursion(t, val, &found, &res, '#', Nil);
+// 	return res;
+// }
 
-			if (operation == 'i') {
-				ConnectChild(node, &t);
-			} else if (operation == 'd') {
-				t = Nil;
-			}
-		}
-		if (t != Nil) {
-			// if (operation == 'd') printf("(%d: %d)", ROOT(t), *f);
+// void searchTreeRecursion(Tree t, Infotype val, boolean* f, Tree** treeResult, char operation, Tree node) {
+// 	if (t != Nil) {
+// 		int i = 0;
 
-			while (i < TREECOUNT(t) && !(*f)) {
-				searchTreeRecursion(SUBTREE(t, i), val, f, treeResult, operation, node);
-				i += 1;
-			}
-		}
-	}
-}
+// 		if (operation == 'd') printf("%d\n", ROOT(t));
+// 		if (ROOT(t).id == val) {
+// 			*f = true;
+// 			*treeResult = &t;
+
+// 			if (operation == 'i') {
+// 				ConnectChild(node, &t);
+// 			} else if (operation == 'd') {
+// 				t = Nil;
+// 			}
+// 		}
+// 		if (t != Nil) {
+// 			// if (operation == 'd') printf("(%d: %d)", ROOT(t), *f);
+
+// 			while (i < TREECOUNT(t) && !(*f)) {
+// 				searchTreeRecursion(SUBTREE(t, i), val, f, treeResult, operation, node);
+// 				i += 1;
+// 			}
+// 		}
+// 	}
+// }

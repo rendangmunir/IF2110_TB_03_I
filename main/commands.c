@@ -8,7 +8,7 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 
 // 0b. Inisialisasi
-void BacaDataPengguna(char* filepath);
+void BacaDataConfig(char* filepath, int op, char* suffix);
 void BacaProfilPengguna();
 
 // 1. Pengguna
@@ -66,7 +66,7 @@ void Inisialisasi() {
         printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
         Inisialisasi();
     } else {
-        BacaDataPengguna(filepath);
+        BacaDataConfig(filepath, 1, "/pengguna.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -175,20 +175,36 @@ boolean directoryExists(char* filepath) {
 }
 
 // 0b. Inisialisasi
-void BacaDataPengguna(char* filepath) {
-    char pengguna[120];
-    char file[] = "/pengguna.config";
-    concatStrings(filepath, file, pengguna);
-    printf("%s\n", pengguna);
+void BacaDataConfig(char* prefix, int op, char* suffix) {
+    char filepath[120];
+
+    concatStrings(prefix, suffix, filepath);
+    printf("%s\n", filepath);
 
     // Parse file
-    STARTFILE(pengguna);
+    STARTFILE(filepath);
     ADVNEWLINE();
 
-    int usersCount = WordToInt(currentWord);
-    printf("Usercount: %d\n", usersCount);
-    for (int i = 0; i < usersCount; i++) {
-        BacaProfilPengguna();
+    int itemCount = WordToInt(currentWord);
+    // printf("Usercount: %d\n", itemCount);
+    for (int i = 0; i < itemCount; i++) {
+        switch (op) {
+        case 1:
+            BacaProfilPengguna();
+            break;
+        // case 2:
+        //     char suffix[] = "/kicauan.config";
+        //     break;
+        // case 3:
+        //     char suffix[] = "/balasan.config";
+        //     break;
+        // case 4:
+        //     char suffix[] = "/draf.config";
+        //     break;
+        // default:
+        //     char suffix[] = "/utas.config";
+        //     break;
+        }        
     }
 }
 
@@ -223,13 +239,13 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
-    // printWord(nama); printf("\n");
-    // printWord(pass); printf("\n");
-    // printWord(bio); printf("\n");
-    // printWord(noHP); printf("\n");
-    // printWord(weton); printf("\n");
-    // printWord(jenis); printf("\n");
-    // displayMatrixChar(profilepic);
+    printWord(nama); printf("\n");
+    printWord(pass); printf("\n");
+    printWord(bio); printf("\n");
+    printWord(noHP); printf("\n");
+    printWord(weton); printf("\n");
+    printWord(jenis); printf("\n");
+    displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     insertLastPengguna(&listUsers, user);
 }
