@@ -8,7 +8,7 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 
 // 0b. Inisialisasi
-void BacaDataConfig(char* filepath, int op, char* suffix);
+void BacaDataPengguna(char* filepath);
 void BacaProfilPengguna();
 
 // 1. Pengguna
@@ -67,7 +67,7 @@ void Inisialisasi() {
         printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
         Inisialisasi();
     } else {
-        BacaDataConfig(filepath, 1, "/pengguna.config");
+        BacaDataPengguna(filepath);
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -185,41 +185,26 @@ boolean directoryExists(char* filepath) {
 }
 
 // 0b. Inisialisasi
-void BacaDataConfig(char* prefix, int op, char* suffix) {
-    char filepath[120];
-
-    concatStrings(prefix, suffix, filepath);
-    printf("%s\n", filepath);
+void BacaDataPengguna(char* filepath) {
+    char pengguna[120];
+    char file[] = "/pengguna.config";
+    concatStrings(filepath, file, pengguna);
+    printf("%s\n", pengguna);
 
     // Parse file
-    STARTFILE(filepath);
+    STARTFILE(pengguna);
     ADVNEWLINE();
 
-    int itemCount = WordToInt(currentWord);
-    // printf("Usercount: %d\n", itemCount);
-    for (int i = 0; i < itemCount; i++) {
-        switch (op) {
-        case 1:
-            BacaProfilPengguna();
-            break;
-        // case 2:
-        //     char suffix[] = "/kicauan.config";
-        //     break;
-        // case 3:
-        //     char suffix[] = "/balasan.config";
-        //     break;
-        // case 4:
-        //     char suffix[] = "/draf.config";
-        //     break;
-        // default:
-        //     char suffix[] = "/utas.config";
-        //     break;
-        }        
+    int usersCount = WordToInt(currentWord);
+    printf("Usercount: %d\n", usersCount);
+    for (int i = 0; i < usersCount; i++) {
+        BacaProfilPengguna();
     }
 }
 
 void BacaProfilPengguna() {
-    Word empty = {MARK, 1};
+    Pengguna p;
+    Word empty = {";", 1};
     // 1 Nama
     ADVNEWLINE();
     Word nama = currentWord;
@@ -230,34 +215,45 @@ void BacaProfilPengguna() {
 
     // 3 Bio
     ADVNEWLINE();
-    Word bio = (!currentWord.Length) ? empty : currentWord;
+    ADV();
+    Word bio = (currentChar == ENTER) ? empty : currentWord;
+    // ADV();
+
+    // Word bio;
+    // if (currentChar == ENTER) {
+    //     bio = empty;
+    // } else {
+    //     bio = currentWord;
+    // }
 
     // 4 NoHP
     ADVNEWLINE();
-    // int noHP = (!currentWord.Length) ? 0 : WordToInt(currentWord);
-    Word noHP = (!currentWord.Length) ? empty : currentWord;
+    ADV();
+    int noHP = (currentChar == ENTER) ? 0 : WordToInt(currentWord);
 
     // 5 Weton
     ADVNEWLINE();
-    Word weton = (!currentWord.Length) ? empty : currentWord;
+    ADV();
+    Word weton = (currentChar == ENTER) ? empty : currentWord;
 
     // 6 Jenis Akun
     ADVNEWLINE();
-    Word jenis = (!currentWord.Length) ? empty : currentWord;
+    ADV();
+    Word jenis = (currentChar == ENTER) ? empty : currentWord;
 
     // 7-11 Foto Profil
-    MatrixChar profilepic;
-    readMatrixChar(&profilepic, 5, 10);
+    for (int i = 0; i < 5; i++) {
+        ADVNEWLINE();
+        ADV();
+    }
 
     printWord(nama); printf("\n");
     printWord(pass); printf("\n");
     printWord(bio); printf("\n");
-    printWord(noHP); printf("\n");
+    printf("%d", noHP); printf("\n");
     printWord(weton); printf("\n");
     printWord(jenis); printf("\n");
-    displayMatrixChar(profilepic);
-    Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
-    insertLastPengguna(&listUsers, user);
+
 }
 
 // 1. Pengguna

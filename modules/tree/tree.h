@@ -6,18 +6,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "boolean.h"
-#include "../wordmachine/charmachine.h"
-#include "../wordmachine/wordmachine.h"
-#include "../datetime/datetime.h"
-
-typedef struct {
-   int id;
-   Word text;
-   Word author;
-   DATETIME datetime;
-} Balasan;
 
 /* Selektor */
 #define ROOT(t) (t)->T
@@ -29,7 +18,7 @@ typedef struct {
 #define Nil NULL
 #define INITIAL 5
 
-typedef Balasan Infotype;
+typedef int Infotype;
 typedef struct TNode *Address;
 typedef struct TNode
 {
@@ -97,15 +86,15 @@ void ExpandCapacity(Tree *t);
 /* I.S. : t terdefinisi */
 /* F.S. : Ukuran SubTree menjadi dua kali lipat ukuran semula */
 
-void insertTree(Tree t, int parentID, Infotype child);
-
-void insertTreeRecursion(Tree t, int parentID, Tree child, boolean* f);
-
-void deleteTree(Tree* t, int parentID);
-
-void deleteTreeRecursion(Tree* t, int parentID, boolean* f);
-
 Tree* searchTree(Tree t, Infotype val);
+
+void insertTree(Tree t, Infotype parent, Infotype child);
+
+void insertTreeRecursion(Tree t, Infotype parent, Tree child, boolean* f);
+
+void deleteTree(Tree* t, Infotype parent);
+
+void deleteTreeRecursion(Tree* t, Infotype parent, boolean* f);
 
 void searchTreeRecursion(Tree t, Infotype val, boolean *f, Tree** treeResult, char operation, Tree node);
 
