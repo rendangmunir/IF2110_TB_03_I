@@ -26,6 +26,8 @@ void Muat();
 void Ganti_Profil();
 void Lihat_Profil();
 void PrintFoto(Pengguna p);
+void Atur_Jenis_Akun();
+void Ubah_Foto_Profil();
 
 // 3. Teman
 
@@ -140,6 +142,10 @@ void RunCommand(Word command) {
         Ganti_Profil();
     }else if (WordEqual(command, LIHAT_PROFIL)){
         Lihat_Profil();
+    }else if (WordEqual(command, ATUR_JENIS_AKUN)){
+        Atur_Jenis_Akun();
+    }else if (WordEqual(command, UBAH_FOTO_PROFIL)){
+        Ubah_Foto_Profil();
     }
 
     // 3. Teman
@@ -300,6 +306,7 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
 }
 
 void BacaProfilPengguna() {
+    Pengguna p;
     Word empty = {";", 1};
     // 1 Nama
     ADVNEWLINE();
@@ -338,7 +345,7 @@ void BacaProfilPengguna() {
     // printWord(jenis); printf("\n");
     // displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
-    PrintFoto(user);
+    // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
 }
 
@@ -583,6 +590,67 @@ void Lihat_Profil(){
                 }
             }
         }
+    }
+}
+
+void Atur_Jenis_Akun(){
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
+    }else{
+        Word type = currentUser.JenisAkun;
+        Word Publik = {"Publik", 6};
+        Word Privat = {"Privat", 6};
+        Word YA = {"YA", 2};
+        printf("Saat ini, akun Anda adalah akun "); printWord(type); printf(".\n");
+        if (WordEqual(type, Publik)){
+            printf("Ingin mengubah ke akun Privat?\n");
+            printf("(YA/TIDAK) ");
+            STARTSENTENCE();
+            if (WordEqual(currentWord, YA))
+            {
+                currentUser.JenisAkun=Privat;
+                printf("Akun anda sudah diubah menjadi akun Privat");
+            }else{
+                printf("Pengubahan jenis akun dibatalkan\n");
+            }
+        }else{
+            printf("Ingin mengubah ke akun Publik?\n");
+            printf("(YA/TIDAK) ");
+            STARTSENTENCE();
+            if (WordEqual(currentWord, YA))
+            {
+                currentUser.JenisAkun=Publik;
+                printf("Akun anda sudah diubah menjadi akun Publik\n");
+            }else{
+                printf("Pengubahan jenis akun dibatalkan\n");
+            }
+        }
+    }    
+}
+
+void Ubah_Foto_Profil(){
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
+    }else{
+        printf("Foto profil Anda saat ini adalah\n");
+        PrintFoto(currentUser); printf("\n\n");
+        printf("Masukkan foto profil yang baru\n");
+        MatrixChar fotoprofil;
+        createMatrixChar(5, 10, &fotoprofil);
+        START(); IgnoreBlanks(); IgnoreEnters();
+        int i, j;
+        for (i = 0; i < 5; i++) {
+            for (j = 0; j < 10; j++) {
+                ELMT_MATRIXCHAR(fotoprofil, i ,j) = currentChar;
+                ADV();
+                IgnoreBlanks(); IgnoreEnters();
+            }
+            IgnoreEnters();
+        }
+        currentUser.FotoProfil=fotoprofil;
+        printf("\n");
+        printf("Foto profil anda sudah berhasil diganti!\n\n");
+        PrintFoto(currentUser);
     }
 }
 
