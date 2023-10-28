@@ -127,9 +127,7 @@ void printWordNewline(Word w) {
 }
 
 // 4 - ADVNEWLINE
-void ADVNEWLINE() {
-    IgnoreEnters();
-    
+void ADVNEWLINE() {    
     int i = 0;
     while (currentChar != ENTER && currentChar != '\r') {
         currentWord.TabWord[i] = currentChar;
@@ -137,7 +135,8 @@ void ADVNEWLINE() {
         ADV();
     }
     IgnoreR();
-
+    ADV();
+    
     currentWord.Length = (i < NMax) ? i : NMax;
 }
 

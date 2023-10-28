@@ -147,11 +147,11 @@ void RunCommand(Word command) {
 
     // 6. Balasan
     else if (WordEqual(command, BALAS)) {
-        Balas();
+        // Balas();
     } else if (WordEqual(command, BALASAN)) {
-        DisplayBalasan();
+        // DisplayBalasan();
     } else if (WordEqual(command, HAPUS_BALASAN)) {
-        HapusBalasan();
+        // HapusBalasan();
     }
     // 7. Draf Kicauan
 
