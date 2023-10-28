@@ -193,8 +193,7 @@ void BacaDataPengguna(char* filepath) {
 }
 
 void BacaProfilPengguna() {
-    Pengguna p;
-    Word empty = {";", 1};
+    Word empty = {MARK, 1};
     // 1 Nama
     ADVNEWLINE();
     Word nama = currentWord;
@@ -205,44 +204,34 @@ void BacaProfilPengguna() {
 
     // 3 Bio
     ADVNEWLINE();
-    ADV();
-    Word bio = (currentChar == ENTER) ? empty : currentWord;
-    // ADV();
-
-    // Word bio;
-    // if (currentChar == ENTER) {
-    //     bio = empty;
-    // } else {
-    //     bio = currentWord;
-    // }
+    Word bio = (!currentWord.Length) ? empty : currentWord;
 
     // 4 NoHP
     ADVNEWLINE();
-    ADV();
-    int noHP = (currentChar == ENTER) ? 0 : WordToInt(currentWord);
+    // int noHP = (!currentWord.Length) ? 0 : WordToInt(currentWord);
+    Word noHP = (!currentWord.Length) ? empty : currentWord;
 
     // 5 Weton
     ADVNEWLINE();
-    ADV();
-    Word weton = (currentChar == ENTER) ? empty : currentWord;
+    Word weton = (!currentWord.Length) ? empty : currentWord;
 
     // 6 Jenis Akun
     ADVNEWLINE();
-    ADV();
-    Word jenis = (currentChar == ENTER) ? empty : currentWord;
+    Word jenis = (!currentWord.Length) ? empty : currentWord;
 
     // 7-11 Foto Profil
-    for (int i = 0; i < 5; i++) {
-        ADVNEWLINE();
-    }
+    MatrixChar profilepic;
+    readMatrixChar(&profilepic, 5, 10);
 
-    printWord(nama); printf("\n");
-    printWord(pass); printf("\n");
-    printWord(bio); printf("\n");
-    printf("%d", noHP); printf("\n");
-    printWord(weton); printf("\n");
-    printWord(jenis); printf("\n");
-
+    // printWord(nama); printf("\n");
+    // printWord(pass); printf("\n");
+    // printWord(bio); printf("\n");
+    // printWord(noHP); printf("\n");
+    // printWord(weton); printf("\n");
+    // printWord(jenis); printf("\n");
+    // displayMatrixChar(profilepic);
+    Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
+    insertLastPengguna(&listUsers, user);
 }
 
 // 1. Pengguna
