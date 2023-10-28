@@ -223,13 +223,13 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
-    // printWord(nama); printf("\n");
-    // printWord(pass); printf("\n");
-    // printWord(bio); printf("\n");
-    // printWord(noHP); printf("\n");
-    // printWord(weton); printf("\n");
-    // printWord(jenis); printf("\n");
-    // displayMatrixChar(profilepic);
+    printWord(nama); printf("\n");
+    printWord(pass); printf("\n");
+    printWord(bio); printf("\n");
+    printWord(noHP); printf("\n");
+    printWord(weton); printf("\n");
+    printWord(jenis); printf("\n");
+    displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     insertLastPengguna(&listUsers, user);
 }

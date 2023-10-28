@@ -112,12 +112,9 @@ void PrintTree(Tree t)
    		  Setiap pohon ditandai dengan tanda kurung buka dan tanda kurung tutup ()
    		  Pohon kosong ditandai dengan () */
 {
-	if (t == Nil)
-	{
-		printf("()");
-	}
-	else
-	{
+	if (t == Nil) {
+		// printf("()");
+	} else {
 		printf("(");
 		printf("%d", ROOT(t));
 		int i;
@@ -142,14 +139,6 @@ void ExpandCapacity(Tree *t)
 	int i;
 	for (i = 0; i < TREECAPACITY(*temp); i++)
 		SUBTREE(*t,i) = SUBTREE(*temp,i);
-}
-
-Tree* searchTree(Tree t, Infotype val) {
-	boolean found = false;
-	Tree* res = Nil;
-
-	searchTreeRecursion(t, val, &found, &res, '#', Nil);
-	return res;
 }
 
 void insertTree(Tree t, Infotype parent, Infotype child) {
@@ -192,11 +181,19 @@ void deleteTreeRecursion(Tree* t, Infotype parent, boolean* f) {
 			*t = Nil;
 		}
 
-		while (i < TREECOUNT(*t) && !(*f) && (*t != Nil)) {
+		while (!(*f) && i < TREECOUNT(*t)) {
 			deleteTreeRecursion(&SUBTREE(*t, i), parent, f);
 			i += 1;
 		}
 	}
+}
+
+Tree* searchTree(Tree t, Infotype val) {
+	boolean found = false;
+	Tree* res = Nil;
+
+	searchTreeRecursion(t, val, &found, &res, '#', Nil);
+	return res;
 }
 
 void searchTreeRecursion(Tree t, Infotype val, boolean* f, Tree** treeResult, char operation, Tree node) {
