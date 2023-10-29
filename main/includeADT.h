@@ -22,6 +22,9 @@
 #include "../modules/wordmachine/wordmachine.c"
 #include "../modules/wordmachine/charmachine.c"
 
+//  6. ADT Linked List
+#include "../modules/listutas/listutas.c"
+
 // X. ADT Tree
 #include "../modules/treebalasan/treebalasan.c"
 

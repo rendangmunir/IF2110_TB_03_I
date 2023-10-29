@@ -12,17 +12,17 @@
 #include "../datetime/datetime.h"
 
 /* Definisi Utas : */
-typedef Utas EltypeUtas;
-typedef struct Utas* Address;
+typedef nodeUtas EltypeUtas;
+typedef struct nodeUtas* Address;
 
-typedef struct Utas {
+typedef struct nodeUtas{
     int index;
     Word author;
     DATETIME datetime;
     Word text;
 
     Address next;
-} Utas;
+}nodeUtas;
 
 
 #define INDEX(p) (p)->index

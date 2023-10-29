@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 Address newNodeUtas(){
-    Address p = (Address) malloc (sizeof(Utas));
+    Address p = (Address) malloc (sizeof(nodeUtas));
     if (p != NULL){
         NEXT(p) = NULL;
     }
