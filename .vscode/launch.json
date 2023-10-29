@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/coding/IF2110_TB_03_I/main",
-      "program": "c:/coding/IF2110_TB_03_I/main/build/Debug/outDebug",
+      "cwd": "c:/coding/IF2110_TB_03_I/modules/listutas",
+      "program": "c:/coding/IF2110_TB_03_I/modules/listutas/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

@@ -1,0 +1,29 @@
+x1 1 0 0 0 0 0 0 0 0
+1 x1 0 1 0 0 0 0 0 0
+0 0 x0 0 0 0 0 0 0 0
+0 1 0 x1 1 0 0 0 0 0
+0 0 0 1 x1 0 0 0 0 0
+0 0 0 0 0 x1 1 1 0 0
+0 0 0 0 0 1 x1 0 0 0
+0 0 0 0 0 1 0 x1 0 0
+0 0 0 0 0 0 0 0 x1 1
+0 0 0 0 0 0 0 0 1 x1
+
+1 1 0 0 0 0 0 0 0 0
+1 1 0 1 0 0 0 0 0 0
+0 0 0 0 0 0 0 0 0 0
+0 1 0 1 1 0 0 0 0 0
+0 0 0 1 1 0 0 0 0 0
+0 0 0 0 0 1 1 1 0 0
+0 0 0 0 0 1 1 0 0 0
+0 0 0 0 0 1 0 1 0 0
+0 0 0 0 0 0 0 0 1 1
+0 0 0 0 0 0 0 0 1 1
+
+A   B   C   D   E   F   G   H   I   J
+-4  A  -1   A   A  -3   F   F  -2  I
+
+A   B   C   D   E   F   G   H   I   J
+-4  0  -1   0   0  -3   5   5  -2   8
+
+gcc -o ./bin/dsu ./modules/disjointset/tesdsu.c ./modules/disjointset/disjointset.c ./modules/matrixchar/matrixchar.c ./modules/liststatik/liststatik.c ./modules/grafteman/grafteman.c ./modules/wordmachine/charmachine.c ./modules/wordmachine/wordmachine.c

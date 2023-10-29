@@ -4,6 +4,8 @@
 #define MATRIXCHAR_H
 
 #include "boolean.h"
+#include "../wordmachine/charmachine.h"
+#include "../wordmachine/wordmachine.h"
 
 /* Ukuran maksimum baris dan kolom */
 #define ROW_CAP_MATRIXCHAR 100

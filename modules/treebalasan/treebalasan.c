@@ -105,23 +105,23 @@ boolean HasOneChildBalasan(TreeBalasan t)
 }
 
 /***** Display Tree *****/
-void PrintTreeBalasan(TreeBalasan t)
-/* I.S. : t terdefinisi
-   F.S. : Semua simpul t sudah dicetak secara preorder: root dan child(ren)
-   		  Setiap pohon ditandai dengan tanda kurung buka dan tanda kurung tutup ()
-   		  Pohon kosong ditandai dengan () */
-{
-	if (t == Nil_BALASAN) {
-		// printf("()");
-	} else {
-		printf("(");
-		printf("%d", ROOT_BALASAN(t));
-		int i;
-		for (i = 0; i < TREECOUNT_BALASAN(t); i++)
-			PrintTreeBalasan(SUBTREE_BALASAN(t,i));
-		printf(")");
-	}
-}
+// void PrintTreeBalasan(TreeBalasan t)
+// /* I.S. : t terdefinisi
+//    F.S. : Semua simpul t sudah dicetak secara preorder: root dan child(ren)
+//    		  Setiap pohon ditandai dengan tanda kurung buka dan tanda kurung tutup ()
+//    		  Pohon kosong ditandai dengan () */
+// {
+// 	if (t == Nil_BALASAN) {
+// 		// printf("()");
+// 	} else {
+// 		printf("(");
+// 		printf("%d", ROOT_BALASAN(t));
+// 		int i;
+// 		for (i = 0; i < TREECOUNT_BALASAN(t); i++)
+// 			PrintTreeBalasan(SUBTREE_BALASAN(t,i));
+// 		printf(")");
+// 	}
+// }
 
 void ExpandCapacityBalasan(TreeBalasan *t)
 /* Proses: Memperbesar dua kali lipat capacity t */
@@ -186,36 +186,24 @@ void deleteTreeRecursionBalasan(TreeBalasan* t, int parentID, boolean* f) {
 	}
 }
 
-// Tree* searchTree(Tree t, Infotype val) {
-// 	boolean found = false;
-// 	Tree* res = Nil;
+boolean treeExists(TreeBalasan t, int parentID) {
+	boolean found = false;
 
-// 	searchTreeRecursion(t, val, &found, &res, '#', Nil);
-// 	return res;
-// }
+	searchTreeRecursion(t, parentID, &found);
+	return found;
+}
 
-// void searchTreeRecursion(Tree t, Infotype val, boolean* f, Tree** treeResult, char operation, Tree node) {
-// 	if (t != Nil) {
-// 		int i = 0;
+void searchTreeRecursion(TreeBalasan t, int parentID, boolean *f) {
+	if (t != Nil_BALASAN) {
+		int i = 0;
 
-// 		if (operation == 'd') printf("%d\n", ROOT(t));
-// 		if (ROOT(t).id == val) {
-// 			*f = true;
-// 			*treeResult = &t;
+		if (ROOT_BALASAN(t).id == parentID) {
+			*f = true;
+		}
 
-// 			if (operation == 'i') {
-// 				ConnectChild(node, &t);
-// 			} else if (operation == 'd') {
-// 				t = Nil;
-// 			}
-// 		}
-// 		if (t != Nil) {
-// 			// if (operation == 'd') printf("(%d: %d)", ROOT(t), *f);
-
-// 			while (i < TREECOUNT(t) && !(*f)) {
-// 				searchTreeRecursion(SUBTREE(t, i), val, f, treeResult, operation, node);
-// 				i += 1;
-// 			}
-// 		}
-// 	}
-// }
+		while (!(*f) && i < TREECOUNT_BALASAN(t)) {
+			searchTreeRecursion(SUBTREE_BALASAN(t, i), parentID, f);
+			i += 1;
+		}
+	}
+}

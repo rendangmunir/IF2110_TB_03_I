@@ -142,18 +142,29 @@ void ADVNEWLINE() {
 
 // 5 - StrToInt
 int WordToInt(Word w) {
-    int mult = w.Length - 1;
-
-    int i, j;
-    int dec;
-    int sum = 0;
-    for (i = 0; i < w.Length; i++) {
-        dec = 1;
-        for (j = mult; j > i; j--) {
-            dec *= 10;
+    if (w.TabWord[0] == '-') {
+        int k;
+        Word newWord;
+        for (k = 1; k < w.Length; k++) {
+            newWord.TabWord[k - 1] = w.TabWord[k]; 
         }
-        sum += (w.TabWord[i] - 48) * dec;
-    }
+        newWord.Length = w.Length - 1;
 
-    return sum;
+        return -1 * WordToInt(newWord);
+    } else {
+        int mult = w.Length - 1;
+
+        int i, j;
+        int dec;
+        int sum = 0;
+        for (i = 0; i < w.Length; i++) {
+            dec = 1;
+            for (j = mult; j > i; j--) {
+                dec *= 10;
+            }
+            sum += (w.TabWord[i] - 48) * dec;
+        }
+
+        return sum;
+    }
 }

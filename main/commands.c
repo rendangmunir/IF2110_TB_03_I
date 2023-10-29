@@ -12,6 +12,7 @@ DATETIME parseDATETIME();
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
+void BacaGrafPertemanan();
 void BacaKicauan();
 
 // 1. Pengguna
@@ -26,6 +27,8 @@ void Muat();
 void Ganti_Profil();
 void Lihat_Profil();
 void PrintFoto(Pengguna p);
+void Atur_Jenis_Akun();
+void Ubah_Foto_Profil();
 
 // 3. Teman
 
@@ -46,6 +49,9 @@ void HapusBalasan();
 
 // 8. Utas
 
+// X. Kelompok Teman
+void KelompokTeman();
+
 // X. FYB
 void FYB();
 
@@ -59,6 +65,7 @@ boolean runProgram;
 // Data Structures
 ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
+GrafTeman FriendGraph;
 
 // Commands
 void Inisialisasi() {
@@ -120,6 +127,9 @@ void RunCommand(Word command) {
 
     // 8. Utas
 
+    // X. Kelompok Teman
+    Word KELOMPOK_TEMAN = {"KELOMPOK_TEMAN", 14};
+
     // X. FYB
     Word FYB_STR = {"FYB", 3};
 
@@ -146,6 +156,10 @@ void RunCommand(Word command) {
         Ganti_Profil();
     }else if (WordEqual(command, LIHAT_PROFIL)){
         Lihat_Profil();
+    }else if (WordEqual(command, ATUR_JENIS_AKUN)){
+        Atur_Jenis_Akun();
+    }else if (WordEqual(command, UBAH_FOTO_PROFIL)){
+        Ubah_Foto_Profil();
     }
 
     // 3. Teman
@@ -161,15 +175,20 @@ void RunCommand(Word command) {
 
     // 6. Balasan
     else if (WordEqual(command, BALAS)) {
-        // Balas();
+        Balas();
     } else if (WordEqual(command, BALASAN)) {
-        // DisplayBalasan();
+        DisplayBalasan();
     } else if (WordEqual(command, HAPUS_BALASAN)) {
-        // HapusBalasan();
+        HapusBalasan();
     }
     // 7. Draf Kicauan
 
     // 8. Utas
+
+    // X. Kelompok Teman
+    else if (WordEqual(command, KELOMPOK_TEMAN)) {
+        KelompokTeman();
+    }
 
     // X. FYB
     else if (WordEqual(command, FYB_STR)) {
@@ -308,9 +327,14 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         //     break;
         }        
     }
+
+    if (op == 1) {
+        BacaGrafPertemanan();
+    }
 }
 
 void BacaProfilPengguna() {
+    Pengguna p;
     Word empty = {";", 1};
     // 1 Nama
     ADVNEWLINE();
@@ -349,8 +373,15 @@ void BacaProfilPengguna() {
     // printWord(jenis); printf("\n");
     // displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
-    PrintFoto(user);
+    // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
+}
+
+void BacaGrafPertemanan() {
+    int n = listLengthPengguna(listUsers);
+    readMatrixChar(&FriendGraph, n, n);
+
+    displayMatrixChar(FriendGraph);
 }
 
 void BacaKicauan() {
@@ -381,7 +412,9 @@ void BacaKicauan() {
     // printWord(author); printf("\n");
     // TulisDATETIME(t); printf("\n");
 
-    Kicauan k = {id, text, likes, author, t};
+    Balasan b = {-1, text, author, t};
+    TreeBalasan tree = NewTreeBalasan(b, Nil_BALASAN);
+    Kicauan k = {id, text, likes, author, t, tree};
 
     insertLastKicauan(&listKicauan, k);
 }
@@ -499,13 +532,29 @@ void Ganti_Profil(){
         printf("| No HP: %d\n", currentUser.noHP);
         printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
         Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
+        Word empty = {';',1};
 
-        printf("Masukkan Bio Akun:\n");
-        STARTSENTENCE();
+        boolean validbio=false;
+        Word bio;
+        while (!validbio)
+        {
+            printf("Masukkan Bio Akun:\n");
+            STARTSENTENCE();
 
-        Word bio = currentWord;
+            bio = currentWord;
+            if (currentWord.Length<=135){
+                validbio=true;
+            }
+            if (!validbio){
+                printf("\n");
+                printf("Bio melebihi panjang maksimum karakter!\n");
+                printf("\n");
+            }
+        }
         currentUser.Bio=bio;
         printf("\n");
+        /* code */
+        
 
         boolean validnr=false;
         while (!validnr)
@@ -531,6 +580,9 @@ void Ganti_Profil(){
         {
             printf("Masukkan Weton:\n");
             STARTSENTENCE();
+            if (WordEqual(currentWord,empty)){
+                validwt=true;
+            }
 
             for (int i=0; i<4;i++){
                 if (WordEqual(currentWord,weton[i])){
@@ -602,6 +654,67 @@ void Lihat_Profil(){
     }
 }
 
+void Atur_Jenis_Akun(){
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
+    }else{
+        Word type = currentUser.JenisAkun;
+        Word Publik = {"Publik", 6};
+        Word Privat = {"Privat", 6};
+        Word YA = {"YA", 2};
+        printf("Saat ini, akun Anda adalah akun "); printWord(type); printf(".\n");
+        if (WordEqual(type, Publik)){
+            printf("Ingin mengubah ke akun Privat?\n");
+            printf("(YA/TIDAK) ");
+            STARTSENTENCE();
+            if (WordEqual(currentWord, YA))
+            {
+                currentUser.JenisAkun=Privat;
+                printf("Akun anda sudah diubah menjadi akun Privat");
+            }else{
+                printf("Pengubahan jenis akun dibatalkan\n");
+            }
+        }else{
+            printf("Ingin mengubah ke akun Publik?\n");
+            printf("(YA/TIDAK) ");
+            STARTSENTENCE();
+            if (WordEqual(currentWord, YA))
+            {
+                currentUser.JenisAkun=Publik;
+                printf("Akun anda sudah diubah menjadi akun Publik\n");
+            }else{
+                printf("Pengubahan jenis akun dibatalkan\n");
+            }
+        }
+    }    
+}
+
+void Ubah_Foto_Profil(){
+    if (!isLoggedIn){
+        printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
+    }else{
+        printf("Foto profil Anda saat ini adalah\n");
+        PrintFoto(currentUser); printf("\n\n");
+        printf("Masukkan foto profil yang baru\n");
+        MatrixChar fotoprofil;
+        createMatrixChar(5, 10, &fotoprofil);
+        START(); IgnoreBlanks(); IgnoreEnters();
+        int i, j;
+        for (i = 0; i < 5; i++) {
+            for (j = 0; j < 10; j++) {
+                ELMT_MATRIXCHAR(fotoprofil, i ,j) = currentChar;
+                ADV();
+                IgnoreBlanks(); IgnoreEnters();
+            }
+            IgnoreEnters();
+        }
+        currentUser.FotoProfil=fotoprofil;
+        printf("\n");
+        printf("Foto profil anda sudah berhasil diganti!\n\n");
+        PrintFoto(currentUser);
+    }
+}
+
 // 3. Teman
 
 // 4. Permintaan Pertemanan
@@ -632,9 +745,22 @@ void PrintKicauan(Kicauan k) {
     printf("Disukai: %d\n", likes);
 }
 
-void Kicau() {
-    printf("Masukkan kicauan: \n");
+int indexOfKicauan(int id) {
+    int n = listLengthKicauan(listKicauan);
 
+    int index = -1;
+    int i = 0;
+    while (i < n && index == -1) {
+        if (ELMT_Kicauan(listKicauan, i).id == id) {
+            index = i;
+        } else {
+            i += 1;
+        }
+    }
+    return i;
+}
+
+Kicauan inputKicau() {
     STARTSENTENCE();
     int len = currentWord.Length;
     len = (len < 280) ? len : 280;
@@ -651,7 +777,7 @@ void Kicau() {
 
     if (!count) {
         printf("Kicauan tidak boleh hanya berisi spasi!\n");
-        Kicau();
+        return inputKicau();
     } else {
         int id = listLengthKicauan(listKicauan) + 1;
         Word text = currentWord;
@@ -659,13 +785,23 @@ void Kicau() {
         Word author = currentUser.Nama;
         DATETIME datetime = GetDateTime();
 
-        Kicauan submittedKicauan = {id, text, likes, author, datetime};
+        Balasan b = {-1, text, author, datetime};
+        TreeBalasan tree = NewTreeBalasan(b, Nil_BALASAN);
+        Kicauan submittedKicauan = {id, text, likes, author, datetime, tree, 0};
 
-        printf("Selamat! kicauan telah diterbitkan!\nDetil kicauan:\n");
-        PrintKicauan(submittedKicauan);
-
-        insertLastKicauan(&listKicauan, submittedKicauan);
+        return submittedKicauan;
     }
+}
+
+void Kicau() {
+    printf("Masukkan kicauan: \n");
+
+    Kicauan submittedKicauan = inputKicau();
+
+    printf("Selamat! kicauan telah diterbitkan!\nDetil kicauan:\n");
+    PrintKicauan(submittedKicauan);
+
+    insertLastKicauan(&listKicauan, submittedKicauan);
 }
 
 void DisplayKicauan() {
@@ -679,13 +815,146 @@ void DisplayKicauan() {
 }
 
 // 6. Balasan
-void Balas() {
+void PrintBalasan(Balasan k, int indent) {
+    int id = k.id;
+    Word text = k.text;
+    Word author = k.author;
+    DATETIME datetime = k.datetime;
     
+    printf("\n");
+    printTab(indent);
+    printf("ID = %d\n", id);
+    
+    printTab(indent);
+    printWordNewline(author);
+
+    printTab(indent);
+    TulisDATETIME(datetime);
+    printf("\n");
+
+    printTab(indent);
+    printWordNewline(text);
+}
+
+void PrintTreeBalasan(TreeBalasan t, int indent) {
+	if (t != Nil_BALASAN) {
+		int i = 0;
+
+        if (ROOT_BALASAN(t).id != IDX_UNDEF) {
+            PrintBalasan(ROOT_BALASAN(t), indent);
+        }
+		while (i < TREECOUNT_BALASAN(t)) {
+			PrintTreeBalasan(SUBTREE_BALASAN(t, i), indent + 1);
+			i += 1;
+		}
+	}
+}
+
+void Balas() {
+    ADVWORD();
+    int IDKicau = WordToInt(currentWord);
+    printf("IDKicau: %d\n", IDKicau);
+
+    ADVWORD();
+    int IDBalasan = WordToInt(currentWord);
+    printf("IDBalasan: %d\n", IDBalasan);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Wah, tidak terdapat kicauan yang ingin Anda balas!\n");
+    } else {
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+        if (!treeExists(tree, IDBalasan)) {
+            printf("Wah, tidak terdapat balasan yang ingin Anda balas!\n");
+        } else {
+            printf("Masukkan balasan: \n");
+
+            Kicauan k = inputKicau();
+            ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += 1;
+            int id = ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan;
+
+            Balasan submittedBalasan = {id, k.text, k.author, k.datetime};
+            insertTreeBalasan(tree, IDBalasan, submittedBalasan);
+
+            printf("Selamat! Balasan telah diterbitkan!\nDetil balasan:\n");
+            PrintBalasan(submittedBalasan, 1);
+        }
+    }
+}
+
+void DisplayBalasan() {
+    ADVWORD();
+    int IDKicau = WordToInt(currentWord);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Wah, tidak terdapat kicauan dengan ID tersebut!\n");
+    } else if (ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan == 0) {
+        printf("Belum terdapat balasan apapun pada kicauan tersebut. Yuk balas kicauan tersebut!\n");
+    } else {
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+        PrintTreeBalasan(tree, 0);
+    }
+}
+
+void HapusBalasan() {
+    ADVWORD();
+    int IDKicau = WordToInt(currentWord);
+    printf("IDKicau: %d\n", IDKicau);
+
+    ADVWORD();
+    int IDBalasan = WordToInt(currentWord);
+    printf("IDBalasan: %d\n", IDBalasan);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
+    } else {
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+        if (!treeExists(tree, IDBalasan)) {
+            printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
+        } else {
+            deleteTreeBalasan(&tree, IDBalasan);
+            ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += -1;
+
+            printf("Balasan berhasil dihapus! Semoga bukan balasan yang penting, yah!\n");
+        }
+    }
 }
 
 // 7. Draf Kicauan
 
 // 8. Utas
+
+// X. Kelompok Teman
+void KelompokTeman() {
+    int n = ROW_EFF_MATRIXCHAR(FriendGraph);
+    DisjointSet groups = findGroups(FriendGraph);
+    DisjointSet groupList = groups;
+
+    int count = 0;
+    for (int i = 0; i < listLength(groups); i++) {
+        if (getIndexRoot(groups, i) == getIndexRoot(groups, currentUser.id)) {
+            ELMT(groupList, i) = 1;
+            count += 1;
+        } else {
+            ELMT(groupList, i) = 0;
+        }
+    }
+    printf("Terdapat %d orang dalam Kelompok Teman ", count);
+    printWord(currentUser.Nama);
+    printf(": \n");
+
+    int pre = 1;
+    for (int i = 0; i < listLength(groupList); i++) {
+        if (ELMT(groupList, i) == 1) {
+            printf("%d. ", pre);
+            pre += 1;
+            printWord(ELMTPengguna(listUsers, i).Nama);
+            printf("\n");
+        } 
+    }
+}
 
 // X. FYB
 void FYB() {

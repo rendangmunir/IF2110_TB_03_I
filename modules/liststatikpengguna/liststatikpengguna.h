@@ -21,6 +21,7 @@ typedef struct {
    Word Weton;
    Word JenisAkun;
    MatrixChar FotoProfil;
+   int id;
 } Pengguna;
 
 /*  Kamus Umum */
