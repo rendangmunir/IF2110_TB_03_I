@@ -20,6 +20,16 @@ void CreateList(List *l, Kicauan kicau)
     NEXT(*l) = NULL;
 }
 
+/****************** PEMBUATAN LIST KOSONG ******************/
+void CreateUtas(EltypeUtas *utas, Word author, DATETIME datetime, Word text)
+/* I.S. sembarang             */
+/* F.S. Terbentuk Utas dengan index Undeff */
+{
+    (utas)->index = IDX_UNDEF;
+    (utas)->author = author;
+    (utas)->datetime = datetime;
+    (utas)->text = text; 
+}
 /****************** TEST LIST KOSONG ******************/
 boolean isEmpty(List l)
 /* Mengirim true jika list kosong */
@@ -45,11 +55,32 @@ void setUtas(List *l, int idx, EltypeUtas val);
 /* I.S. l terdefinisi, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Mengubah elemen l pada indeks ke-idx menjadi val */
 
-int indexOf(List l, EltypeUtas val);
+int indexOf(List l, EltypeUtas val)
 /* I.S. l, val terdefinisi */
 /* F.S. Mencari apakah ada elemen list l yang bernilai val */
 /* Jika ada, mengembalikan indeks elemen pertama l yang bernilai val */
 /* Mengembalikan IDX_UNDEF jika tidak ditemukan */
+{
+    int i;
+    i = 0;
+    Address p = l;
+    boolean found = false;
+    while(p != NULL && !found){
+        if(INFO(p) == val){
+            found=true;
+        }
+        else{
+            i++;
+            p = NEXT(p);
+        }
+    }
+    if(found){
+        return i;
+    }
+    else{
+        return IDX_UNDEF;
+    }
+}
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
@@ -177,8 +208,21 @@ void displayList(List l);
 /* Jika list kosong : menulis [] */
 /* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
 
-int length(List l);
+int length(List l)
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
+{
+    if(isEmpty(l)){
+        return 0;
+    }else{
+        int i = 0;
+        Address p = l;
+        while (NEXT(p) != NULL){
+            i++;
+            p = NEXT(p);
+        }
+        return i;
+    }
+}
 
 /****************** PROSES TERHADAP LIST ******************/
 List concat(List l1, List l2) ;
