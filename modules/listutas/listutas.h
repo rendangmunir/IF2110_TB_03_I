@@ -9,55 +9,52 @@
 #include "boolean.h"
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
-#include "../listdinkicauan/listdinkicauan.h"
+// #include "../listdinkicauan/listdinkicauan.h"
 #include "../datetime/datetime.h"
 
 /* Definisi Utas : */
 typedef Utas EltypeUtas;
-typedef struct nodeUtas* Address;
+typedef struct Utas* Address;
 
 typedef struct Utas {
     int index;
     Word author;
     DATETIME datetime;
     Word text;
+
+    Address next;
 } Utas;
 
-typedef struct nodeUtas
-{
-    EltypeUtas utas;
-    Address next
-};
-
+typedef Address List;
 
 #define IDX(p) (p)->index
-#define INFO(p) (p)->utas
+// #define INFO(p) (p)->utas
 #define AUTHOR(P) (P)->utas.author
 #define DATETIME(p) (p)->utas.datetime
 #define TEXT(P) (P)->utas.text
 #define NEXT(p) (p)->next
 
-Address newNodeUtas(EltypeUtas val);
+Address newNodeUtas();
 
 /* Definisi List : */
 /* List kosong : FIRST(l) = NULL */
 /* Setiap elemen dengan Address p dapat diacu INFO(p), NEXT(p) */
 /* Elemen terakhir list: jika addressnya Last, maka NEXT(Last)=NULL */
 
-typedef struct kicau* List;
-typedef struct kicau{
-    Kicauan kicau;
-    Address next;
-}Kicau;
+// typedef struct kicau* List;
+// typedef struct kicau{
+//     Kicauan kicau;
+//     Address next;
+// }Kicau;
 
 
 
 #define IDX_UNDEF (-1)
-#define FIRST(l) (l)
-#define KICAU(l) (l)->kicau
+// #define FIRST(l) (l)
+// #define KICAU(l) (l)->kicau
 /* PROTOTYPE */
 /****************** PEMBUATAN LIST KOSONG ******************/
-void CreateList(List *l, Kicauan kicau);
+// void CreateList(List *l, Kicauan kicau);
 /* I.S. sembarang             */
 /* F.S. Terbentuk list kosong */
 

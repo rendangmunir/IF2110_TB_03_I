@@ -12,6 +12,7 @@
 #include "../wordmachine/wordmachine.h"
 #include "../datetime/datetime.h"
 #include "../treebalasan/treebalasan.h"
+#include "../listutas/listutas.h"
 
 typedef struct Kicauan {
    int id;
@@ -19,8 +20,11 @@ typedef struct Kicauan {
    int likes;
    Word author;
    DATETIME datetime;
+
    TreeBalasan tree;
    int jumlahBalasan;
+
+   Utas* nextUtas;
 } Kicauan;
 
 /*  Kamus Umum */
