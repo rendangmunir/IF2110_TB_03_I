@@ -48,6 +48,9 @@ void HapusBalasan();
 // 7. Draf Kicauan
 
 // 8. Utas
+void SambungUtas();
+void HapusUtas();
+void CetakUtas();
 
 // X. Kelompok Teman
 void KelompokTeman();
