@@ -175,11 +175,11 @@ void RunCommand(Word command) {
 
     // 6. Balasan
     else if (WordEqual(command, BALAS)) {
-        // Balas();
+        Balas();
     } else if (WordEqual(command, BALASAN)) {
-        // DisplayBalasan();
+        DisplayBalasan();
     } else if (WordEqual(command, HAPUS_BALASAN)) {
-        // HapusBalasan();
+        HapusBalasan();
     }
     // 7. Draf Kicauan
 
@@ -412,7 +412,9 @@ void BacaKicauan() {
     // printWord(author); printf("\n");
     // TulisDATETIME(t); printf("\n");
 
-    Kicauan k = {id, text, likes, author, t};
+    Balasan b = {-1, text, author, t};
+    TreeBalasan tree = NewTreeBalasan(b, Nil_BALASAN);
+    Kicauan k = {id, text, likes, author, t, tree};
 
     insertLastKicauan(&listKicauan, k);
 }
@@ -743,9 +745,22 @@ void PrintKicauan(Kicauan k) {
     printf("Disukai: %d\n", likes);
 }
 
-void Kicau() {
-    printf("Masukkan kicauan: \n");
+int indexOfKicauan(int id) {
+    int n = listLengthKicauan(listKicauan);
 
+    int index = -1;
+    int i = 0;
+    while (i < n && index == -1) {
+        if (ELMT_Kicauan(listKicauan, i).id == id) {
+            index = i;
+        } else {
+            i += 1;
+        }
+    }
+    return i;
+}
+
+Kicauan inputKicau() {
     STARTSENTENCE();
     int len = currentWord.Length;
     len = (len < 280) ? len : 280;
@@ -762,7 +777,7 @@ void Kicau() {
 
     if (!count) {
         printf("Kicauan tidak boleh hanya berisi spasi!\n");
-        Kicau();
+        return inputKicau();
     } else {
         int id = listLengthKicauan(listKicauan) + 1;
         Word text = currentWord;
@@ -770,13 +785,23 @@ void Kicau() {
         Word author = currentUser.Nama;
         DATETIME datetime = GetDateTime();
 
-        Kicauan submittedKicauan = {id, text, likes, author, datetime};
+        Balasan b = {-1, text, author, datetime};
+        TreeBalasan tree = NewTreeBalasan(b, Nil_BALASAN);
+        Kicauan submittedKicauan = {id, text, likes, author, datetime, tree, 0};
 
-        printf("Selamat! kicauan telah diterbitkan!\nDetil kicauan:\n");
-        PrintKicauan(submittedKicauan);
-
-        insertLastKicauan(&listKicauan, submittedKicauan);
+        return submittedKicauan;
     }
+}
+
+void Kicau() {
+    printf("Masukkan kicauan: \n");
+
+    Kicauan submittedKicauan = inputKicau();
+
+    printf("Selamat! kicauan telah diterbitkan!\nDetil kicauan:\n");
+    PrintKicauan(submittedKicauan);
+
+    insertLastKicauan(&listKicauan, submittedKicauan);
 }
 
 void DisplayKicauan() {
@@ -790,8 +815,111 @@ void DisplayKicauan() {
 }
 
 // 6. Balasan
-void Balas() {
+void PrintBalasan(Balasan k, int indent) {
+    int id = k.id;
+    Word text = k.text;
+    Word author = k.author;
+    DATETIME datetime = k.datetime;
     
+    printf("\n");
+    printTab(indent);
+    printf("ID = %d\n", id);
+    
+    printTab(indent);
+    printWordNewline(author);
+
+    printTab(indent);
+    TulisDATETIME(datetime);
+    printf("\n");
+
+    printTab(indent);
+    printWordNewline(text);
+}
+
+void PrintTreeBalasan(TreeBalasan t, int indent) {
+	if (t != Nil_BALASAN) {
+		int i = 0;
+
+        if (ROOT_BALASAN(t).id != IDX_UNDEF) {
+            PrintBalasan(ROOT_BALASAN(t), indent);
+        }
+		while (i < TREECOUNT_BALASAN(t)) {
+			PrintTreeBalasan(SUBTREE_BALASAN(t, i), indent + 1);
+			i += 1;
+		}
+	}
+}
+
+void Balas() {
+    ADVWORD();
+    int IDKicau = WordToInt(currentWord);
+    printf("IDKicau: %d\n", IDKicau);
+
+    ADVWORD();
+    int IDBalasan = WordToInt(currentWord);
+    printf("IDBalasan: %d\n", IDBalasan);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Wah, tidak terdapat kicauan yang ingin Anda balas!\n");
+    } else {
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+        if (!treeExists(tree, IDBalasan)) {
+            printf("Wah, tidak terdapat balasan yang ingin Anda balas!\n");
+        } else {
+            printf("Masukkan balasan: \n");
+
+            Kicauan k = inputKicau();
+            ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += 1;
+            int id = ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan;
+
+            Balasan submittedBalasan = {id, k.text, k.author, k.datetime};
+            insertTreeBalasan(tree, IDBalasan, submittedBalasan);
+
+            printf("Selamat! Balasan telah diterbitkan!\nDetil balasan:\n");
+            PrintBalasan(submittedBalasan, 1);
+        }
+    }
+}
+
+void DisplayBalasan() {
+    ADVWORD();
+    int IDKicau = WordToInt(currentWord);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Wah, tidak terdapat kicauan dengan ID tersebut!\n");
+    } else if (ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan == 0) {
+        printf("Belum terdapat balasan apapun pada kicauan tersebut. Yuk balas kicauan tersebut!\n");
+    } else {
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+        PrintTreeBalasan(tree, 0);
+    }
+}
+
+void HapusBalasan() {
+    ADVWORD();
+    int IDKicau = WordToInt(currentWord);
+    printf("IDKicau: %d\n", IDKicau);
+
+    ADVWORD();
+    int IDBalasan = WordToInt(currentWord);
+    printf("IDBalasan: %d\n", IDBalasan);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
+    } else {
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+        if (!treeExists(tree, IDBalasan)) {
+            printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
+        } else {
+            deleteTreeBalasan(&tree, IDBalasan);
+            ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += -1;
+
+            printf("Balasan berhasil dihapus! Semoga bukan balasan yang penting, yah!\n");
+        }
+    }
 }
 
 // 7. Draf Kicauan

@@ -86,7 +86,7 @@ boolean HasOneChildBalasan(TreeBalasan t);
 /* Mengirimkan true jika t hanya memiliki 1 child */
 
 /***** Display Tree *****/
-void PrintTreeBalasan(TreeBalasan t);
+// void PrintTreeBalasan(TreeBalasan t);
 /* I.S. : t terdefinisi
    F.S. : Semua simpul t sudah dicetak secara preorder: root dan child(ren)
    		  Setiap pohon ditandai dengan tanda kurung buka dan tanda kurung tutup ()
@@ -105,8 +105,8 @@ void deleteTreeBalasan(TreeBalasan* t, int parentID);
 
 void deleteTreeRecursionBalasan(TreeBalasan* t, int parentID, boolean* f);
 
-TreeBalasan* searchTreeBalasan(TreeBalasan t, InfotypeBalasan val);
+boolean treeExists(TreeBalasan t, int parentID);
 
-void searchTreeRecursionBalasan(TreeBalasan t, InfotypeBalasan val, boolean *f, TreeBalasan** treeResult, char operation, TreeBalasan node);
+void searchTreeRecursion(TreeBalasan t, int parentID, boolean *f);
 
 #endif

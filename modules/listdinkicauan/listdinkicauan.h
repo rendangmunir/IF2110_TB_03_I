@@ -11,6 +11,7 @@
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
 #include "../datetime/datetime.h"
+#include "../treebalasan/treebalasan.h"
 
 typedef struct Kicauan {
    int id;
@@ -18,6 +19,8 @@ typedef struct Kicauan {
    int likes;
    Word author;
    DATETIME datetime;
+   TreeBalasan tree;
+   int jumlahBalasan;
 } Kicauan;
 
 /*  Kamus Umum */
@@ -129,7 +132,7 @@ boolean isListEqualKicauan(ListDinKicauan l1, ListDinKicauan l2);
 
 /* ********** SEARCHING ********** */
 /* ***  Perhatian : list boleh kosong!! *** */
-IdxType indexOfKicauan(ListDinKicauan l, ElTypeKicauan val);
+// IdxType indexOfKicauan(ListDinKicauan l, ElTypeKicauan val);
 /* Search apakah ada elemen List l yang bernilai val */
 /* Jika ada, menghasilkan indeks i terkecil, dengan elemen ke-i = val */
 /* Jika tidak ada, mengirimkan IDX_UNDEF */
