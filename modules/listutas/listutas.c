@@ -1,10 +1,9 @@
 #include "listutas.h"
 #include <stdlib.h>
 
-Address newNodeUtas(EltypeUtas val){
+Address newNodeUtas(){
     Address p = (Address) malloc (sizeof(Utas));
     if (p != NULL){
-        INFO(p) = val;
         NEXT(p) = NULL;
     }
     return p;
@@ -12,13 +11,13 @@ Address newNodeUtas(EltypeUtas val){
 
 /* PROTOTYPE */
 /****************** PEMBUATAN LIST KOSONG ******************/
-void CreateList(List *l, Kicauan kicau)
-/* I.S. sembarang             */
-/* F.S. Terbentuk list kosong */
-{
-    KICAU(*l) = kicau;
-    NEXT(*l) = NULL;
-}
+// void CreateList(List *l, Kicauan kicau)
+// /* I.S. sembarang             */
+// /* F.S. Terbentuk list kosong */
+// {
+//     KICAU(*l) = kicau;
+//     NEXT(*l) = NULL;
+// }
 
 /****************** PEMBUATAN LIST KOSONG ******************/
 void CreateUtas(EltypeUtas *utas, Word author, DATETIME datetime, Word text)
