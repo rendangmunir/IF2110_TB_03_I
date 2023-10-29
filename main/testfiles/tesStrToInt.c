@@ -5,5 +5,5 @@ int main() {
     STARTWORD();
     int num = WordToInt(currentWord);
 
-    printf("Result: %d\n", (num + 10));
+    printf("Result: %d\n", num);
 }
