@@ -506,13 +506,29 @@ void Ganti_Profil(){
         printf("| No HP: %d\n", currentUser.noHP);
         printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
         Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
+        Word empty = {';',1};
 
-        printf("Masukkan Bio Akun:\n");
-        STARTSENTENCE();
+        boolean validbio=false;
+        Word bio;
+        while (!validbio)
+        {
+            printf("Masukkan Bio Akun:\n");
+            STARTSENTENCE();
 
-        Word bio = currentWord;
+            bio = currentWord;
+            if (currentWord.Length<=135){
+                validbio=true;
+            }
+            if (!validbio){
+                printf("\n");
+                printf("Bio melebihi panjang maksimum karakter!\n");
+                printf("\n");
+            }
+        }
         currentUser.Bio=bio;
         printf("\n");
+        /* code */
+        
 
         boolean validnr=false;
         while (!validnr)
@@ -538,6 +554,9 @@ void Ganti_Profil(){
         {
             printf("Masukkan Weton:\n");
             STARTSENTENCE();
+            if (WordEqual(currentWord,empty)){
+                validwt=true;
+            }
 
             for (int i=0; i<4;i++){
                 if (WordEqual(currentWord,weton[i])){
