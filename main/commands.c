@@ -12,6 +12,7 @@ DATETIME parseDATETIME();
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
+void BacaGrafPertemanan();
 void BacaKicauan();
 
 // 1. Pengguna
@@ -48,6 +49,9 @@ void HapusBalasan();
 
 // 8. Utas
 
+// X. Kelompok Teman
+void KelompokTeman();
+
 // X. FYB
 void FYB();
 
@@ -61,6 +65,7 @@ boolean runProgram;
 // Data Structures
 ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
+GrafTeman FriendGraph;
 
 // Commands
 void Inisialisasi() {
@@ -122,6 +127,9 @@ void RunCommand(Word command) {
 
     // 8. Utas
 
+    // X. Kelompok Teman
+    Word KELOMPOK_TEMAN = {"KELOMPOK_TEMAN", 14};
+
     // X. FYB
     Word FYB_STR = {"FYB", 3};
 
@@ -176,6 +184,11 @@ void RunCommand(Word command) {
     // 7. Draf Kicauan
 
     // 8. Utas
+
+    // X. Kelompok Teman
+    else if (WordEqual(command, KELOMPOK_TEMAN)) {
+        KelompokTeman();
+    }
 
     // X. FYB
     else if (WordEqual(command, FYB_STR)) {
@@ -314,6 +327,10 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         //     break;
         }        
     }
+
+    if (op == 1) {
+        BacaGrafPertemanan();
+    }
 }
 
 void BacaProfilPengguna() {
@@ -358,6 +375,13 @@ void BacaProfilPengguna() {
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
+}
+
+void BacaGrafPertemanan() {
+    int n = listLengthPengguna(listUsers);
+    readMatrixChar(&FriendGraph, n, n);
+
+    displayMatrixChar(FriendGraph);
 }
 
 void BacaKicauan() {
@@ -773,6 +797,36 @@ void Balas() {
 // 7. Draf Kicauan
 
 // 8. Utas
+
+// X. Kelompok Teman
+void KelompokTeman() {
+    int n = ROW_EFF_MATRIXCHAR(FriendGraph);
+    DisjointSet groups = findGroups(FriendGraph);
+    DisjointSet groupList = groups;
+
+    int count = 0;
+    for (int i = 0; i < listLength(groups); i++) {
+        if (getIndexRoot(groups, i) == getIndexRoot(groups, currentUser.id)) {
+            ELMT(groupList, i) = 1;
+            count += 1;
+        } else {
+            ELMT(groupList, i) = 0;
+        }
+    }
+    printf("Terdapat %d orang dalam Kelompok Teman ", count);
+    printWord(currentUser.Nama);
+    printf(": \n");
+
+    int pre = 1;
+    for (int i = 0; i < listLength(groupList); i++) {
+        if (ELMT(groupList, i) == 1) {
+            printf("%d. ", pre);
+            pre += 1;
+            printWord(ELMTPengguna(listUsers, i).Nama);
+            printf("\n");
+        } 
+    }
+}
 
 // X. FYB
 void FYB() {
