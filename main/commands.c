@@ -12,6 +12,7 @@ DATETIME parseDATETIME();
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
+void BacaGrafPertemanan();
 void BacaKicauan();
 
 // 1. Pengguna
@@ -61,6 +62,7 @@ boolean runProgram;
 // Data Structures
 ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
+GrafTeman FriendGraph;
 
 // Commands
 void Inisialisasi() {
@@ -314,6 +316,10 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         //     break;
         }        
     }
+
+    if (op == 1) {
+        BacaGrafPertemanan();
+    }
 }
 
 void BacaProfilPengguna() {
@@ -358,6 +364,13 @@ void BacaProfilPengguna() {
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
+}
+
+void BacaGrafPertemanan() {
+    int n = listLengthPengguna(listUsers);
+    readMatrixChar(&FriendGraph, n, n);
+
+    displayMatrixChar(FriendGraph);
 }
 
 void BacaKicauan() {

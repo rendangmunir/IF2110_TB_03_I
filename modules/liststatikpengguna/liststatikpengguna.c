@@ -233,6 +233,7 @@ int indexOfUser(ListStatikPengguna l, Word name) {
 /* *** Menambahkan elemen terakhir *** */
 void insertLastPengguna(ListStatikPengguna *l, ElTypePengguna user) {
     if ((!isFullPengguna(*l))) {
+        user.id = listLengthPengguna(*l);
         ELMTPengguna(*l, listLengthPengguna(*l)) = user;
         l->Neff += 1;
     }

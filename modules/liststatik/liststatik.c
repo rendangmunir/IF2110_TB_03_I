@@ -6,7 +6,7 @@
 void CreateListStatik(ListStatik *l) {
     int i;
     for (i = 0; i < CAPACITY; i++) {
-        ELMT(*l, i) = MARK;
+        ELMT(*l, i) = MARKLIST;
     }
     /* I.S. l sembarang */
     /* F.S. Terbentuk List l kosong dengan kapasitas CAPACITY */
@@ -19,7 +19,7 @@ int listLength(ListStatik l) {
     int i;
     int counter = 0;
     for (i = 0; i < CAPACITY; i++) {
-        if (ELMT(l, i) != MARK) {
+        if (ELMT(l, i) != MARKLIST) {
             counter += 1;
         }
     }
@@ -36,7 +36,7 @@ IdxType getFirstIdx(ListStatik l) {
         IdxType firstIndex = -1;
         
         while (firstIndex == -1) {
-            if (ELMT(l, i) != MARK) {
+            if (ELMT(l, i) != MARKLIST) {
                 firstIndex = i;
             }
             i += 1;
@@ -53,7 +53,7 @@ IdxType getLastIdx(ListStatik l) {
         IdxType lastIndex = -1;
         
         while (lastIndex == -1) {
-            if (ELMT(l, i) != MARK) {
+            if (ELMT(l, i) != MARKLIST) {
                 lastIndex = i;
             }
             i += -1;
@@ -264,7 +264,7 @@ void insertLast(ListStatik *l, ElType val) {
 void deleteFirst(ListStatik *l, ElType *val) {
     int n = listLength(*l);
     int temp = ELMT(*l, 0); 
-    ELMT(*l, 0) = MARK;
+    ELMT(*l, 0) = MARKLIST;
 
     if (!isEmpty(*l)) {
         *val = temp;
@@ -274,7 +274,7 @@ void deleteFirst(ListStatik *l, ElType *val) {
             ELMT(*l, i - 1) = ELMT(*l, i);
         }
 
-        ELMT(*l, n - 1) = MARK;
+        ELMT(*l, n - 1) = MARKLIST;
     }
     /* Proses : Menghapus elemen pertama List */
     /* I.S. List tidak kosong */
@@ -287,14 +287,14 @@ void deleteAt(ListStatik *l, ElType *val, IdxType idx) {
     if (isIdxValid(*l, idx)) {
         int temp = ELMT(*l, idx);
         int n = listLength(*l);
-        ELMT(*l, idx) = MARK;
+        ELMT(*l, idx) = MARKLIST;
         if ((!isEmpty(*l))) {
             *val = temp;
             int i;
             for (i = idx + 1; i < n; i++) {
                 ELMT(*l, i - 1) = ELMT(*l, i);
             }
-            ELMT(*l, n - 1) = MARK;
+            ELMT(*l, n - 1) = MARKLIST;
         }
     }
     
@@ -308,7 +308,7 @@ void deleteAt(ListStatik *l, ElType *val, IdxType idx) {
 void deleteLast(ListStatik *l, ElType *val) {
     if (!isEmpty(*l)) {
         *val = ELMT(*l, listLength(*l) - 1); 
-        ELMT(*l, listLength(*l) - 1) = MARK;
+        ELMT(*l, listLength(*l) - 1) = MARKLIST;
     }
     /* Proses : Menghapus elemen terakhir List */
     /* I.S. List tidak kosong */

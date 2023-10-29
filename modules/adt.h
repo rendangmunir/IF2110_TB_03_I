@@ -21,6 +21,9 @@
 // X. ADT Tree
 #include "./treebalasan/treebalasan.h"
 
+// X. ADT Graf
+#include "./grafteman/grafteman.h"
+
 // X. ADT Max Heap
 #include "./maxheapkicauan/maxheapkicauan.h"
 

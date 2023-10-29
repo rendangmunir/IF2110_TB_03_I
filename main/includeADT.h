@@ -25,6 +25,9 @@
 // X. ADT Tree
 #include "../modules/treebalasan/treebalasan.c"
 
+// X. ADT Graf
+#include "../modules/grafteman/grafteman.c"
+
 // X. ADT Max Heap
 #include "../modules/maxheapkicauan/maxheapkicauan.c"
 
