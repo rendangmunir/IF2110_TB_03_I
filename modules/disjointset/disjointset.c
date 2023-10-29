@@ -46,15 +46,9 @@ DisjointSet findGroups(GrafTeman m) {
         for (int i = 0; i < n; i++) {
             for (int j = (i + 1); j < n; j++) {
                 if (ELMT_MATRIXCHAR(m, i, j) == '1') {
-                    printf("i: %d", i);
-                    printf("j: %d\n", j);
-                    printf("rootI: %d", getIndexRoot(s, i));
-                    printf("rootJ: %d", getIndexRoot(s, j));
                     UnionDisjointSet(&s, i, j);
                 }
             }
-            printf("i: %d -->", i);
-            printList(s); printf("\n");
         }
         return s;
     }

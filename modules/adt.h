@@ -24,6 +24,9 @@
 // X. ADT Graf
 #include "./grafteman/grafteman.h"
 
+// X. ADT Disjoint Set
+#include "./disjointset/disjointset.h"
+
 // X. ADT Max Heap
 #include "./maxheapkicauan/maxheapkicauan.h"
 
