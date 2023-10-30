@@ -14,6 +14,7 @@ void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
 void BacaGrafPertemanan();
 void BacaKicauan();
+void BacaBalasan();
 
 void simpanDATETIME(FILE* file, DATETIME t);
 void SimpanConfigFile(char* foldername, int op, char* suffix);
@@ -40,6 +41,7 @@ void Ubah_Foto_Profil();
 // 4. Permintaan Pertemanan
 
 // 5. Kicauan
+int indexOfKicauan(int id);
 void Kicau();
 void DisplayKicauan();
 void SukaKicauan();
@@ -57,10 +59,12 @@ void SambungUtas();
 void HapusUtas();
 void CetakUtas();
 
-// X. Kelompok Teman
+// 9. Tagar
+
+// 10. Kelompok Teman
 void KelompokTeman();
 
-// X. FYB
+// 11. FYB
 void FYB();
 
 // ================= Data =================
@@ -75,7 +79,7 @@ ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
 GrafTeman FriendGraph;
 
-// Commands
+// ================= Commands =================
 void Inisialisasi() {
     printf("Silahkan masukan folder konfigurasi untuk dimuat: ");
     
@@ -95,6 +99,7 @@ void Inisialisasi() {
     } else {
         BacaDataConfig(filepath, 1, "/pengguna.config");
         BacaDataConfig(filepath, 2, "/kicauan.config");
+        BacaDataConfig(filepath, 3, "/balasan.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -327,9 +332,9 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         case 2:
             BacaKicauan();
             break;
-        // case 3:
-        //     char suffix[] = "/balasan.config";
-        //     break;
+        case 3:
+            BacaBalasan();
+            break;
         // case 4:
         //     char suffix[] = "/draf.config";
         //     break;
@@ -428,6 +433,46 @@ void BacaKicauan() {
     Kicauan k = {id, text, likes, author, t, tree};
 
     insertLastKicauan(&listKicauan, k);
+}
+
+void BacaBalasan() {
+    // ID Kicauan
+    ADVNEWLINE();
+    int IDKicau = WordToInt(currentWord);
+
+    // Jumlah Balasan
+    ADVNEWLINE();
+    int n = WordToInt(currentWord);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    // Baca Balasan
+    for (int i = 0; i < n; i++) {
+        // ID Parent
+        ADVWORD();
+        int IDParent = WordToInt(currentWord);
+
+        // ID Balasan
+        ADVNEWLINE();
+        int IDBalasan = WordToInt(currentWord);
+
+        // Text
+        ADVNEWLINE();
+        Word text = currentWord;
+
+        // Author
+        ADVNEWLINE();
+        Word author = currentWord;
+
+        // Datetime
+        DATETIME t = parseDATETIME();
+
+        // Insert Balasan
+        Balasan b = {IDBalasan, text, author, t};
+        ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += 1;
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+
+        insertTreeBalasan(tree, IDParent, b);
+    }
 }
 
 void simpanDATETIME(FILE* file, DATETIME t) {
@@ -1028,7 +1073,9 @@ void HapusBalasan() {
 
 // 8. Utas
 
-// X. Kelompok Teman
+// 9. Tagar
+
+// 10. Kelompok Teman
 void KelompokTeman() {
     int n = ROW_EFF_MATRIXCHAR(FriendGraph);
     DisjointSet groups = findGroups(FriendGraph);
@@ -1058,7 +1105,7 @@ void KelompokTeman() {
     }
 }
 
-// X. FYB
+// 11. FYB
 void FYB() {
     MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
     HeapifyListKicauan(&h);
