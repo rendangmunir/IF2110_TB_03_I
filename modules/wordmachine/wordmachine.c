@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "charmachine.h"
 #include "wordmachine.h"
 
@@ -140,7 +141,7 @@ void ADVNEWLINE() {
     currentWord.Length = (i < NMax) ? i : NMax;
 }
 
-// 5 - StrToInt
+// 5 - WordToInt
 int WordToInt(Word w) {
     if (w.TabWord[0] == '-') {
         int k;
@@ -167,4 +168,23 @@ int WordToInt(Word w) {
 
         return sum;
     }
+}
+
+// 6 - WriteWord
+void WriteWord(FILE* file, Word w) {
+    int i;
+    for (i = 0; i < w.Length; i++) {
+        fprintf(file, "%c", w.TabWord[i]);
+    }
+}
+
+// 7 - WordToStr
+char* WordToStr(Word w){
+   char* str = (char*) malloc (w.Length + 1);
+   int i;
+   for (i = 0; i < w.Length; i++){
+      str[i] = w.TabWord[i];
+   }
+   str[w.Length] = '\0';
+   return str;
 }

@@ -24,69 +24,70 @@ void CreateUtas(EltypeUtas *utas, Word author, DATETIME datetime, Word text)
 /* I.S. sembarang             */
 /* F.S. Terbentuk Utas dengan index Undeff */
 {
-    (utas)->index = IDX_UNDEF;
+    (utas)->index = IDX_UNDEF_UTAS;
     (utas)->author = author;
     (utas)->datetime = datetime;
     (utas)->text = text;
 }
 /****************** TEST LIST KOSONG ******************/
-boolean isEmpty(List l)
+boolean isEmptyUtas(List l)
 /* Mengirim true jika list kosong */
 {
     return l == NULL;
 }
 
 /****************** GETTER SETTER ******************/
-EltypeUtas getUtas(List l, int idx)
-/* I.S. l terdefinisi, idx indeks yang valid dalam l, yaitu 0..length(l) */
-/* F.S. Mengembalikan nilai elemen l pada indeks idx */
-{
-    Address p = l;
-    while(INDEX(p)<idx){
-        p = NEXT(p);
-    }
-    return INFO(p);
-}
+// EltypeUtas getUtas(List l, int idx)
+// /* I.S. l terdefinisi, idx indeks yang valid dalam l, yaitu 0..length(l) */
+// /* F.S. Mengembalikan nilai elemen l pada indeks idx */
+// {
+//     Address p = l;
+//     while(INDEX(p)<idx){
+//         p = NEXT(p);
+//     }
+//     return INFO_UTAS(p);
+// }
 
 void setUtas(List *l, int idx, EltypeUtas val);
 /* I.S. l terdefinisi, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Mengubah elemen l pada indeks ke-idx menjadi val */
 
-int indexOf(List l, EltypeUtas val)
-/* I.S. l, val terdefinisi */
-/* F.S. Mencari apakah ada elemen list l yang bernilai val */
-/* Jika ada, mengembalikan indeks elemen pertama l yang bernilai val */
-/* Mengembalikan IDX_UNDEF jika tidak ditemukan */
-{
-    int i;
-    i = 1;
-    Address p = l;
-    boolean found = false;
-    while(p != NULL && !found){
-        if(INFO(p) == val){
-            found=true;
-        }
-        else{
-            i++;
-            p = NEXT(p);
-        }
-    }
-    if(found){
-        return i;
-    }
-    else{
-        return IDX_UNDEF;
-    }
-}
+// int indexOfUtas(List l, EltypeUtas val)
+// /* I.S. l, val terdefinisi */
+// /* F.S. Mencari apakah ada elemen list l yang bernilai val */
+// /* Jika ada, mengembalikan indeks elemen pertama l yang bernilai val */
+// /* Mengembalikan IDX_UNDEF jika tidak ditemukan */
+// {
+//     int i;
+//     i = 1;
+//     Address p = l;
+//     boolean found = false;
+//     while(p != NULL && !found){
+//         if(INFO(p) == val){
+//             found=true;
+//         }
+//         else{
+//             i++;
+//             p = NEXT(p);
+//         }
+//     }
+//     if(found){
+//         return i;
+//     }
+//     else{
+//         return IDX_UNDEF_UTAS;
+//     }
+// }
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
-void insertFirst(List *l, EltypeUtas val)
+void insertFirstUtas(List *l, EltypeUtas val)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen pertama dengan nilai val jika alokasi berhasil. */
 {
-    Address newUtas,p,idx;
+    Address newUtas,p;
+    int idx;
     newUtas = newNodeUtas(val);
     if (newUtas != NULL){
         p = *l;
@@ -103,17 +104,17 @@ void insertFirst(List *l, EltypeUtas val)
 }
 /* Jika alokasi gagal: I.S.= F.S. */
 
-void insertLast(List *l, EltypeUtas val)
+void insertLastUtas(List *l, EltypeUtas val)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen list di akhir: elemen terakhir yang baru */
 /* bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 {
-    if(isEmpty(*l)){
-        insertFirst(l,val);
+    if(isEmptyUtas(*l)){
+        insertFirstUtas(l,val);
     }else{
         Address p = newNodeUtas(val);
-        INDEX(p) = length(*l);
+        INDEX(p) = lengthUtas(*l);
         Address last = *l;
         if(p != NULL){
             while(NEXT(last) != NULL){
@@ -124,15 +125,16 @@ void insertLast(List *l, EltypeUtas val)
     }
 }
 
-void insertAt(List *l, EltypeUtas val, int idx)
+void insertAtUtas(List *l, EltypeUtas val, int idx)
 /* I.S. l tidak mungkin kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menyisipkan elemen dalam list pada indeks ke-idx (bukan menimpa elemen di i) */
 /* yang bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 {
-    Address p, loc,i;
+    Address p, loc;
+    int i;
     if(idx==1){
-        insertFirst(l, val);
+        insertFirstUtas(l, val);
     }
     else{
         p = newNodeUtas(val);
@@ -156,7 +158,7 @@ void insertAt(List *l, EltypeUtas val, int idx)
 }
 
 /*** PENGHAPUSAN ELEMEN ***/
-void deleteFirst(List *l)
+void deleteFirstUtas(List *l)
 /* I.S. List l tidak kosong  */
 /* F.S. Elemen pertama list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen pertama di-dealokasi */
@@ -170,7 +172,7 @@ void deleteFirst(List *l)
         p = NEXT(p);
     }
 }
-void deleteLast(List *l)
+void deleteLastUtas(List *l)
 /* I.S. list tidak kosong */
 /* F.S. Elemen terakhir list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen terakhir di-dealokasi */
@@ -190,13 +192,13 @@ void deleteLast(List *l)
     free(p);
 }
 
-void deleteAt(List *l, int idx)
+void deleteAtUtas(List *l, int idx)
 /* I.S. list tidak kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. val diset dengan elemen l pada indeks ke-idx. */
 /*      Elemen l pada indeks ke-idx dihapus dari l */
 {
     if (idx == 1){
-        deleteFirst(l);
+        deleteFirstUtas(l);
     }else{
         Address p = *l;
         Address temp;
@@ -216,42 +218,10 @@ void deleteAt(List *l, int idx)
 
 
 /****************** PROSES SEMUA ELEMEN LIST ******************/
-void displayUtas(List l)
-// void printInfo(List l);
-/* I.S. List mungkin kosong */
-/* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
-/* Contoh : jika ada tiga elemen bernilai 1, 20, 30 akan dicetak: [1,20,30] */
-/* Jika list kosong : menulis [] */
-/* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
-{
-    Address p = l;
-    while (p != NULL){
-        int index = INDEX(p);
-        Word author = AUTHOR(p);
-        DATETIME datetime = DATETIME(p);
-        Word text = TEXT(p);
-        
-        printf("\n");
-        printTab(2);
-        printf("ID = %d\n", index);
-        
-        printTab(2);
-        printWordNewline(author);
-
-        printTab(2);
-        TulisDATETIME(datetime);
-        printf("\n");
-
-        printTab(2);
-        printWordNewline(text);
-        p = NEXT(p);
-    }
-}
-
-int length(List l)
+int lengthUtas(List l)
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
 {
-    if(isEmpty(l)){
+    if(isEmptyUtas(l)){
         return 0;
     }else{
         int i = 0;

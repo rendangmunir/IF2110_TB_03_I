@@ -8,12 +8,19 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 void ADVUntil(char mark);
 DATETIME parseDATETIME();
+void printTab(int count);
 
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
 void BacaGrafPertemanan();
 void BacaKicauan();
+void BacaBalasan();
+
+void simpanDATETIME(FILE* file, DATETIME t);
+void SimpanConfigFile(char* foldername, int op, char* suffix);
+void SimpanKicauan(char* filepath);
+void SimpanBalasan(char* filepath);
 
 // 1. Pengguna
 void Daftar();
@@ -22,6 +29,7 @@ void Keluar();
 void TutupProgram();
 void ListPengguna();
 void Muat();
+void Simpan();
 
 // 2. Profil
 void Ganti_Profil();
@@ -35,12 +43,15 @@ void Ubah_Foto_Profil();
 // 4. Permintaan Pertemanan
 
 // 5. Kicauan
+int indexOfKicauan(int id);
 void Kicau();
 void DisplayKicauan();
 void SukaKicauan();
 void UbahKicauan();
 
 // 6. Balasan
+int hitungKicauanDenganBalasan();
+void SimpanTreeBalasan(FILE* file, TreeBalasan t);
 void Balas();
 void DisplayBalasan();
 void HapusBalasan();
@@ -48,14 +59,17 @@ void HapusBalasan();
 // 7. Draf Kicauan
 
 // 8. Utas
+void displayUtas(List l);
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
 
-// X. Kelompok Teman
+// 9. Tagar
+
+// 10. Kelompok Teman
 void KelompokTeman();
 
-// X. FYB
+// 11. FYB
 void FYB();
 
 // ================= Data =================
@@ -70,7 +84,7 @@ ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
 GrafTeman FriendGraph;
 
-// Commands
+// ================= Commands =================
 void Inisialisasi() {
     printf("Silahkan masukan folder konfigurasi untuk dimuat: ");
     
@@ -90,6 +104,7 @@ void Inisialisasi() {
     } else {
         BacaDataConfig(filepath, 1, "/pengguna.config");
         BacaDataConfig(filepath, 2, "/kicauan.config");
+        BacaDataConfig(filepath, 3, "/balasan.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -104,6 +119,7 @@ void RunCommand(Word command) {
     Word TUTUP_PROGRAM = {"TUTUP_PROGRAM", 13};
     Word LISTPENGGUNA = {"LISTPENGGUNA", 12};
     Word MUAT = {"MUAT", 4};
+    Word SIMPAN = {"SIMPAN", 6};
 
     // 2. Profil
     Word GANTI_PROFIL = {"GANTI_PROFIL", 12};
@@ -148,10 +164,12 @@ void RunCommand(Word command) {
         ListPengguna();
     } else if (WordEqual(command, TUTUP_PROGRAM)) {
         TutupProgram();
-    } else if (WordEqual(command, MUAT)) {
+    } else if (WordEqual(command, MUAT) && !isLoggedIn) {
         // Muat();
     } else if (!isLoggedIn) {
         printf("Perintah yang dimasukkan tidak dikenali atau Anda belum login! Silahkan jalankan perintah MASUK, DAFTAR, MUAT, atau TUTUP_PROGRAM.\n");
+    } else if (WordEqual(command, SIMPAN)) {
+        Simpan();
     }
 
     // 2. Profil
@@ -319,9 +337,9 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         case 2:
             BacaKicauan();
             break;
-        // case 3:
-        //     char suffix[] = "/balasan.config";
-        //     break;
+        case 3:
+            BacaBalasan();
+            break;
         // case 4:
         //     char suffix[] = "/draf.config";
         //     break;
@@ -420,6 +438,135 @@ void BacaKicauan() {
     Kicauan k = {id, text, likes, author, t, tree};
 
     insertLastKicauan(&listKicauan, k);
+}
+
+void BacaBalasan() {
+    // ID Kicauan
+    ADVNEWLINE();
+    int IDKicau = WordToInt(currentWord);
+
+    // Jumlah Balasan
+    ADVNEWLINE();
+    int n = WordToInt(currentWord);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    // Baca Balasan
+    for (int i = 0; i < n; i++) {
+        // ID Parent
+        ADVWORD();
+        int IDParent = WordToInt(currentWord);
+
+        // ID Balasan
+        ADVNEWLINE();
+        int IDBalasan = WordToInt(currentWord);
+
+        // Text
+        ADVNEWLINE();
+        Word text = currentWord;
+
+        // Author
+        ADVNEWLINE();
+        Word author = currentWord;
+
+        // Datetime
+        DATETIME t = parseDATETIME();
+
+        // Insert Balasan
+        Balasan b = {IDBalasan, text, author, t};
+        ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += 1;
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+
+        insertTreeBalasan(tree, IDParent, b);
+    }
+}
+
+void simpanDATETIME(FILE* file, DATETIME t) {
+    // Day
+    fprintf(file, "%02d/", t.DD);
+    
+    // Month
+    fprintf(file, "%02d/", t.MM);
+    
+    // Year
+    fprintf(file, "%02d ", t.YYYY);
+    
+    // Hour
+    fprintf(file, "%02d:", t.T.HH);
+    
+    // Min
+    fprintf(file, "%02d:", t.T.MM);
+    
+    // Sec
+    fprintf(file, "%02d", t.T.SS);
+}
+
+void SimpanConfigFile(char* folderpath, int op, char* suffix) {
+    // 1. Setup filepath string
+    char filepath[80];
+    concatStrings(folderpath, suffix, filepath);
+
+    // 2. Run write functions
+    switch (op) {
+        case 2:
+            SimpanKicauan(filepath);
+            break;
+        case 3:
+            SimpanBalasan(filepath);
+    }
+}
+
+void SimpanKicauan(char* filepath) {
+    // 1. Open filepath kicauan.config
+    FILE *configFile = fopen(filepath, "w");
+
+    if (configFile == NULL) {
+        perror("Unable to open config file.\n");
+    }
+
+    // 2. Write to file
+    int n = listLengthKicauan(listKicauan);
+    fprintf(configFile, "%d\n", n);
+
+    for (int i = 0; i < n; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        fprintf(configFile, "%d", k.id); fprintf(configFile, "\n");
+        WriteWord(configFile, k.text); fprintf(configFile, "\n");
+        fprintf(configFile, "%d", k.likes); fprintf(configFile, "\n");
+        WriteWord(configFile, k.author); fprintf(configFile, "\n");
+        simpanDATETIME(configFile, k.datetime);
+        if (i != (n - 1)) {
+            fprintf(configFile, "\n");
+        }
+    }
+
+    // 3. Close file
+    fclose(configFile);
+}
+
+void SimpanBalasan(char* filepath) {
+    // 1. Open filepath balasan.config
+    FILE *configFile = fopen(filepath, "w");
+
+    if (configFile == NULL) {
+        perror("Unable to open config file.\n");
+    }
+
+    // 2. Write to file
+    int count = hitungKicauanDenganBalasan();
+    int n = listLengthKicauan(listKicauan);
+    fprintf(configFile, "%d\n", count);
+
+    for (int i = 0; i < n; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        if (k.jumlahBalasan > 0) {
+            fprintf(configFile, "%d\n", k.id);
+            fprintf(configFile, "%d", k.jumlahBalasan);
+            SimpanTreeBalasan(configFile, k.tree);
+        }
+    }
+
+    // 3. Close file
+    fclose(configFile);
 }
 
 // 1. Pengguna
@@ -524,6 +671,38 @@ void ListPengguna() {
     }
 }
 
+void Muat() {
+    
+}
+
+void Simpan() {
+    // 1. Ask for foldername from user
+    printf("\nMasukkan nama folder penyimpanan: \n");
+
+    STARTSENTENCE();
+    Word foldernameWord = currentWord;
+    char* foldername = WordToStr(foldernameWord);
+
+    char folderpath[50];
+    char prefix[] = "./config/";
+    concatStrings(prefix, foldername, folderpath);
+
+    // 2. Create folder if it doesn't exist
+    if (!directoryExists(folderpath)) {
+        printf("Belum terdapat folder tersebut. Akan dilakukan pembuatan folder terlebih dahulu.\n");
+        mkdir(folderpath);
+
+        printf("Mohon tunggu...\n1...\n2...\n3...\nFolder sudah berhasil dibuat.\n");
+    }
+
+    // 3. Run write functions
+    printf("\nAnda akan melakukan penyimpanan di ");
+    printWord(foldernameWord); printf(".\n\nMohon tunggu...\n1...\n2...\n3...\n\nPenyimpanan telah berhasil dilakukan!\n");
+
+    SimpanConfigFile(folderpath, 2, "/kicauan.config");
+    SimpanConfigFile(folderpath, 3, "/balasan.config");
+}
+
 // 2. Profil
 
 void Ganti_Profil(){
@@ -564,6 +743,9 @@ void Ganti_Profil(){
         {
             printf("Masukkan No HP:\n");
             STARTSENTENCE();
+            if (WordEqual(currentWord,empty)){
+                validnr=true;
+            }
             for (int i=0; i<currentWord.Length; i++){
                 if (currentWord.TabWord[i]>'0' && currentWord.TabWord[i]<'9'){
                     validnr=true;
@@ -818,6 +1000,18 @@ void DisplayKicauan() {
 }
 
 // 6. Balasan
+int hitungKicauanDenganBalasan() {
+    int n = listLengthKicauan(listKicauan);
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        if (k.jumlahBalasan > 0) {
+            count += 1;
+        }
+    }
+    return count;
+}
+
 void PrintBalasan(Balasan k, int indent) {
     int id = k.id;
     Word text = k.text;
@@ -850,6 +1044,24 @@ void PrintTreeBalasan(TreeBalasan t, int indent) {
 			PrintTreeBalasan(SUBTREE_BALASAN(t, i), indent + 1);
 			i += 1;
 		}
+	}
+}
+
+void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
+	if (t != Nil_BALASAN) {        
+        int i = 0;
+        while (i < TREECOUNT_BALASAN(t)) {
+            Balasan parent = ROOT_BALASAN(t);
+            Balasan child = ROOT_BALASAN(SUBTREE_BALASAN(t, i));
+
+            fprintf(file, "\n%d %d\n", parent.id, child.id);
+            WriteWord(file, child.text); fprintf(file, "\n");
+            WriteWord(file, child.author); fprintf(file, "\n");
+            simpanDATETIME(file, child.datetime);
+
+            SimpanTreeBalasan(file, SUBTREE_BALASAN(t, i));
+            i += 1;
+        }
 	}
 }
 
@@ -928,13 +1140,41 @@ void HapusBalasan() {
 // 7. Draf Kicauan
 
 // 8. Utas
-void printUtas(Kicauan k){
-    Address l = k.nextUtas;
-    PrintKicauan(k);
-    displayUtas(l);
+void displayUtas(List l)
+// void printInfo(List l);
+/* I.S. List mungkin kosong */
+/* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
+/* Contoh : jika ada tiga elemen bernilai 1, 20, 30 akan dicetak: [1,20,30] */
+/* Jika list kosong : menulis [] */
+/* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
+{
+    Address p = l;
+    while (p != NULL){
+        int index = INDEX(p);
+        Word author = AUTHOR(p);
+        DATETIME datetime = DATETIME(p);
+        Word text = TEXT(p);
+        
+        printf("\n");
+        printTab(2);
+        printf("ID = %d\n", index);
+        
+        printTab(2);
+        printWordNewline(author);
+
+        printTab(2);
+        TulisDATETIME(datetime);
+        printf("\n");
+
+        printTab(2);
+        printWordNewline(text);
+        p = NEXT(p);
+    }
 }
 
-// X. Kelompok Teman
+// 9. Tagar
+
+// 10. Kelompok Teman
 void KelompokTeman() {
     int n = ROW_EFF_MATRIXCHAR(FriendGraph);
     DisjointSet groups = findGroups(FriendGraph);
@@ -964,7 +1204,7 @@ void KelompokTeman() {
     }
 }
 
-// X. FYB
+// 11. FYB
 void FYB() {
     MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
     HeapifyListKicauan(&h);
