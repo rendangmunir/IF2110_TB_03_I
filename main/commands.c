@@ -928,6 +928,11 @@ void HapusBalasan() {
 // 7. Draf Kicauan
 
 // 8. Utas
+void printUtas(Kicauan k){
+    Address l = k.nextUtas;
+    PrintKicauan(k);
+    displayUtas(l);
+}
 
 // X. Kelompok Teman
 void KelompokTeman() {
