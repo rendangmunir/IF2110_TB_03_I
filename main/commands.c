@@ -319,16 +319,20 @@ DATETIME parseDATETIME() {
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix) {
     char filepath[120];
+    int itemCount;
 
     concatStrings(prefix, suffix, filepath);
     // printf("%s\n", filepath);
 
     // Parse file
     STARTFILE(filepath);
-    ADVNEWLINE();
+    if (currentChar != '0') {
+        ADVNEWLINE();
+        itemCount = WordToInt(currentWord);
+    } else {
+        itemCount = 0;
+    }
 
-    int itemCount = WordToInt(currentWord);
-    // printf("Usercount: %d\n", itemCount);
     for (int i = 0; i < itemCount; i++) {
         switch (op) {
         case 1:
@@ -349,7 +353,7 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         }        
     }
 
-    if (op == 1) {
+    if (op == 1 && itemCount > 0) {
         BacaGrafPertemanan();
     }
 }
