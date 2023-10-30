@@ -20,6 +20,7 @@ void BacaBalasan();
 void simpanDATETIME(FILE* file, DATETIME t);
 void SimpanConfigFile(char* foldername, int op, char* suffix);
 void SimpanKicauan(char* filepath);
+void SimpanBalasan(char* filepath);
 
 // 1. Pengguna
 void Daftar();
@@ -49,6 +50,8 @@ void SukaKicauan();
 void UbahKicauan();
 
 // 6. Balasan
+int hitungKicauanDenganBalasan();
+void SimpanTreeBalasan(FILE* file, TreeBalasan t);
 void Balas();
 void DisplayBalasan();
 void HapusBalasan();
@@ -507,6 +510,8 @@ void SimpanConfigFile(char* folderpath, int op, char* suffix) {
         case 2:
             SimpanKicauan(filepath);
             break;
+        case 3:
+            SimpanBalasan(filepath);
     }
 }
 
@@ -531,6 +536,32 @@ void SimpanKicauan(char* filepath) {
         simpanDATETIME(configFile, k.datetime);
         if (i != (n - 1)) {
             fprintf(configFile, "\n");
+        }
+    }
+
+    // 3. Close file
+    fclose(configFile);
+}
+
+void SimpanBalasan(char* filepath) {
+    // 1. Open filepath balasan.config
+    FILE *configFile = fopen(filepath, "w");
+
+    if (configFile == NULL) {
+        perror("Unable to open config file.\n");
+    }
+
+    // 2. Write to file
+    int count = hitungKicauanDenganBalasan();
+    int n = listLengthKicauan(listKicauan);
+    fprintf(configFile, "%d\n", count);
+
+    for (int i = 0; i < n; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        if (k.jumlahBalasan > 0) {
+            fprintf(configFile, "%d\n", k.id);
+            fprintf(configFile, "%d", k.jumlahBalasan);
+            SimpanTreeBalasan(configFile, k.tree);
         }
     }
 
@@ -667,7 +698,9 @@ void Simpan() {
     // 3. Run write functions
     printf("\nAnda akan melakukan penyimpanan di ");
     printWord(foldernameWord); printf(".\n\nMohon tunggu...\n1...\n2...\n3...\n\nPenyimpanan telah berhasil dilakukan!\n");
+
     SimpanConfigFile(folderpath, 2, "/kicauan.config");
+    SimpanConfigFile(folderpath, 3, "/balasan.config");
 }
 
 // 2. Profil
@@ -967,6 +1000,18 @@ void DisplayKicauan() {
 }
 
 // 6. Balasan
+int hitungKicauanDenganBalasan() {
+    int n = listLengthKicauan(listKicauan);
+    int count = 0;
+    for (int i = 0; i < n; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        if (k.jumlahBalasan > 0) {
+            count += 1;
+        }
+    }
+    return count;
+}
+
 void PrintBalasan(Balasan k, int indent) {
     int id = k.id;
     Word text = k.text;
@@ -999,6 +1044,24 @@ void PrintTreeBalasan(TreeBalasan t, int indent) {
 			PrintTreeBalasan(SUBTREE_BALASAN(t, i), indent + 1);
 			i += 1;
 		}
+	}
+}
+
+void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
+	if (t != Nil_BALASAN) {        
+        int i = 0;
+        while (i < TREECOUNT_BALASAN(t)) {
+            Balasan parent = ROOT_BALASAN(t);
+            Balasan child = ROOT_BALASAN(SUBTREE_BALASAN(t, i));
+
+            fprintf(file, "\n%d %d\n", parent.id, child.id);
+            WriteWord(file, child.text); fprintf(file, "\n");
+            WriteWord(file, child.author); fprintf(file, "\n");
+            simpanDATETIME(file, child.datetime);
+
+            SimpanTreeBalasan(file, SUBTREE_BALASAN(t, i));
+            i += 1;
+        }
 	}
 }
 
