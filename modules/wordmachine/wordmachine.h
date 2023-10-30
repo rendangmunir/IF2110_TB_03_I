@@ -29,6 +29,8 @@ void IgnoreBlanks();
 
 void IgnoreEnters();
 
+void IgnoreR();
+
 void STARTWORD();
 /* I.S. : currentChar sembarang
    F.S. : EndWord = true, dan currentChar = MARK;
@@ -55,5 +57,17 @@ boolean WordEqual(Word a, Word b);
 
 // 2 - PrintWord
 void printWord(Word w);
+
+// 3 - printWordNewline
+void printWordNewline(Word w);
+
+// 4 - ADVNEWLINE
+void ADVNEWLINE();
+
+// 5 - StrToInt
+int WordToInt(Word w);
+
+// 6 - WriteWord
+void WriteWord();
 
 #endif

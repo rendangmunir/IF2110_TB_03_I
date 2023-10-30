@@ -22,8 +22,17 @@
 #include "../modules/wordmachine/wordmachine.c"
 #include "../modules/wordmachine/charmachine.c"
 
+//  6. ADT Linked List
+#include "../modules/listutas/listutas.c"
+
 // X. ADT Tree
 #include "../modules/treebalasan/treebalasan.c"
+
+// X. ADT Graf
+#include "../modules/grafteman/grafteman.c"
+
+// X. ADT Disjoint Set Union
+#include "../modules/disjointset/disjointset.c"
 
 // X. ADT Max Heap
 #include "../modules/maxheapkicauan/maxheapkicauan.c"

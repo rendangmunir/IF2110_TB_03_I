@@ -93,7 +93,7 @@ boolean isListEqualKicauan(ListDinKicauan l1, ListDinKicauan l2);
 
 /* ********** SEARCHING ********** */
 /* ***  Perhatian : list boleh kosong!! *** */
-IdxType indexOfKicauan(ListDinKicauan l, ElTypeKicauan val);
+// IdxType indexOfKicauan(ListDinKicauan l, ElTypeKicauan val);
 /* Search apakah ada elemen List l yang bernilai val */
 /* Jika ada, menghasilkan indeks i terkecil, dengan elemen ke-i = val */
 /* Jika tidak ada, mengirimkan IDX_UNDEF */
