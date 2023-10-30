@@ -9,43 +9,34 @@
 #include "boolean.h"
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
-// #include "../listdinkicauan/listdinkicauan.h"
 #include "../datetime/datetime.h"
 
 /* Definisi Utas : */
-typedef struct Utas* Address;
+typedef nodeUtas EltypeUtas;
+typedef struct nodeUtas* Address;
 
-typedef struct Utas {
+typedef struct nodeUtas {
     int index;
     Word author;
     DATETIME datetime;
     Word text;
 
     Address next;
-} Utas;
+} nodeUtas;
 
-typedef Utas EltypeUtas;
-typedef Address List;
-
-#define IDX(p) (p)->index
-#define INFO_UTAS(p) (*p)
-#define AUTHOR(P) (P)->utas.author
-#define DATETIME(p) (p)->utas.datetime
-#define TEXT(P) (P)->utas.text
+#define INDEX(p) (p)->index
+#define AUTHOR(P) (P)->author
+#define DATETIME(p) (p)->datetime
+#define TEXT(P) (P)->text
 #define NEXT(p) (p)->next
 
 Address newNodeUtas();
 
+typedef Address List;
 /* Definisi List : */
 /* List kosong : FIRST(l) = NULL */
 /* Setiap elemen dengan Address p dapat diacu INFO(p), NEXT(p) */
 /* Elemen terakhir list: jika addressnya Last, maka NEXT(Last)=NULL */
-
-// typedef struct kicau* List;
-// typedef struct kicau{
-//     Kicauan kicau;
-//     Address next;
-// }Kicau;
 
 #define IDX_UNDEF_UTAS (-1)
 // #define FIRST(l) (l)
@@ -96,16 +87,16 @@ void insertAtUtas(List *l, EltypeUtas val, int idx);
 /* yang bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 
 /*** PENGHAPUSAN ELEMEN ***/
-void deleteFirstUtas(List *l, EltypeUtas *val);
+void deleteFirst(List *l);
 /* I.S. List l tidak kosong  */
 /* F.S. Elemen pertama list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen pertama di-dealokasi */
-void deleteLastUtas(List *l, EltypeUtas *val);
+void deleteLast(List *l);
 /* I.S. list tidak kosong */
 /* F.S. Elemen terakhir list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen terakhir di-dealokasi */
 
-void deleteAtUtas(List *l, int idx, EltypeUtas *val);
+void deleteAt(List *l, int idx);
 /* I.S. list tidak kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. val diset dengan elemen l pada indeks ke-idx. */
 /*      Elemen l pada indeks ke-idx dihapus dari l */
