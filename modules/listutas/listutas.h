@@ -15,15 +15,14 @@
 typedef nodeUtas EltypeUtas;
 typedef struct nodeUtas* Address;
 
-typedef struct nodeUtas{
+typedef struct nodeUtas {
     int index;
     Word author;
     DATETIME datetime;
     Word text;
 
     Address next;
-}nodeUtas;
-
+} nodeUtas;
 
 #define INDEX(p) (p)->index
 #define AUTHOR(P) (P)->author
@@ -39,8 +38,7 @@ typedef Address List;
 /* Setiap elemen dengan Address p dapat diacu INFO(p), NEXT(p) */
 /* Elemen terakhir list: jika addressnya Last, maka NEXT(Last)=NULL */
 
-
-#define IDX_UNDEF (-1)
+#define IDX_UNDEF_UTAS (-1)
 // #define FIRST(l) (l)
 // #define KICAU(l) (l)->kicau
 /* PROTOTYPE */
@@ -50,7 +48,7 @@ typedef Address List;
 /* F.S. Terbentuk list kosong */
 
 /****************** TEST LIST KOSONG ******************/
-boolean isEmpty(List l);
+boolean isEmptyUtas(List l);
 /* Mengirim true jika list kosong */
 
 /****************** GETTER SETTER ******************/
@@ -62,7 +60,7 @@ void setUtas(List *l, int idx, EltypeUtas val);
 /* I.S. l terdefinisi, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Mengubah elemen l pada indeks ke-idx menjadi val */
 
-int indexOf(List l, EltypeUtas val);
+int indexOfUtas(List l, EltypeUtas val);
 /* I.S. l, val terdefinisi */
 /* F.S. Mencari apakah ada elemen list l yang bernilai val */
 /* Jika ada, mengembalikan indeks elemen pertama l yang bernilai val */
@@ -70,19 +68,19 @@ int indexOf(List l, EltypeUtas val);
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
-void insertFirst(List *l, EltypeUtas val);
+void insertFirstUtas(List *l, EltypeUtas val);
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen pertama dengan nilai val jika alokasi berhasil. */
 /* Jika alokasi gagal: I.S.= F.S. */
 
-void insertLast(List *l, EltypeUtas val);
+void insertLastUtas(List *l, EltypeUtas val);
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen list di akhir: elemen terakhir yang baru */
 /* bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 
-void insertAt(List *l, EltypeUtas val, int idx);
+void insertAtUtas(List *l, EltypeUtas val, int idx);
 /* I.S. l tidak mungkin kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menyisipkan elemen dalam list pada indeks ke-idx (bukan menimpa elemen di i) */
@@ -105,7 +103,7 @@ void deleteAt(List *l, int idx);
 
 
 /****************** PROSES SEMUA ELEMEN LIST ******************/
-void displayList(List l);
+void displayListUtas(List l);
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -113,11 +111,11 @@ void displayList(List l);
 /* Jika list kosong : menulis [] */
 /* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
 
-int length(List l);
+int lengthUtas(List l);
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
 
 /****************** PROSES TERHADAP LIST ******************/
-List concat(List l1, List l2) ;
+List concatUtas(List l1, List l2);
 /* I.S. l1 dan l2 sembarang */
 /* F.S. l1 dan l2 kosong, l3 adalah hasil konkatenasi l1 & l2 */
 /* Konkatenasi dua buah list : l1 dan l2    */

@@ -24,13 +24,13 @@ void CreateUtas(EltypeUtas *utas, Word author, DATETIME datetime, Word text)
 /* I.S. sembarang             */
 /* F.S. Terbentuk Utas dengan index Undeff */
 {
-    (utas)->index = IDX_UNDEF;
+    (utas)->index = IDX_UNDEF_UTAS;
     (utas)->author = author;
     (utas)->datetime = datetime;
     (utas)->text = text;
 }
 /****************** TEST LIST KOSONG ******************/
-boolean isEmpty(List l)
+boolean isEmptyUtas(List l)
 /* Mengirim true jika list kosong */
 {
     return l == NULL;
@@ -45,7 +45,7 @@ EltypeUtas getUtas(List l, int idx)
     while(INDEX(p)<idx){
         p = NEXT(p);
     }
-    return INFO(p);
+    return INFO_UTAS(p);
 }
 
 void setUtas(List *l, int idx, EltypeUtas val);
@@ -75,13 +75,13 @@ int indexOf(List l, EltypeUtas val)
         return i;
     }
     else{
-        return IDX_UNDEF;
+        return IDX_UNDEF_UTAS;
     }
 }
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
-void insertFirst(List *l, EltypeUtas val)
+void insertFirstUtas(List *l, EltypeUtas val)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen pertama dengan nilai val jika alokasi berhasil. */
@@ -103,14 +103,14 @@ void insertFirst(List *l, EltypeUtas val)
 }
 /* Jika alokasi gagal: I.S.= F.S. */
 
-void insertLast(List *l, EltypeUtas val)
+void insertLastUtas(List *l, EltypeUtas val)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen list di akhir: elemen terakhir yang baru */
 /* bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 {
-    if(isEmpty(*l)){
-        insertFirst(l,val);
+    if(isEmptyUtas(*l)){
+        insertFirstUtas(l,val);
     }else{
         Address p = newNodeUtas(val);
         INDEX(p) = length(*l);
@@ -124,7 +124,7 @@ void insertLast(List *l, EltypeUtas val)
     }
 }
 
-void insertAt(List *l, EltypeUtas val, int idx)
+void insertAtUtas(List *l, EltypeUtas val, int idx)
 /* I.S. l tidak mungkin kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menyisipkan elemen dalam list pada indeks ke-idx (bukan menimpa elemen di i) */
@@ -248,10 +248,10 @@ void displayUtas(List l)
     }
 }
 
-int length(List l)
+int lengthUtas(List l)
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
 {
-    if(isEmpty(l)){
+    if(isEmptyUtas(l)){
         return 0;
     }else{
         int i = 0;
