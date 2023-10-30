@@ -8,6 +8,7 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 void ADVUntil(char mark);
 DATETIME parseDATETIME();
+void printTab(int count);
 
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
@@ -55,6 +56,7 @@ void HapusBalasan();
 // 7. Draf Kicauan
 
 // 8. Utas
+void displayUtas(List l);
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
@@ -1075,6 +1077,37 @@ void HapusBalasan() {
 // 7. Draf Kicauan
 
 // 8. Utas
+void displayUtas(List l)
+// void printInfo(List l);
+/* I.S. List mungkin kosong */
+/* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
+/* Contoh : jika ada tiga elemen bernilai 1, 20, 30 akan dicetak: [1,20,30] */
+/* Jika list kosong : menulis [] */
+/* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
+{
+    Address p = l;
+    while (p != NULL){
+        int index = INDEX(p);
+        Word author = AUTHOR(p);
+        DATETIME datetime = DATETIME(p);
+        Word text = TEXT(p);
+        
+        printf("\n");
+        printTab(2);
+        printf("ID = %d\n", index);
+        
+        printTab(2);
+        printWordNewline(author);
+
+        printTab(2);
+        TulisDATETIME(datetime);
+        printf("\n");
+
+        printTab(2);
+        printWordNewline(text);
+        p = NEXT(p);
+    }
+}
 
 // 9. Tagar
 
