@@ -4,7 +4,7 @@
 /* EltypeUtas adalah integer */
 
 #ifndef listutas_H
-#define listuatas_H
+#define listutas_H
 
 #include "boolean.h"
 #include "../wordmachine/charmachine.h"
@@ -12,7 +12,6 @@
 #include "../datetime/datetime.h"
 
 /* Definisi Utas : */
-typedef nodeUtas EltypeUtas;
 typedef struct nodeUtas* Address;
 
 typedef struct nodeUtas {
@@ -23,6 +22,7 @@ typedef struct nodeUtas {
 
     Address next;
 } nodeUtas;
+typedef nodeUtas EltypeUtas;
 
 #define INDEX(p) (p)->index
 #define AUTHOR(P) (P)->author
@@ -87,16 +87,16 @@ void insertAtUtas(List *l, EltypeUtas val, int idx);
 /* yang bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 
 /*** PENGHAPUSAN ELEMEN ***/
-void deleteFirst(List *l);
+void deleteFirstUtas(List *l);
 /* I.S. List l tidak kosong  */
 /* F.S. Elemen pertama list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen pertama di-dealokasi */
-void deleteLast(List *l);
+void deleteLastUtas(List *l);
 /* I.S. list tidak kosong */
 /* F.S. Elemen terakhir list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen terakhir di-dealokasi */
 
-void deleteAt(List *l, int idx);
+void deleteAtUtas(List *l, int idx);
 /* I.S. list tidak kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. val diset dengan elemen l pada indeks ke-idx. */
 /*      Elemen l pada indeks ke-idx dihapus dari l */

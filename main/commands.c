@@ -8,12 +8,14 @@ void concatStrings(const char *str1, const char *str2, char *result);
 boolean directoryExists(char* filepath);
 void ADVUntil(char mark);
 DATETIME parseDATETIME();
+void printTab(int count);
 
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix);
 void BacaProfilPengguna();
 void BacaGrafPertemanan();
 void BacaKicauan();
+void BacaBalasan();
 
 void simpanDATETIME(FILE* file, DATETIME t);
 void SimpanConfigFile(char* foldername, int op, char* suffix);
@@ -40,6 +42,7 @@ void Ubah_Foto_Profil();
 // 4. Permintaan Pertemanan
 
 // 5. Kicauan
+int indexOfKicauan(int id);
 void Kicau();
 void DisplayKicauan();
 void SukaKicauan();
@@ -53,14 +56,17 @@ void HapusBalasan();
 // 7. Draf Kicauan
 
 // 8. Utas
+void displayUtas(List l);
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
 
-// X. Kelompok Teman
+// 9. Tagar
+
+// 10. Kelompok Teman
 void KelompokTeman();
 
-// X. FYB
+// 11. FYB
 void FYB();
 
 // ================= Data =================
@@ -75,7 +81,7 @@ ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
 GrafTeman FriendGraph;
 
-// Commands
+// ================= Commands =================
 void Inisialisasi() {
     printf("Silahkan masukan folder konfigurasi untuk dimuat: ");
     
@@ -95,6 +101,7 @@ void Inisialisasi() {
     } else {
         BacaDataConfig(filepath, 1, "/pengguna.config");
         BacaDataConfig(filepath, 2, "/kicauan.config");
+        BacaDataConfig(filepath, 3, "/balasan.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -327,9 +334,9 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         case 2:
             BacaKicauan();
             break;
-        // case 3:
-        //     char suffix[] = "/balasan.config";
-        //     break;
+        case 3:
+            BacaBalasan();
+            break;
         // case 4:
         //     char suffix[] = "/draf.config";
         //     break;
@@ -428,6 +435,46 @@ void BacaKicauan() {
     Kicauan k = {id, text, likes, author, t, tree};
 
     insertLastKicauan(&listKicauan, k);
+}
+
+void BacaBalasan() {
+    // ID Kicauan
+    ADVNEWLINE();
+    int IDKicau = WordToInt(currentWord);
+
+    // Jumlah Balasan
+    ADVNEWLINE();
+    int n = WordToInt(currentWord);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    // Baca Balasan
+    for (int i = 0; i < n; i++) {
+        // ID Parent
+        ADVWORD();
+        int IDParent = WordToInt(currentWord);
+
+        // ID Balasan
+        ADVNEWLINE();
+        int IDBalasan = WordToInt(currentWord);
+
+        // Text
+        ADVNEWLINE();
+        Word text = currentWord;
+
+        // Author
+        ADVNEWLINE();
+        Word author = currentWord;
+
+        // Datetime
+        DATETIME t = parseDATETIME();
+
+        // Insert Balasan
+        Balasan b = {IDBalasan, text, author, t};
+        ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan += 1;
+        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
+
+        insertTreeBalasan(tree, IDParent, b);
+    }
 }
 
 void simpanDATETIME(FILE* file, DATETIME t) {
@@ -1030,8 +1077,41 @@ void HapusBalasan() {
 // 7. Draf Kicauan
 
 // 8. Utas
+void displayUtas(List l)
+// void printInfo(List l);
+/* I.S. List mungkin kosong */
+/* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
+/* Contoh : jika ada tiga elemen bernilai 1, 20, 30 akan dicetak: [1,20,30] */
+/* Jika list kosong : menulis [] */
+/* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
+{
+    Address p = l;
+    while (p != NULL){
+        int index = INDEX(p);
+        Word author = AUTHOR(p);
+        DATETIME datetime = DATETIME(p);
+        Word text = TEXT(p);
+        
+        printf("\n");
+        printTab(2);
+        printf("ID = %d\n", index);
+        
+        printTab(2);
+        printWordNewline(author);
 
-// X. Kelompok Teman
+        printTab(2);
+        TulisDATETIME(datetime);
+        printf("\n");
+
+        printTab(2);
+        printWordNewline(text);
+        p = NEXT(p);
+    }
+}
+
+// 9. Tagar
+
+// 10. Kelompok Teman
 void KelompokTeman() {
     int n = ROW_EFF_MATRIXCHAR(FriendGraph);
     DisjointSet groups = findGroups(FriendGraph);
@@ -1061,7 +1141,7 @@ void KelompokTeman() {
     }
 }
 
-// X. FYB
+// 11. FYB
 void FYB() {
     MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
     HeapifyListKicauan(&h);
