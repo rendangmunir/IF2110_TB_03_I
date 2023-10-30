@@ -535,6 +535,9 @@ void Ganti_Profil(){
         {
             printf("Masukkan No HP:\n");
             STARTSENTENCE();
+            if (WordEqual(currentWord,empty)){
+                validnr=true;
+            }
             for (int i=0; i<currentWord.Length; i++){
                 if (currentWord.TabWord[i]>'0' && currentWord.TabWord[i]<'9'){
                     validnr=true;
