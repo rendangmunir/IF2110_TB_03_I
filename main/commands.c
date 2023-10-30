@@ -15,6 +15,10 @@ void BacaProfilPengguna();
 void BacaGrafPertemanan();
 void BacaKicauan();
 
+void simpanDATETIME(FILE* file, DATETIME t);
+void SimpanConfigFile(char* foldername, int op, char* suffix);
+void SimpanKicauan(char* filepath);
+
 // 1. Pengguna
 void Daftar();
 void Masuk();
@@ -22,6 +26,7 @@ void Keluar();
 void TutupProgram();
 void ListPengguna();
 void Muat();
+void Simpan();
 
 // 2. Profil
 void Ganti_Profil();
@@ -101,6 +106,7 @@ void RunCommand(Word command) {
     Word TUTUP_PROGRAM = {"TUTUP_PROGRAM", 13};
     Word LISTPENGGUNA = {"LISTPENGGUNA", 12};
     Word MUAT = {"MUAT", 4};
+    Word SIMPAN = {"SIMPAN", 6};
 
     // 2. Profil
     Word GANTI_PROFIL = {"GANTI_PROFIL", 12};
@@ -145,10 +151,12 @@ void RunCommand(Word command) {
         ListPengguna();
     } else if (WordEqual(command, TUTUP_PROGRAM)) {
         TutupProgram();
-    } else if (WordEqual(command, MUAT)) {
+    } else if (WordEqual(command, MUAT) && !isLoggedIn) {
         // Muat();
     } else if (!isLoggedIn) {
         printf("Perintah yang dimasukkan tidak dikenali atau Anda belum login! Silahkan jalankan perintah MASUK, DAFTAR, MUAT, atau TUTUP_PROGRAM.\n");
+    } else if (WordEqual(command, SIMPAN)) {
+        Simpan();
     }
 
     // 2. Profil
@@ -419,6 +427,67 @@ void BacaKicauan() {
     insertLastKicauan(&listKicauan, k);
 }
 
+void simpanDATETIME(FILE* file, DATETIME t) {
+    // Day
+    fprintf(file, "%02d/", t.DD);
+    
+    // Month
+    fprintf(file, "%02d/", t.MM);
+    
+    // Year
+    fprintf(file, "%02d ", t.YYYY);
+    
+    // Hour
+    fprintf(file, "%02d:", t.T.HH);
+    
+    // Min
+    fprintf(file, "%02d:", t.T.MM);
+    
+    // Sec
+    fprintf(file, "%02d", t.T.SS);
+}
+
+void SimpanConfigFile(char* folderpath, int op, char* suffix) {
+    // 1. Setup filepath string
+    char filepath[80];
+    concatStrings(folderpath, suffix, filepath);
+
+    // 2. Run write functions
+    switch (op) {
+        case 2:
+            SimpanKicauan(filepath);
+            break;
+    }
+}
+
+void SimpanKicauan(char* filepath) {
+    // 1. Open filepath kicauan.config
+    FILE *configFile = fopen(filepath, "w");
+
+    if (configFile == NULL) {
+        perror("Unable to open config file.\n");
+    }
+
+    // 2. Write to file
+    int n = listLengthKicauan(listKicauan);
+    fprintf(configFile, "%d\n", n);
+
+    for (int i = 0; i < n; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+        fprintf(configFile, "%d", k.id); fprintf(configFile, "\n");
+        WriteWord(configFile, k.text); fprintf(configFile, "\n");
+        fprintf(configFile, "%d", k.likes); fprintf(configFile, "\n");
+        WriteWord(configFile, k.author); fprintf(configFile, "\n");
+        simpanDATETIME(configFile, k.datetime);
+        if (i != (n - 1)) {
+            fprintf(configFile, "\n");
+        }
+    }
+
+    // 3. Close file
+    fclose(configFile);
+}
+
 // 1. Pengguna
 void Daftar() {
     if (isLoggedIn) {
@@ -519,6 +588,36 @@ void ListPengguna() {
         printWord(user.Nama);
         printf("\n");
     }
+}
+
+void Muat() {
+    
+}
+
+void Simpan() {
+    // 1. Ask for foldername from user
+    printf("\nMasukkan nama folder penyimpanan: \n");
+
+    STARTSENTENCE();
+    Word foldernameWord = currentWord;
+    char* foldername = WordToStr(foldernameWord);
+
+    char folderpath[50];
+    char prefix[] = "./config/";
+    concatStrings(prefix, foldername, folderpath);
+
+    // 2. Create folder if it doesn't exist
+    if (!directoryExists(folderpath)) {
+        printf("Belum terdapat folder tersebut. Akan dilakukan pembuatan folder terlebih dahulu.\n");
+        mkdir(folderpath);
+
+        printf("Mohon tunggu...\n1...\n2...\n3...\nFolder sudah berhasil dibuat.\n");
+    }
+
+    // 3. Run write functions
+    printf("\nAnda akan melakukan penyimpanan di ");
+    printWord(foldernameWord); printf(".\n\nMohon tunggu...\n1...\n2...\n3...\n\nPenyimpanan telah berhasil dilakukan!\n");
+    SimpanConfigFile(folderpath, 2, "/kicauan.config");
 }
 
 // 2. Profil

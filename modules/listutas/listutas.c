@@ -24,13 +24,13 @@ void CreateUtas(EltypeUtas *utas, Word author, DATETIME datetime, Word text)
 /* I.S. sembarang             */
 /* F.S. Terbentuk Utas dengan index Undeff */
 {
-    (utas)->index = IDX_UNDEF;
+    (utas)->index = IDX_UNDEF_UTAS;
     (utas)->author = author;
     (utas)->datetime = datetime;
     (utas)->text = text; 
 }
 /****************** TEST LIST KOSONG ******************/
-boolean isEmpty(List l)
+boolean isEmptyUtas(List l)
 /* Mengirim true jika list kosong */
 {
     return NEXT(l) == NULL;
@@ -47,43 +47,43 @@ EltypeUtas getUtas(List l, int idx)
         i++;
         p = NEXT(p);
     }
-    return INFO(p);
+    return INFO_UTAS(p);
 }
 
 void setUtas(List *l, int idx, EltypeUtas val);
 /* I.S. l terdefinisi, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Mengubah elemen l pada indeks ke-idx menjadi val */
 
-int indexOf(List l, EltypeUtas val)
-/* I.S. l, val terdefinisi */
-/* F.S. Mencari apakah ada elemen list l yang bernilai val */
-/* Jika ada, mengembalikan indeks elemen pertama l yang bernilai val */
-/* Mengembalikan IDX_UNDEF jika tidak ditemukan */
-{
-    int i;
-    i = 0;
-    Address p = l;
-    boolean found = false;
-    while(p != NULL && !found){
-        if(INFO(p) == val){
-            found=true;
-        }
-        else{
-            i++;
-            p = NEXT(p);
-        }
-    }
-    if(found){
-        return i;
-    }
-    else{
-        return IDX_UNDEF;
-    }
-}
+// int indexOfUtas(List l, EltypeUtas val)
+// /* I.S. l, val terdefinisi */
+// /* F.S. Mencari apakah ada elemen list l yang bernilai val */
+// /* Jika ada, mengembalikan indeks elemen pertama l yang bernilai val */
+// /* Mengembalikan IDX_UNDEF jika tidak ditemukan */
+// {
+//     int i;
+//     i = 0;
+//     Address p = l;
+//     boolean found = false;
+//     while(p != NULL && !found){
+//         if(INFO_UTAS(p) == val){
+//             found=true;
+//         }
+//         else{
+//             i++;
+//             p = NEXT(p);
+//         }
+//     }
+//     if(found){
+//         return i;
+//     }
+//     else{
+//         return IDX_UNDEF_UTAS;
+//     }
+// }
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
-void insertFirst(List *l, EltypeUtas val)
+void insertFirstUtas(List *l, EltypeUtas val)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen pertama dengan nilai val jika alokasi berhasil. */
@@ -98,14 +98,14 @@ void insertFirst(List *l, EltypeUtas val)
 }
 /* Jika alokasi gagal: I.S.= F.S. */
 
-void insertLast(List *l, EltypeUtas val)
+void insertLastUtas(List *l, EltypeUtas val)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen list di akhir: elemen terakhir yang baru */
 /* bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 {
-    if(isEmpty(*l)){
-        insertFirst(l,val);
+    if(isEmptyUtas(*l)){
+        insertFirstUtas(l,val);
     }else{
         Address p = newNodeUtas(val);
         Address last = *l;
@@ -118,7 +118,7 @@ void insertLast(List *l, EltypeUtas val)
     }
 }
 
-void insertAt(List *l, EltypeUtas val, int idx)
+void insertAtUtas(List *l, EltypeUtas val, int idx)
 /* I.S. l tidak mungkin kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menyisipkan elemen dalam list pada indeks ke-idx (bukan menimpa elemen di i) */
@@ -127,7 +127,7 @@ void insertAt(List *l, EltypeUtas val, int idx)
     int cnt = 0;
     Address p, loc;
     if(idx==0){
-        insertFirst(l, val);
+        insertFirstUtas(l, val);
     }
     else{
         p = newNodeUtas(val);
@@ -144,7 +144,7 @@ void insertAt(List *l, EltypeUtas val, int idx)
 }
 
 /*** PENGHAPUSAN ELEMEN ***/
-void deleteFirst(List *l, EltypeUtas *val)
+void deleteFirstUtas(List *l, EltypeUtas *val)
 /* I.S. List l tidak kosong  */
 /* F.S. Elemen pertama list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen pertama di-dealokasi */
@@ -154,7 +154,7 @@ void deleteFirst(List *l, EltypeUtas *val)
     NEXT(*l) = NEXT(p);
     free(p);
 }
-void deleteLast(List *l, EltypeUtas *val)
+void deleteLastUtas(List *l, EltypeUtas *val)
 /* I.S. list tidak kosong */
 /* F.S. Elemen terakhir list dihapus: nilai info disimpan pada x */
 /*      dan alamat elemen terakhir di-dealokasi */
@@ -171,17 +171,17 @@ void deleteLast(List *l, EltypeUtas *val)
     else{
         NEXT(q) = NULL;
     }
-    *val = INFO(p);
+    *val = INFO_UTAS(p);
     free(p);
 }
 
-void deleteAt(List *l, int idx, EltypeUtas *val)
+void deleteAtUtas(List *l, int idx, EltypeUtas *val)
 /* I.S. list tidak kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. val diset dengan elemen l pada indeks ke-idx. */
 /*      Elemen l pada indeks ke-idx dihapus dari l */
 {
     if (idx == 0){
-        deleteFirst(l, val);
+        deleteFirstUtas(l, val);
     }else{
         Address p = *l;
         Address q;
@@ -191,7 +191,7 @@ void deleteAt(List *l, int idx, EltypeUtas *val)
             i++;
         }
         q = NEXT(p);
-        *val = INFO(q);
+        *val = INFO_UTAS(q);
         NEXT(p) = NEXT(q);
         free(q);
     }
@@ -199,7 +199,7 @@ void deleteAt(List *l, int idx, EltypeUtas *val)
 
 
 /****************** PROSES SEMUA ELEMEN LIST ******************/
-void displayList(List l);
+void displayListUtas(List l);
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -207,10 +207,10 @@ void displayList(List l);
 /* Jika list kosong : menulis [] */
 /* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
 
-int length(List l)
+int lengthUtas(List l)
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
 {
-    if(isEmpty(l)){
+    if(isEmptyUtas(l)){
         return 0;
     }else{
         int i = 0;
@@ -224,7 +224,7 @@ int length(List l)
 }
 
 /****************** PROSES TERHADAP LIST ******************/
-List concat(List l1, List l2) ;
+List concatUtas(List l1, List l2) ;
 /* I.S. l1 dan l2 sembarang */
 /* F.S. l1 dan l2 kosong, l3 adalah hasil konkatenasi l1 & l2 */
 /* Konkatenasi dua buah list : l1 dan l2    */
