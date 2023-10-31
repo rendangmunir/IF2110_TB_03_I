@@ -736,9 +736,11 @@ void Simpan() {
 // 2. Profil
 
 void Ganti_Profil(){
+    int id;
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
     }else{
+        id = indexOfUser(listUsers, currentUser.Nama);
         printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
         printf("| No HP: %d\n", currentUser.noHP);
@@ -812,6 +814,7 @@ void Ganti_Profil(){
         }
         currentUser.Weton=currentWord;
         printf("Profil anda sudah berhasil diperbarui!\n\n");
+        listUsers.contents[id]=currentUser;
     }
 }
 
@@ -832,7 +835,7 @@ void PrintFoto(Pengguna p){
 }
 
 void PrintProfil(Pengguna p){
-    printf("| Nama: "); printWord(p.Nama); printf("\n");
+    printf("\n| Nama: "); printWord(p.Nama); printf("\n");
     printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
     printf("| No HP: "); printWord(p.noHP); printf("\n");
     printf("| Weton: "); printWord(p.Weton); printf("\n\n");
@@ -841,6 +844,8 @@ void PrintProfil(Pengguna p){
 }
 
 void Lihat_Profil(){
+    Pengguna user;
+    Word Publik = {"Publik", 6};
 
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
@@ -856,13 +861,15 @@ void Lihat_Profil(){
             if (userIndex == IDX_UNDEF){
                 printf("Akun ini tidak terdaftar di BurBir!\n");
             }else{
-                Pengguna user = ELMTPengguna(listUsers, userIndex);
-                Word Publik = {"Publik", 6};
+                user = ELMTPengguna(listUsers, userIndex);
                 if(WordEqual(user.JenisAkun, Publik)){
                     PrintProfil(user);
                 }else{
-                    //cek apakah currentuser mengikuti user (Isfollowing(currentUser, user))
-                    PrintProfil(user); 
+                    if (IsTeman(currentUser.Nama, name)){
+                        PrintProfil(user);
+                    }else{
+                        printf("\nWah, akun "); printWord(name);printf(" diprivat nih. ikuti dulu yuk untuk bisa melihat profil "); printWord(name); printf("!\n\n"); 
+                    }
                 }
             }
         }
@@ -870,9 +877,11 @@ void Lihat_Profil(){
 }
 
 void Atur_Jenis_Akun(){
+    int id;
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
     }else{
+        id = indexOfUser(listUsers, currentUser.Nama);
         Word type = currentUser.JenisAkun;
         Word Publik = {"Publik", 6};
         Word Privat = {"Privat", 6};
@@ -901,6 +910,7 @@ void Atur_Jenis_Akun(){
                 printf("Pengubahan jenis akun dibatalkan\n");
             }
         }
+        listUsers.contents[id]=currentUser;
     }    
 }
 
@@ -908,6 +918,7 @@ void Ubah_Foto_Profil(){
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
     }else{
+        int id = indexOfUser(listUsers,currentUser.Nama);
         printf("Foto profil Anda saat ini adalah\n");
         PrintFoto(currentUser); printf("\n\n");
         printf("Masukkan foto profil yang baru\n");
@@ -923,10 +934,10 @@ void Ubah_Foto_Profil(){
             }
             IgnoreEnters();
         }
-        currentUser.FotoProfil=fotoprofil;
+        listUsers.contents[id].FotoProfil=fotoprofil;
         printf("\n");
         printf("Foto profil anda sudah berhasil diganti!\n\n");
-        PrintFoto(currentUser);
+        PrintFoto(listUsers.contents[id]);
     }
 }
 
