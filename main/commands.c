@@ -1225,10 +1225,15 @@ void KelompokTeman() {
 
 // 11. FYB
 void FYB() {
+    int n = listLengthKicauan(listKicauan);
+    n = (n < 8) ? n : 8;
+
+    printf("Berikut %d kicauan dengan jumlah like tertinggi di FYB: \n", n);
     MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
     HeapifyListKicauan(&h);
 
-    while (MaxHeapLengthKicauan(h) > 1) {
+    for (int i = 0; i < n; i++) {
+        printf("\nKicauan %d: ", (i + 1));
         ElTypeKicauan root;
         PopMaxHeap(&h, &root);
 
