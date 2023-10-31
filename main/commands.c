@@ -1205,19 +1205,28 @@ nodeUtas inputUtas(){
 }
 
 void Utas(){
-
+    
 }
- void CetakUtas(){
+
+void CetakUtas(){
     ADVWORD();
     int IDUtas = WordToInt(currentWord);
-
     int indexKicauan = indexOfKicauan(IDUtas);
+    Word private = {"Privat", 6};
+    Word private = {"Publik", 6};
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Utas tidak ditemukan!\n");
     } else {
-        TreeBalasan tree = ELMT_Kicauan(listKicauan, indexKicauan).tree;
-        PrintTreeBalasan(tree, 0);
-    }
+        List l = k.nextUtas;
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        Pengguna p;
+        if (p.JenisAkun == private) {
+            printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
+        }else {
+            PrintKicauan(k);
+            printUtas(l);
+        }
+    }  
 }
 
 // 9. Tagar
