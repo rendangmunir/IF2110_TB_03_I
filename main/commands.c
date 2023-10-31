@@ -60,10 +60,11 @@ void HapusBalasan();
 // 7. Draf Kicauan
 
 // 8. Utas
-void displayUtas(List l);
+void CetakUtas();
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
+void Utas();
 
 // 9. Tagar
 
@@ -448,13 +449,13 @@ void BacaKicauan() {
 void BacaBalasan() {
     // ID Kicauan
     ADVNEWLINE();
-    int IDKicau = WordToInt(currentWord);
+    int IDUtas = WordToInt(currentWord);
 
     // Jumlah Balasan
     ADVNEWLINE();
     int n = WordToInt(currentWord);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     // Baca Balasan
     for (int i = 0; i < n; i++) {
         // ID Parent
@@ -735,11 +736,9 @@ void Simpan() {
 // 2. Profil
 
 void Ganti_Profil(){
-    int id;
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
     }else{
-        id = indexOfUser(listUsers, currentUser.Nama);
         printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
         printf("| No HP: %d\n", currentUser.noHP);
@@ -813,7 +812,6 @@ void Ganti_Profil(){
         }
         currentUser.Weton=currentWord;
         printf("Profil anda sudah berhasil diperbarui!\n\n");
-        listUsers.contents[id]=currentUser;
     }
 }
 
@@ -834,7 +832,7 @@ void PrintFoto(Pengguna p){
 }
 
 void PrintProfil(Pengguna p){
-    printf("\n| Nama: "); printWord(p.Nama); printf("\n");
+    printf("| Nama: "); printWord(p.Nama); printf("\n");
     printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
     printf("| No HP: "); printWord(p.noHP); printf("\n");
     printf("| Weton: "); printWord(p.Weton); printf("\n\n");
@@ -843,8 +841,6 @@ void PrintProfil(Pengguna p){
 }
 
 void Lihat_Profil(){
-    Pengguna user;
-    Word Publik = {"Publik", 6};
 
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
@@ -860,15 +856,13 @@ void Lihat_Profil(){
             if (userIndex == IDX_UNDEF){
                 printf("Akun ini tidak terdaftar di BurBir!\n");
             }else{
-                user = ELMTPengguna(listUsers, userIndex);
+                Pengguna user = ELMTPengguna(listUsers, userIndex);
+                Word Publik = {"Publik", 6};
                 if(WordEqual(user.JenisAkun, Publik)){
                     PrintProfil(user);
                 }else{
-                    if (IsTeman(currentUser.Nama, name)){
-                        PrintProfil(user);
-                    }else{
-                        printf("\nWah, akun "); printWord(name);printf(" diprivat nih. ikuti dulu yuk untuk bisa melihat profil "); printWord(name); printf("!\n\n"); 
-                    }
+                    //cek apakah currentuser mengikuti user (Isfollowing(currentUser, user))
+                    PrintProfil(user); 
                 }
             }
         }
@@ -876,11 +870,9 @@ void Lihat_Profil(){
 }
 
 void Atur_Jenis_Akun(){
-    int id;
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
     }else{
-        id = indexOfUser(listUsers, currentUser.Nama);
         Word type = currentUser.JenisAkun;
         Word Publik = {"Publik", 6};
         Word Privat = {"Privat", 6};
@@ -909,7 +901,6 @@ void Atur_Jenis_Akun(){
                 printf("Pengubahan jenis akun dibatalkan\n");
             }
         }
-        listUsers.contents[id]=currentUser;
     }    
 }
 
@@ -917,7 +908,6 @@ void Ubah_Foto_Profil(){
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
     }else{
-        int id = indexOfUser(listUsers,currentUser.Nama);
         printf("Foto profil Anda saat ini adalah\n");
         PrintFoto(currentUser); printf("\n\n");
         printf("Masukkan foto profil yang baru\n");
@@ -933,10 +923,10 @@ void Ubah_Foto_Profil(){
             }
             IgnoreEnters();
         }
-        listUsers.contents[id].FotoProfil=fotoprofil;
+        currentUser.FotoProfil=fotoprofil;
         printf("\n");
         printf("Foto profil anda sudah berhasil diganti!\n\n");
-        PrintFoto(listUsers.contents[id]);
+        PrintFoto(currentUser);
     }
 }
 
@@ -1098,14 +1088,14 @@ void PrintTreeBalasan(TreeBalasan t, int indent) {
 
 void Balas() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
-    printf("IDKicau: %d\n", IDKicau);
+    int IDUtas = WordToInt(currentWord);
+    printf("IDUtas: %d\n", IDUtas);
 
     ADVWORD();
     int IDBalasan = WordToInt(currentWord);
     printf("IDBalasan: %d\n", IDBalasan);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat kicauan yang ingin Anda balas!\n");
     } else {
@@ -1130,9 +1120,9 @@ void Balas() {
 
 void DisplayBalasan() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
+    int IDUtas = WordToInt(currentWord);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat kicauan dengan ID tersebut!\n");
     } else if (ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan == 0) {
@@ -1145,14 +1135,14 @@ void DisplayBalasan() {
 
 void HapusBalasan() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
-    printf("IDKicau: %d\n", IDKicau);
+    int IDUtas = WordToInt(currentWord);
+    printf("IDUtas: %d\n", IDUtas);
 
     ADVWORD();
     int IDBalasan = WordToInt(currentWord);
     printf("IDBalasan: %d\n", IDBalasan);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
     } else {
@@ -1171,7 +1161,7 @@ void HapusBalasan() {
 // 7. Draf Kicauan
 
 // 8. Utas
-void displayUtas(List l)
+void printUtas(List l)
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -1200,6 +1190,60 @@ void displayUtas(List l)
         printTab(2);
         printWordNewline(text);
         p = NEXT(p);
+    }
+}
+
+nodeUtas inputUtas(){
+    Kicauan k = inputKicau();
+    nodeUtas u;
+    u.author = k.author;
+    u.index = IDX_UNDEF;
+    u.datetime = k.datetime;
+    u.text = k.text;
+    u.next = NULL;
+    return u;
+}
+
+void Utas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
+    
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Kicauan tidak ditemukan!\n");
+    }else{
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        Word author = k.author;
+        Word Username = p.Nama;
+        // Compare Username dengan author
+        if (!WordEqual(author,Username)){
+            printf("Utas ini bukan milik anda\n");
+        }else{
+
+        }
+    }
+}
+
+void CetakUtas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
+    Word privat = {"Privat", 6};
+    Word publik = {"Publik", 6};
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Utas tidak ditemukan!\n");
+    } else {
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        if(p.JenisAkun.TabWord[1] == privat.TabWord[1]){
+            printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
+        }else {
+            PrintKicauan(k);
+            printUtas(l);
+        }
     }
 }
 
