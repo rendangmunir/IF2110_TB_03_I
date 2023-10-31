@@ -48,28 +48,46 @@ void HeapifyListKicauan(MaxHeapKicauan *h) {
 }
 
 void Heapify(MaxHeapKicauan *h, int index) {
+    // 1. Get left child and right child index
     int l = LEFTCHILD_Heap(index);
     int r = RIGHTCHILD_Heap(index);
-
     int length = MaxHeapLengthKicauan(*h);
-    int leftchild = ELMT_Heap(*h, l).likes;
-    int rightchild = ELMT_Heap(*h, r).likes;
 
-    int largest = index;
-    int largestlikes = ELMT_Heap(*h, largest).likes;
+    if (l < length) {
+        int leftchild = ELMT_Heap(*h, l).likes;
+        DATETIME leftDATETIME = ELMT_Heap(*h, l).datetime;
+        
+        int largest = index;
+        int largestlikes = ELMT_Heap(*h, largest).likes;
+        DATETIME largestDATETIME = ELMT_Heap(*h, largest).datetime;
 
-    if (l < length && leftchild > largestlikes) {
-        largest = l;
-        largestlikes = ELMT_Heap(*h, largest).likes;
-    }
-    if (r < length && rightchild > largestlikes) {
-        largest = r;
-        largestlikes = ELMT_Heap(*h, largest).likes;
-    }
+        // Compare current and leftchild
+        boolean leftLargerLikes = (leftchild > largestlikes);
+        boolean leftSmallerDATETIME = (leftchild == largestlikes) && (DLT(leftDATETIME, largestDATETIME)); 
+        if (l < length && (leftLargerLikes || leftSmallerDATETIME)) {
+            largest = l;
+            largestlikes = ELMT_Heap(*h, largest).likes;
+            largestDATETIME = leftDATETIME;
+        }
 
-    if (largest != index) {
-        swapMaxHeap(h, index, largest);
-        Heapify(h, largest);
+        if (r < length) {
+            int rightchild = ELMT_Heap(*h, r).likes;
+            DATETIME rightDATETIME = ELMT_Heap(*h, r).datetime;
+
+            // Compare largest and rightchild
+            boolean rightLargerLikes = (rightchild > largestlikes);
+            boolean rightSmallerDATETIME = (rightchild == largestlikes) && (DLT(rightDATETIME, largestDATETIME)); 
+            if (r < length && (rightLargerLikes || rightSmallerDATETIME)) {
+                largest = r;
+                largestlikes = ELMT_Heap(*h, largest).likes;
+                largestDATETIME = rightDATETIME;
+            }
+        }
+
+        if (largest != index) {
+            swapMaxHeap(h, index, largest);
+            Heapify(h, largest);
+        }
     }
 }
 

@@ -18,7 +18,7 @@ void BacaKicauan();
 void BacaBalasan();
 
 void simpanDATETIME(FILE* file, DATETIME t);
-void SimpanConfigFile(char* foldername, int op, char* suffix);
+void SimpanDataConfig(char* foldername, int op, char* suffix);
 void SimpanKicauan(char* filepath);
 void SimpanBalasan(char* filepath);
 
@@ -39,6 +39,7 @@ void Atur_Jenis_Akun();
 void Ubah_Foto_Profil();
 
 // 3. Teman
+boolean IsTeman(Word user1, Word user2);
 
 // 4. Permintaan Pertemanan
 
@@ -320,16 +321,20 @@ DATETIME parseDATETIME() {
 // 0b. Inisialisasi
 void BacaDataConfig(char* prefix, int op, char* suffix) {
     char filepath[120];
+    int itemCount;
 
     concatStrings(prefix, suffix, filepath);
     // printf("%s\n", filepath);
 
     // Parse file
     STARTFILE(filepath);
-    ADVNEWLINE();
+    if (currentChar != '0') {
+        ADVNEWLINE();
+        itemCount = WordToInt(currentWord);
+    } else {
+        itemCount = 0;
+    }
 
-    int itemCount = WordToInt(currentWord);
-    // printf("Usercount: %d\n", itemCount);
     for (int i = 0; i < itemCount; i++) {
         switch (op) {
         case 1:
@@ -350,7 +355,7 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         }        
     }
 
-    if (op == 1) {
+    if (op == 1 && itemCount > 0) {
         BacaGrafPertemanan();
     }
 }
@@ -501,7 +506,7 @@ void simpanDATETIME(FILE* file, DATETIME t) {
     fprintf(file, "%02d", t.T.SS);
 }
 
-void SimpanConfigFile(char* folderpath, int op, char* suffix) {
+void SimpanDataConfig(char* folderpath, int op, char* suffix) {
     // 1. Setup filepath string
     char filepath[80];
     concatStrings(folderpath, suffix, filepath);
@@ -513,6 +518,7 @@ void SimpanConfigFile(char* folderpath, int op, char* suffix) {
             break;
         case 3:
             SimpanBalasan(filepath);
+            break;
     }
 }
 
@@ -557,17 +563,40 @@ void SimpanBalasan(char* filepath) {
     int n = listLengthKicauan(listKicauan);
     fprintf(configFile, "%d\n", count);
 
+    int currentKicauan = 0;
     for (int i = 0; i < n; i++) {
         Kicauan k = ELMT_Kicauan(listKicauan, i);
         if (k.jumlahBalasan > 0) {
+            if (currentKicauan > 0) {
+                fprintf(configFile, "\n");
+            }
             fprintf(configFile, "%d\n", k.id);
             fprintf(configFile, "%d", k.jumlahBalasan);
             SimpanTreeBalasan(configFile, k.tree);
+            currentKicauan += 1;
         }
     }
 
     // 3. Close file
     fclose(configFile);
+}
+
+void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
+	if (t != Nil_BALASAN) {        
+        int i = 0;
+        while (i < TREECOUNT_BALASAN(t)) {
+            Balasan parent = ROOT_BALASAN(t);
+            Balasan child = ROOT_BALASAN(SUBTREE_BALASAN(t, i));
+
+            fprintf(file, "\n%d %d\n", parent.id, child.id);
+            WriteWord(file, child.text); fprintf(file, "\n");
+            WriteWord(file, child.author); fprintf(file, "\n");
+            simpanDATETIME(file, child.datetime);
+
+            SimpanTreeBalasan(file, SUBTREE_BALASAN(t, i));
+            i += 1;
+        }
+	}
 }
 
 // 1. Pengguna
@@ -700,8 +729,8 @@ void Simpan() {
     printf("\nAnda akan melakukan penyimpanan di ");
     printWord(foldernameWord); printf(".\n\nMohon tunggu...\n1...\n2...\n3...\n\nPenyimpanan telah berhasil dilakukan!\n");
 
-    SimpanConfigFile(folderpath, 2, "/kicauan.config");
-    SimpanConfigFile(folderpath, 3, "/balasan.config");
+    SimpanDataConfig(folderpath, 2, "/kicauan.config");
+    SimpanDataConfig(folderpath, 3, "/balasan.config");
 }
 
 // 2. Profil
@@ -902,6 +931,12 @@ void Ubah_Foto_Profil(){
 }
 
 // 3. Teman
+boolean IsTeman(Word user1, Word user2) {
+    int idx1 = indexOfUser(listUsers, user1);
+    int idx2 = indexOfUser(listUsers, user2);
+
+    return (ELMT_MATRIXCHAR(FriendGraph, idx1, idx2) == FRIEND_MARK);
+}
 
 // 4. Permintaan Pertemanan
 
@@ -929,6 +964,9 @@ void PrintKicauan(Kicauan k) {
     
     printTab(1);
     printf("Disukai: %d\n", likes);
+
+    printTab(1);
+    printf("Balasan: %d\n", k.jumlahBalasan);
 }
 
 int indexOfKicauan(int id) {
@@ -994,7 +1032,7 @@ void DisplayKicauan() {
     int kicauanCount = listLengthKicauan(listKicauan);
     for (int i = (kicauanCount - 1); i >= 0; i--) {
         Kicauan k = ELMT_Kicauan(listKicauan, i);
-        if (WordEqual(k.author, currentUser.Nama)) {
+        if (WordEqual(k.author, currentUser.Nama) || IsTeman(k.author, currentUser.Nama)) {
             PrintKicauan(k);
         }
     }
@@ -1045,24 +1083,6 @@ void PrintTreeBalasan(TreeBalasan t, int indent) {
 			PrintTreeBalasan(SUBTREE_BALASAN(t, i), indent + 1);
 			i += 1;
 		}
-	}
-}
-
-void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
-	if (t != Nil_BALASAN) {        
-        int i = 0;
-        while (i < TREECOUNT_BALASAN(t)) {
-            Balasan parent = ROOT_BALASAN(t);
-            Balasan child = ROOT_BALASAN(SUBTREE_BALASAN(t, i));
-
-            fprintf(file, "\n%d %d\n", parent.id, child.id);
-            WriteWord(file, child.text); fprintf(file, "\n");
-            WriteWord(file, child.author); fprintf(file, "\n");
-            simpanDATETIME(file, child.datetime);
-
-            SimpanTreeBalasan(file, SUBTREE_BALASAN(t, i));
-            i += 1;
-        }
 	}
 }
 
@@ -1234,10 +1254,15 @@ void KelompokTeman() {
 
 // 11. FYB
 void FYB() {
+    int n = listLengthKicauan(listKicauan);
+    n = (n < 8) ? n : 8;
+
+    printf("Berikut %d kicauan dengan jumlah like tertinggi di FYB: \n", n);
     MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
     HeapifyListKicauan(&h);
 
-    while (MaxHeapLengthKicauan(h) > 1) {
+    for (int i = 0; i < n; i++) {
+        printf("\nKicauan %d: ", (i + 1));
         ElTypeKicauan root;
         PopMaxHeap(&h, &root);
 
