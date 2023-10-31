@@ -736,11 +736,9 @@ void Simpan() {
 // 2. Profil
 
 void Ganti_Profil(){
-    int id;
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
     }else{
-        id = indexOfUser(listUsers, currentUser.Nama);
         printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
         printf("| No HP: %d\n", currentUser.noHP);
@@ -814,7 +812,6 @@ void Ganti_Profil(){
         }
         currentUser.Weton=currentWord;
         printf("Profil anda sudah berhasil diperbarui!\n\n");
-        listUsers.contents[id]=currentUser;
     }
 }
 
@@ -835,7 +832,7 @@ void PrintFoto(Pengguna p){
 }
 
 void PrintProfil(Pengguna p){
-    printf("\n| Nama: "); printWord(p.Nama); printf("\n");
+    printf("| Nama: "); printWord(p.Nama); printf("\n");
     printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
     printf("| No HP: "); printWord(p.noHP); printf("\n");
     printf("| Weton: "); printWord(p.Weton); printf("\n\n");
@@ -844,8 +841,6 @@ void PrintProfil(Pengguna p){
 }
 
 void Lihat_Profil(){
-    Pengguna user;
-    Word Publik = {"Publik", 6};
 
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
@@ -861,15 +856,13 @@ void Lihat_Profil(){
             if (userIndex == IDX_UNDEF){
                 printf("Akun ini tidak terdaftar di BurBir!\n");
             }else{
-                user = ELMTPengguna(listUsers, userIndex);
+                Pengguna user = ELMTPengguna(listUsers, userIndex);
+                Word Publik = {"Publik", 6};
                 if(WordEqual(user.JenisAkun, Publik)){
                     PrintProfil(user);
                 }else{
-                    if (IsTeman(currentUser.Nama, name)){
-                        PrintProfil(user);
-                    }else{
-                        printf("\nWah, akun "); printWord(name);printf(" diprivat nih. ikuti dulu yuk untuk bisa melihat profil "); printWord(name); printf("!\n\n"); 
-                    }
+                    //cek apakah currentuser mengikuti user (Isfollowing(currentUser, user))
+                    PrintProfil(user); 
                 }
             }
         }
@@ -877,11 +870,9 @@ void Lihat_Profil(){
 }
 
 void Atur_Jenis_Akun(){
-    int id;
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
     }else{
-        id = indexOfUser(listUsers, currentUser.Nama);
         Word type = currentUser.JenisAkun;
         Word Publik = {"Publik", 6};
         Word Privat = {"Privat", 6};
@@ -910,7 +901,6 @@ void Atur_Jenis_Akun(){
                 printf("Pengubahan jenis akun dibatalkan\n");
             }
         }
-        listUsers.contents[id]=currentUser;
     }    
 }
 
@@ -918,7 +908,6 @@ void Ubah_Foto_Profil(){
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk menikmati layanan BurBir\n");
     }else{
-        int id = indexOfUser(listUsers,currentUser.Nama);
         printf("Foto profil Anda saat ini adalah\n");
         PrintFoto(currentUser); printf("\n\n");
         printf("Masukkan foto profil yang baru\n");
@@ -934,10 +923,10 @@ void Ubah_Foto_Profil(){
             }
             IgnoreEnters();
         }
-        listUsers.contents[id].FotoProfil=fotoprofil;
+        currentUser.FotoProfil=fotoprofil;
         printf("\n");
         printf("Foto profil anda sudah berhasil diganti!\n\n");
-        PrintFoto(listUsers.contents[id]);
+        PrintFoto(currentUser);
     }
 }
 
@@ -1216,28 +1205,46 @@ nodeUtas inputUtas(){
 }
 
 void Utas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
     
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Kicauan tidak ditemukan!\n");
+    }else{
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        Word author = k.author;
+        Word Username = p.Nama;
+        // Compare Username dengan author
+        if (!WordEqual(author,Username)){
+            printf("Utas ini bukan milik anda\n");
+        }else{
+
+        }
+    }
 }
 
 void CetakUtas(){
     ADVWORD();
     int IDUtas = WordToInt(currentWord);
     int indexKicauan = indexOfKicauan(IDUtas);
-    Word private = {"Privat", 6};
-    Word private = {"Publik", 6};
+    Word privat = {"Privat", 6};
+    Word publik = {"Publik", 6};
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Utas tidak ditemukan!\n");
     } else {
-        List l = k.nextUtas;
         Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
-        Pengguna p;
-        if (p.JenisAkun == private) {
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        if(p.JenisAkun.TabWord[1] == privat.TabWord[1]){
             printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
         }else {
             PrintKicauan(k);
             printUtas(l);
         }
-    }  
+    }
 }
 
 // 9. Tagar
