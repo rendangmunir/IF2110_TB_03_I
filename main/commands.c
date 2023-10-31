@@ -18,7 +18,7 @@ void BacaKicauan();
 void BacaBalasan();
 
 void simpanDATETIME(FILE* file, DATETIME t);
-void SimpanConfigFile(char* foldername, int op, char* suffix);
+void SimpanDataConfig(char* foldername, int op, char* suffix);
 void SimpanKicauan(char* filepath);
 void SimpanBalasan(char* filepath);
 
@@ -505,7 +505,7 @@ void simpanDATETIME(FILE* file, DATETIME t) {
     fprintf(file, "%02d", t.T.SS);
 }
 
-void SimpanConfigFile(char* folderpath, int op, char* suffix) {
+void SimpanDataConfig(char* folderpath, int op, char* suffix) {
     // 1. Setup filepath string
     char filepath[80];
     concatStrings(folderpath, suffix, filepath);
@@ -517,6 +517,7 @@ void SimpanConfigFile(char* folderpath, int op, char* suffix) {
             break;
         case 3:
             SimpanBalasan(filepath);
+            break;
     }
 }
 
@@ -727,8 +728,8 @@ void Simpan() {
     printf("\nAnda akan melakukan penyimpanan di ");
     printWord(foldernameWord); printf(".\n\nMohon tunggu...\n1...\n2...\n3...\n\nPenyimpanan telah berhasil dilakukan!\n");
 
-    SimpanConfigFile(folderpath, 2, "/kicauan.config");
-    SimpanConfigFile(folderpath, 3, "/balasan.config");
+    SimpanDataConfig(folderpath, 2, "/kicauan.config");
+    SimpanDataConfig(folderpath, 3, "/balasan.config");
 }
 
 // 2. Profil
