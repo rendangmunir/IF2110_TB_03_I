@@ -937,7 +937,38 @@ boolean IsTeman(Word user1, Word user2) {
     return (ELMT_MATRIXCHAR(FriendGraph, idx1, idx2) == FRIEND_MARK);
 }
 
+void Daftar_Teman(Pengguna p) {
+    if (!isLoggedIn) {
+        printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
+    } else {
+        if (isEmptyPengguna(listUsers)) {
+            printWord(p.Nama);
+            printf(" belum mempunyai teman\n");
+        }
+        else {
+            printWord(p.Nama);
+            printf(" memiliki %d teman\nDaftar teman ", listLengthPengguna(listUsers));
+            printWord(p.Nama);
+            for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+                ElTypePengguna el = ELMTPengguna(listUsers, i);
+                if (IsTeman(p.Nama, el.Nama)) {
+                    if (!WordEqual(p.Nama, el.Nama)) {
+                        printf("| ");
+                        printWord(el.Nama);
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+}
+void Hapus_Teman(Pengguna p) {}
+
 // 4. Permintaan Pertemanan
+void Tambah_Teman(Pengguna p) {}
+void Batal_Tambah_Teman(Pengguna p) {}
+void Daftar_Permintaan_Perteman(Pengguna p) {}
+void Setujui_Pertemanan(Pengguna p) {}
 
 // 5. Kicauan
 void PrintKicauan(Kicauan k) {
