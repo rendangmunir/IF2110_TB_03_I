@@ -958,7 +958,7 @@ void Daftar_Teman(Pengguna p) {
         else {
             printf(" memiliki %d teman\nDaftar teman ", jumlahTeman);
             printWord(p.Nama);
-            prinf("\n");
+            printf("\n");
             for (int i = 0; i < listLengthPengguna(listUsers); i++) {
                 ElTypePengguna el = ELMTPengguna(listUsers, i);
                 if (IsTeman(p.Nama, el.Nama)) {
@@ -972,6 +972,7 @@ void Daftar_Teman(Pengguna p) {
         }
     }
 }
+
 void Hapus_Teman(Pengguna p) {
     printf("Masukkan nama pengguna:\n");
     STARTWORD();
