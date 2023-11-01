@@ -939,17 +939,26 @@ boolean IsTeman(Word user1, Word user2) {
 }
 
 void Daftar_Teman(Pengguna p) {
+    int jumlahTeman = 0;
     if (!isLoggedIn) {
         printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
     } else {
-        if (isEmptyPengguna(listUsers)) {
-            printWord(p.Nama);
+        printWord(p.Nama);
+        for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+            ElTypePengguna el = ELMTPengguna(listUsers, i);
+            if (IsTeman(p.Nama, el.Nama)) {
+                if (!WordEqual(p.Nama, el.Nama)) {
+                    jumlahTeman++;
+                }
+            }
+        }
+        if (jumlahTeman == 0) {
             printf(" belum mempunyai teman\n");
         }
         else {
+            printf(" memiliki %d teman\nDaftar teman ", jumlahTeman);
             printWord(p.Nama);
-            printf(" memiliki %d teman\nDaftar teman ", listLengthPengguna(listUsers));
-            printWord(p.Nama);
+            prinf("\n");
             for (int i = 0; i < listLengthPengguna(listUsers); i++) {
                 ElTypePengguna el = ELMTPengguna(listUsers, i);
                 if (IsTeman(p.Nama, el.Nama)) {
