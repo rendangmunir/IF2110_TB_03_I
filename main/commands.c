@@ -972,7 +972,29 @@ void Daftar_Teman(Pengguna p) {
         }
     }
 }
-void Hapus_Teman(Pengguna p) {}
+void Hapus_Teman(Pengguna p) {
+    printf("Masukkan nama pengguna:\n");
+    STARTWORD();
+    Word nama = currentWord;
+    if (!IsTeman(p.Nama,nama)) {
+        printf("/n");
+        printWord(nama);
+        printf(" bukan teman Anda.\n");
+    } else {
+        printf("Apakah anda yakin ingin menghapus ");
+        printWord(nama); 
+        printf(" dari daftar teman anda?(YA/TIDAK) ");
+        STARTWORD();
+        Word choice = currentWord;
+        if (choice.TabWord[0] == 'T') {
+            printf("Penghapusan teman dibatalkan.\n");
+        } else {
+            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
+            printWord(nama);
+            printf(" berhasil dihapus dari daftar teman Anda.\n");
+        }
+    }
+}
 
 // 4. Permintaan Pertemanan
 void Tambah_Teman(Pengguna p) {}
