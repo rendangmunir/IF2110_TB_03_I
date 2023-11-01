@@ -60,10 +60,11 @@ void HapusBalasan();
 // 7. Draf Kicauan
 
 // 8. Utas
-void displayUtas(List l);
+void CetakUtas();
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
+void Utas();
 
 // 9. Tagar
 
@@ -448,13 +449,13 @@ void BacaKicauan() {
 void BacaBalasan() {
     // ID Kicauan
     ADVNEWLINE();
-    int IDKicau = WordToInt(currentWord);
+    int IDUtas = WordToInt(currentWord);
 
     // Jumlah Balasan
     ADVNEWLINE();
     int n = WordToInt(currentWord);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     // Baca Balasan
     for (int i = 0; i < n; i++) {
         // ID Parent
@@ -1118,14 +1119,14 @@ void PrintTreeBalasan(TreeBalasan t, int indent) {
 
 void Balas() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
-    printf("IDKicau: %d\n", IDKicau);
+    int IDUtas = WordToInt(currentWord);
+    printf("IDUtas: %d\n", IDUtas);
 
     ADVWORD();
     int IDBalasan = WordToInt(currentWord);
     printf("IDBalasan: %d\n", IDBalasan);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat kicauan yang ingin Anda balas!\n");
     } else {
@@ -1150,9 +1151,9 @@ void Balas() {
 
 void DisplayBalasan() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
+    int IDUtas = WordToInt(currentWord);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat kicauan dengan ID tersebut!\n");
     } else if (ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan == 0) {
@@ -1165,14 +1166,14 @@ void DisplayBalasan() {
 
 void HapusBalasan() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
-    printf("IDKicau: %d\n", IDKicau);
+    int IDUtas = WordToInt(currentWord);
+    printf("IDUtas: %d\n", IDUtas);
 
     ADVWORD();
     int IDBalasan = WordToInt(currentWord);
     printf("IDBalasan: %d\n", IDBalasan);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
     } else {
@@ -1191,7 +1192,7 @@ void HapusBalasan() {
 // 7. Draf Kicauan
 
 // 8. Utas
-void displayUtas(List l)
+void printUtas(List l)
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -1220,6 +1221,60 @@ void displayUtas(List l)
         printTab(2);
         printWordNewline(text);
         p = NEXT(p);
+    }
+}
+
+nodeUtas inputUtas(){
+    Kicauan k = inputKicau();
+    nodeUtas u;
+    u.author = k.author;
+    u.index = IDX_UNDEF;
+    u.datetime = k.datetime;
+    u.text = k.text;
+    u.next = NULL;
+    return u;
+}
+
+void Utas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
+    
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Kicauan tidak ditemukan!\n");
+    }else{
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        Word author = k.author;
+        Word Username = p.Nama;
+        // Compare Username dengan author
+        if (!WordEqual(author,Username)){
+            printf("Utas ini bukan milik anda\n");
+        }else{
+
+        }
+    }
+}
+
+void CetakUtas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
+    Word privat = {"Privat", 6};
+    Word publik = {"Publik", 6};
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Utas tidak ditemukan!\n");
+    } else {
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        if(p.JenisAkun.TabWord[1] == privat.TabWord[1]){
+            printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
+        }else {
+            PrintKicauan(k);
+            printUtas(l);
+        }
     }
 }
 
