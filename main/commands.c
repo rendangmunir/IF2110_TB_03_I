@@ -938,7 +938,70 @@ boolean IsTeman(Word user1, Word user2) {
     return (ELMT_MATRIXCHAR(FriendGraph, idx1, idx2) == FRIEND_MARK);
 }
 
+void Daftar_Teman(Pengguna p) {
+    int jumlahTeman = 0;
+    if (!isLoggedIn) {
+        printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
+    } else {
+        printWord(p.Nama);
+        for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+            ElTypePengguna el = ELMTPengguna(listUsers, i);
+            if (IsTeman(p.Nama, el.Nama)) {
+                if (!WordEqual(p.Nama, el.Nama)) {
+                    jumlahTeman++;
+                }
+            }
+        }
+        if (jumlahTeman == 0) {
+            printf(" belum mempunyai teman\n");
+        }
+        else {
+            printf(" memiliki %d teman\nDaftar teman ", jumlahTeman);
+            printWord(p.Nama);
+            printf("\n");
+            for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+                ElTypePengguna el = ELMTPengguna(listUsers, i);
+                if (IsTeman(p.Nama, el.Nama)) {
+                    if (!WordEqual(p.Nama, el.Nama)) {
+                        printf("| ");
+                        printWord(el.Nama);
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Hapus_Teman(Pengguna p) {
+    printf("Masukkan nama pengguna:\n");
+    STARTWORD();
+    Word nama = currentWord;
+    if (!IsTeman(p.Nama,nama)) {
+        printf("/n");
+        printWord(nama);
+        printf(" bukan teman Anda.\n");
+    } else {
+        printf("Apakah anda yakin ingin menghapus ");
+        printWord(nama); 
+        printf(" dari daftar teman anda?(YA/TIDAK) ");
+        STARTWORD();
+        Word choice = currentWord;
+        if (choice.TabWord[0] == 'T') {
+            printf("Penghapusan teman dibatalkan.\n");
+        } else {
+            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
+            printWord(nama);
+            printf(" berhasil dihapus dari daftar teman Anda.\n");
+        }
+    }
+}
+
 // 4. Permintaan Pertemanan
+void Tambah_Teman(Pengguna p) {}
+void Batal_Tambah_Teman(Pengguna p) {}
+void Daftar_Permintaan_Perteman(Pengguna p) {}
+void Setujui_Pertemanan(Pengguna p) {}
 
 // 5. Kicauan
 void PrintKicauan(Kicauan k) {
