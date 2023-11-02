@@ -40,4 +40,7 @@
 // X. ADT pcolor
 #include "../modules/pcolor/pcolor.c"
 
+// X. ADT Stack Draf
+#include "../modules/stackkicauan/stackDraf.c"
+
 #endif
