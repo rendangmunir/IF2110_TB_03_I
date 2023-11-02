@@ -60,6 +60,7 @@
     "random": "c",
     "datetime.h": "c",
     "wordmachine.h": "c",
-    "charmachine.h": "c"
+    "charmachine.h": "c",
+    "matrixchar.h": "c"
   }
 }

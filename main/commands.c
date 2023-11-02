@@ -18,7 +18,7 @@ void BacaKicauan();
 void BacaBalasan();
 
 void simpanDATETIME(FILE* file, DATETIME t);
-void SimpanConfigFile(char* foldername, int op, char* suffix);
+void SimpanDataConfig(char* foldername, int op, char* suffix);
 void SimpanKicauan(char* filepath);
 void SimpanBalasan(char* filepath);
 
@@ -39,6 +39,7 @@ void Atur_Jenis_Akun();
 void Ubah_Foto_Profil();
 
 // 3. Teman
+boolean IsTeman(Word user1, Word user2);
 
 // 4. Permintaan Pertemanan
 
@@ -63,10 +64,11 @@ void PrintDraf(Kicauan Draf);
 void LihatDraf();
 
 // 8. Utas
-void displayUtas(List l);
+void CetakUtas();
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
+void Utas();
 
 // 9. Tagar
 
@@ -459,13 +461,13 @@ void BacaKicauan() {
 void BacaBalasan() {
     // ID Kicauan
     ADVNEWLINE();
-    int IDKicau = WordToInt(currentWord);
+    int IDUtas = WordToInt(currentWord);
 
     // Jumlah Balasan
     ADVNEWLINE();
     int n = WordToInt(currentWord);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     // Baca Balasan
     for (int i = 0; i < n; i++) {
         // ID Parent
@@ -516,7 +518,7 @@ void simpanDATETIME(FILE* file, DATETIME t) {
     fprintf(file, "%02d", t.T.SS);
 }
 
-void SimpanConfigFile(char* folderpath, int op, char* suffix) {
+void SimpanDataConfig(char* folderpath, int op, char* suffix) {
     // 1. Setup filepath string
     char filepath[80];
     concatStrings(folderpath, suffix, filepath);
@@ -528,6 +530,7 @@ void SimpanConfigFile(char* folderpath, int op, char* suffix) {
             break;
         case 3:
             SimpanBalasan(filepath);
+            break;
     }
 }
 
@@ -572,17 +575,40 @@ void SimpanBalasan(char* filepath) {
     int n = listLengthKicauan(listKicauan);
     fprintf(configFile, "%d\n", count);
 
+    int currentKicauan = 0;
     for (int i = 0; i < n; i++) {
         Kicauan k = ELMT_Kicauan(listKicauan, i);
         if (k.jumlahBalasan > 0) {
+            if (currentKicauan > 0) {
+                fprintf(configFile, "\n");
+            }
             fprintf(configFile, "%d\n", k.id);
             fprintf(configFile, "%d", k.jumlahBalasan);
             SimpanTreeBalasan(configFile, k.tree);
+            currentKicauan += 1;
         }
     }
 
     // 3. Close file
     fclose(configFile);
+}
+
+void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
+	if (t != Nil_BALASAN) {        
+        int i = 0;
+        while (i < TREECOUNT_BALASAN(t)) {
+            Balasan parent = ROOT_BALASAN(t);
+            Balasan child = ROOT_BALASAN(SUBTREE_BALASAN(t, i));
+
+            fprintf(file, "\n%d %d\n", parent.id, child.id);
+            WriteWord(file, child.text); fprintf(file, "\n");
+            WriteWord(file, child.author); fprintf(file, "\n");
+            simpanDATETIME(file, child.datetime);
+
+            SimpanTreeBalasan(file, SUBTREE_BALASAN(t, i));
+            i += 1;
+        }
+	}
 }
 
 // 1. Pengguna
@@ -715,8 +741,8 @@ void Simpan() {
     printf("\nAnda akan melakukan penyimpanan di ");
     printWord(foldernameWord); printf(".\n\nMohon tunggu...\n1...\n2...\n3...\n\nPenyimpanan telah berhasil dilakukan!\n");
 
-    SimpanConfigFile(folderpath, 2, "/kicauan.config");
-    SimpanConfigFile(folderpath, 3, "/balasan.config");
+    SimpanDataConfig(folderpath, 2, "/kicauan.config");
+    SimpanDataConfig(folderpath, 3, "/balasan.config");
 }
 
 // 2. Profil
@@ -725,12 +751,13 @@ void Ganti_Profil(){
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
     }else{
-        printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
+        printf("\n| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
         printf("| No HP: %d\n", currentUser.noHP);
         printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
         Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
         Word empty = {';',1};
+        boolean emptystring=false;
 
         boolean validbio=false;
         Word bio;
@@ -742,6 +769,9 @@ void Ganti_Profil(){
             bio = currentWord;
             if (currentWord.Length<=135){
                 validbio=true;
+                if (WordEqual(currentWord,empty)){
+                    emptystring=true;
+                }
             }
             if (!validbio){
                 printf("\n");
@@ -749,17 +779,20 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.Bio=bio;
+        if (!emptystring){
+            currentUser.Bio=bio;
+        }
         printf("\n");
         /* code */
         
-
+        emptystring=false;
         boolean validnr=false;
         while (!validnr)
         {
             printf("Masukkan No HP:\n");
             STARTSENTENCE();
             if (WordEqual(currentWord,empty)){
+                emptystring=true;
                 validnr=true;
             }
             for (int i=0; i<currentWord.Length; i++){
@@ -773,15 +806,19 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.noHP= (currentWord);
+        if (!emptystring){
+            currentUser.noHP= (currentWord);
+        }
         printf("\n");
 
+        emptystring=false;
         boolean validwt=false;
         while (!validwt)
         {
             printf("Masukkan Weton:\n");
             STARTSENTENCE();
             if (WordEqual(currentWord,empty)){
+                emptystring=true;
                 validwt=true;
             }
 
@@ -796,7 +833,9 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.Weton=currentWord;
+        if(!emptystring){
+            currentUser.Weton=currentWord;
+        }
         printf("Profil anda sudah berhasil diperbarui!\n\n");
     }
 }
@@ -818,7 +857,7 @@ void PrintFoto(Pengguna p){
 }
 
 void PrintProfil(Pengguna p){
-    printf("| Nama: "); printWord(p.Nama); printf("\n");
+    printf("\n| Nama: "); printWord(p.Nama); printf("\n");
     printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
     printf("| No HP: "); printWord(p.noHP); printf("\n");
     printf("| Weton: "); printWord(p.Weton); printf("\n\n");
@@ -917,8 +956,77 @@ void Ubah_Foto_Profil(){
 }
 
 // 3. Teman
+boolean IsTeman(Word user1, Word user2) {
+    int idx1 = indexOfUser(listUsers, user1);
+    int idx2 = indexOfUser(listUsers, user2);
+
+    return (ELMT_MATRIXCHAR(FriendGraph, idx1, idx2) == FRIEND_MARK);
+}
+
+void Daftar_Teman(Pengguna p) {
+    int jumlahTeman = 0;
+    if (!isLoggedIn) {
+        printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
+    } else {
+        printWord(p.Nama);
+        for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+            ElTypePengguna el = ELMTPengguna(listUsers, i);
+            if (IsTeman(p.Nama, el.Nama)) {
+                if (!WordEqual(p.Nama, el.Nama)) {
+                    jumlahTeman++;
+                }
+            }
+        }
+        if (jumlahTeman == 0) {
+            printf(" belum mempunyai teman\n");
+        }
+        else {
+            printf(" memiliki %d teman\nDaftar teman ", jumlahTeman);
+            printWord(p.Nama);
+            printf("\n");
+            for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+                ElTypePengguna el = ELMTPengguna(listUsers, i);
+                if (IsTeman(p.Nama, el.Nama)) {
+                    if (!WordEqual(p.Nama, el.Nama)) {
+                        printf("| ");
+                        printWord(el.Nama);
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Hapus_Teman(Pengguna p) {
+    printf("Masukkan nama pengguna:\n");
+    STARTWORD();
+    Word nama = currentWord;
+    if (!IsTeman(p.Nama,nama)) {
+        printf("/n");
+        printWord(nama);
+        printf(" bukan teman Anda.\n");
+    } else {
+        printf("Apakah anda yakin ingin menghapus ");
+        printWord(nama); 
+        printf(" dari daftar teman anda?(YA/TIDAK) ");
+        STARTWORD();
+        Word choice = currentWord;
+        if (choice.TabWord[0] == 'T') {
+            printf("Penghapusan teman dibatalkan.\n");
+        } else {
+            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
+            printWord(nama);
+            printf(" berhasil dihapus dari daftar teman Anda.\n");
+        }
+    }
+}
 
 // 4. Permintaan Pertemanan
+void Tambah_Teman(Pengguna p) {}
+void Batal_Tambah_Teman(Pengguna p) {}
+void Daftar_Permintaan_Perteman(Pengguna p) {}
+void Setujui_Pertemanan(Pengguna p) {}
 
 // 5. Kicauan
 void PrintKicauan(Kicauan k) {
@@ -944,6 +1052,9 @@ void PrintKicauan(Kicauan k) {
     
     printTab(1);
     printf("Disukai: %d\n", likes);
+
+    printTab(1);
+    printf("Balasan: %d\n", k.jumlahBalasan);
 }
 
 int indexOfKicauan(int id) {
@@ -1009,7 +1120,7 @@ void DisplayKicauan() {
     int kicauanCount = listLengthKicauan(listKicauan);
     for (int i = (kicauanCount - 1); i >= 0; i--) {
         Kicauan k = ELMT_Kicauan(listKicauan, i);
-        if (WordEqual(k.author, currentUser.Nama)) {
+        if (WordEqual(k.author, currentUser.Nama) || IsTeman(k.author, currentUser.Nama)) {
             PrintKicauan(k);
         }
     }
@@ -1063,34 +1174,16 @@ void PrintTreeBalasan(TreeBalasan t, int indent) {
 	}
 }
 
-void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
-	if (t != Nil_BALASAN) {        
-        int i = 0;
-        while (i < TREECOUNT_BALASAN(t)) {
-            Balasan parent = ROOT_BALASAN(t);
-            Balasan child = ROOT_BALASAN(SUBTREE_BALASAN(t, i));
-
-            fprintf(file, "\n%d %d\n", parent.id, child.id);
-            WriteWord(file, child.text); fprintf(file, "\n");
-            WriteWord(file, child.author); fprintf(file, "\n");
-            simpanDATETIME(file, child.datetime);
-
-            SimpanTreeBalasan(file, SUBTREE_BALASAN(t, i));
-            i += 1;
-        }
-	}
-}
-
 void Balas() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
-    printf("IDKicau: %d\n", IDKicau);
+    int IDUtas = WordToInt(currentWord);
+    printf("IDUtas: %d\n", IDUtas);
 
     ADVWORD();
     int IDBalasan = WordToInt(currentWord);
     printf("IDBalasan: %d\n", IDBalasan);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat kicauan yang ingin Anda balas!\n");
     } else {
@@ -1115,9 +1208,9 @@ void Balas() {
 
 void DisplayBalasan() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
+    int IDUtas = WordToInt(currentWord);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat kicauan dengan ID tersebut!\n");
     } else if (ELMT_Kicauan(listKicauan, indexKicauan).jumlahBalasan == 0) {
@@ -1130,14 +1223,14 @@ void DisplayBalasan() {
 
 void HapusBalasan() {
     ADVWORD();
-    int IDKicau = WordToInt(currentWord);
-    printf("IDKicau: %d\n", IDKicau);
+    int IDUtas = WordToInt(currentWord);
+    printf("IDUtas: %d\n", IDUtas);
 
     ADVWORD();
     int IDBalasan = WordToInt(currentWord);
     printf("IDBalasan: %d\n", IDBalasan);
 
-    int indexKicauan = indexOfKicauan(IDKicau);
+    int indexKicauan = indexOfKicauan(IDUtas);
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Wah, tidak terdapat balasan yang ingin Anda hapus!\n");
     } else {
@@ -1234,7 +1327,7 @@ void LihatDraf(){
 }
 
 // 8. Utas
-void displayUtas(List l)
+void printUtas(List l)
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -1263,6 +1356,60 @@ void displayUtas(List l)
         printTab(2);
         printWordNewline(text);
         p = NEXT(p);
+    }
+}
+
+nodeUtas inputUtas(){
+    Kicauan k = inputKicau();
+    nodeUtas u;
+    u.author = k.author;
+    u.index = IDX_UNDEF;
+    u.datetime = k.datetime;
+    u.text = k.text;
+    u.next = NULL;
+    return u;
+}
+
+void Utas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
+    
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Kicauan tidak ditemukan!\n");
+    }else{
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        Word author = k.author;
+        Word Username = p.Nama;
+        // Compare Username dengan author
+        if (!WordEqual(author,Username)){
+            printf("Utas ini bukan milik anda\n");
+        }else{
+
+        }
+    }
+}
+
+void CetakUtas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDUtas);
+    Word privat = {"Privat", 6};
+    Word publik = {"Publik", 6};
+    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+        printf("Utas tidak ditemukan!\n");
+    } else {
+        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        if(p.JenisAkun.TabWord[1] == privat.TabWord[1]){
+            printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
+        }else {
+            PrintKicauan(k);
+            printUtas(l);
+        }
     }
 }
 
@@ -1300,10 +1447,15 @@ void KelompokTeman() {
 
 // 11. FYB
 void FYB() {
+    int n = listLengthKicauan(listKicauan);
+    n = (n < 8) ? n : 8;
+
+    printf("Berikut %d kicauan dengan jumlah like tertinggi di FYB: \n", n);
     MaxHeapKicauan h = createMaxHeapKicauan(listKicauan);
     HeapifyListKicauan(&h);
 
-    while (MaxHeapLengthKicauan(h) > 1) {
+    for (int i = 0; i < n; i++) {
+        printf("\nKicauan %d: ", (i + 1));
         ElTypeKicauan root;
         PopMaxHeap(&h, &root);
 
