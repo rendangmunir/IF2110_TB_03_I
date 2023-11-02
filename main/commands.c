@@ -739,12 +739,13 @@ void Ganti_Profil(){
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
     }else{
-        printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
+        printf("\n| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
         printf("| No HP: %d\n", currentUser.noHP);
         printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
         Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
         Word empty = {';',1};
+        boolean emptystring=false;
 
         boolean validbio=false;
         Word bio;
@@ -756,6 +757,9 @@ void Ganti_Profil(){
             bio = currentWord;
             if (currentWord.Length<=135){
                 validbio=true;
+                if (WordEqual(currentWord,empty)){
+                    emptystring=true;
+                }
             }
             if (!validbio){
                 printf("\n");
@@ -763,17 +767,20 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.Bio=bio;
+        if (!emptystring){
+            currentUser.Bio=bio;
+        }
         printf("\n");
         /* code */
         
-
+        emptystring=false;
         boolean validnr=false;
         while (!validnr)
         {
             printf("Masukkan No HP:\n");
             STARTSENTENCE();
             if (WordEqual(currentWord,empty)){
+                emptystring=true;
                 validnr=true;
             }
             for (int i=0; i<currentWord.Length; i++){
@@ -787,15 +794,19 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.noHP= (currentWord);
+        if (!emptystring){
+            currentUser.noHP= (currentWord);
+        }
         printf("\n");
 
+        emptystring=false;
         boolean validwt=false;
         while (!validwt)
         {
             printf("Masukkan Weton:\n");
             STARTSENTENCE();
             if (WordEqual(currentWord,empty)){
+                emptystring=true;
                 validwt=true;
             }
 
@@ -810,7 +821,9 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.Weton=currentWord;
+        if(!emptystring){
+            currentUser.Weton=currentWord;
+        }
         printf("Profil anda sudah berhasil diperbarui!\n\n");
     }
 }
@@ -832,7 +845,7 @@ void PrintFoto(Pengguna p){
 }
 
 void PrintProfil(Pengguna p){
-    printf("| Nama: "); printWord(p.Nama); printf("\n");
+    printf("\n| Nama: "); printWord(p.Nama); printf("\n");
     printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
     printf("| No HP: "); printWord(p.noHP); printf("\n");
     printf("| Weton: "); printWord(p.Weton); printf("\n\n");
