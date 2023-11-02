@@ -57,6 +57,10 @@ void DisplayBalasan();
 void HapusBalasan();
 
 // 7. Draf Kicauan
+void BuatDraf();
+void ProsesDraf(Kicauan Draf);
+void PrintDraf(Kicauan Draf);
+void LihatDraf();
 
 // 8. Utas
 void displayUtas(List l);
@@ -83,6 +87,7 @@ boolean runProgram;
 ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
 GrafTeman FriendGraph;
+Stack DraftStack;
 
 // ================= Commands =================
 void Inisialisasi() {
@@ -143,6 +148,9 @@ void RunCommand(Word command) {
     Word HAPUS_BALASAN = {"HAPUS_BALASAN", 13};
 
     // 7. Draf Kicauan
+    Word BUAT_DRAF = {"BUAT_DRAF", 9};
+    Word LIHAT_DRAF = {"LIHAT_DRAF", 10};
+    
 
     // 8. Utas
 
@@ -203,7 +211,11 @@ void RunCommand(Word command) {
         HapusBalasan();
     }
     // 7. Draf Kicauan
-
+    else if(WordEqual(command, BUAT_DRAF)){
+        BuatDraf();
+    } else if (WordEqual(command, LIHAT_DRAF)){
+        LihatDraf();
+    }
     // 8. Utas
 
     // X. Kelompok Teman
@@ -1142,6 +1154,84 @@ void HapusBalasan() {
 }
 
 // 7. Draf Kicauan
+
+void BuatDraf(){ 
+    Stack DraftStack;
+    CreateEmptyDraf(&DraftStack);
+    printf("Masukkan draf:\n");
+    Kicauan submittedDraf = inputKicau();
+    printf("\n");
+    ProsesDraf(submittedDraf);
+
+}
+
+void ProsesDraf(Kicauan Draf){
+    Stack DraftStack;
+    printf("Apakah anda ingin menghapus, menyimpan, atau menerbitkan draf ini?\n");
+
+    STARTSENTENCE();
+    Word input = currentWord;
+
+    Word HAPUS = {"HAPUS", 5};
+    Word SIMPAN = {"SIMPAN", 6};
+
+    if(WordEqual(input, HAPUS)){
+        printf("Draf telah berhasil dihapus!\n");
+    }else if(WordEqual(input, SIMPAN)){
+        PushDraf(&DraftStack, Draf);
+        printf("Draf telah berhasil disimpan!\n");
+    }else{
+        printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
+        PrintKicauan(Draf);
+    }
+}
+
+void PrintDraf(Kicauan Draf){
+    Word text = Draf.text;
+    DATETIME datetime = Draf.datetime;
+
+    printf("\n");
+    printTab(1);
+    TulisDATETIME(datetime);
+    
+    printTab(1);
+    printWordNewline(text);
+    printf("\n");   
+}
+
+void LihatDraf(){
+    Stack DraftStack;
+    if(IsEmptyDraf(DraftStack)){
+        printf("Yah, anda belum memiliki draf apapun! Buat dulu ya :D\n");
+        BuatDraf();     // apa gaperlu ini ??
+    }else{
+        printf("Ini draf terakhir anda: \n");
+        PrintDraf(InfoTop(DraftStack));
+
+        printf("Apakah anda ingin mengubah, menghapus, atau menerbitkan draf ini? (KEMBALI jika ingin kembali)\n");
+
+        STARTSENTENCE();
+        Word input = currentWord;
+
+        Word HAPUS = {"HAPUS", 5};
+        Word UBAH = {"UBAH", 4};
+
+        Kicauan temp;
+        if(WordEqual(input, HAPUS)){
+            PopDraf(&DraftStack, &temp);
+            printf("Draf telah berhasil dihapus!\n");
+        }else if(WordEqual(input, UBAH)){
+            PopDraf(&DraftStack, &temp);
+            printf("Masukkan draf yang baru: \n");
+            Kicauan submittedDraf = inputKicau();
+            printf("\n");
+            ProsesDraf(submittedDraf);
+        }else{
+            printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
+            PrintKicauan(InfoTop(DraftStack));
+        }
+    }
+}
 
 // 8. Utas
 void displayUtas(List l)
