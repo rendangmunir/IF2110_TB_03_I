@@ -58,6 +58,10 @@ void DisplayBalasan();
 void HapusBalasan();
 
 // 7. Draf Kicauan
+void BuatDraf();
+void ProsesDraf(Kicauan Draf);
+void PrintDraf(Kicauan Draf);
+void LihatDraf();
 
 // 8. Utas
 void CetakUtas();
@@ -85,6 +89,7 @@ boolean runProgram;
 ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
 GrafTeman FriendGraph;
+Stack DraftStack;
 
 // ================= Commands =================
 void Inisialisasi() {
@@ -145,6 +150,9 @@ void RunCommand(Word command) {
     Word HAPUS_BALASAN = {"HAPUS_BALASAN", 13};
 
     // 7. Draf Kicauan
+    Word BUAT_DRAF = {"BUAT_DRAF", 9};
+    Word LIHAT_DRAF = {"LIHAT_DRAF", 10};
+    
 
     // 8. Utas
 
@@ -205,7 +213,11 @@ void RunCommand(Word command) {
         HapusBalasan();
     }
     // 7. Draf Kicauan
-
+    else if(WordEqual(command, BUAT_DRAF)){
+        BuatDraf();
+    } else if (WordEqual(command, LIHAT_DRAF)){
+        LihatDraf();
+    }
     // 8. Utas
 
     // X. Kelompok Teman
@@ -739,12 +751,13 @@ void Ganti_Profil(){
     if (!isLoggedIn){
         printf("Anda belum login! Masuk terlebih dahulu untuk mengganti profil\n");
     }else{
-        printf("| Nama: "); printWord(currentUser.Nama); printf("\n");
+        printf("\n| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
         printf("| No HP: %d\n", currentUser.noHP);
         printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
         Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
         Word empty = {';',1};
+        boolean emptystring=false;
 
         boolean validbio=false;
         Word bio;
@@ -756,6 +769,9 @@ void Ganti_Profil(){
             bio = currentWord;
             if (currentWord.Length<=135){
                 validbio=true;
+                if (WordEqual(currentWord,empty)){
+                    emptystring=true;
+                }
             }
             if (!validbio){
                 printf("\n");
@@ -763,17 +779,20 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.Bio=bio;
+        if (!emptystring){
+            currentUser.Bio=bio;
+        }
         printf("\n");
         /* code */
         
-
+        emptystring=false;
         boolean validnr=false;
         while (!validnr)
         {
             printf("Masukkan No HP:\n");
             STARTSENTENCE();
             if (WordEqual(currentWord,empty)){
+                emptystring=true;
                 validnr=true;
             }
             for (int i=0; i<currentWord.Length; i++){
@@ -787,15 +806,19 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.noHP= (currentWord);
+        if (!emptystring){
+            currentUser.noHP= (currentWord);
+        }
         printf("\n");
 
+        emptystring=false;
         boolean validwt=false;
         while (!validwt)
         {
             printf("Masukkan Weton:\n");
             STARTSENTENCE();
             if (WordEqual(currentWord,empty)){
+                emptystring=true;
                 validwt=true;
             }
 
@@ -810,7 +833,9 @@ void Ganti_Profil(){
                 printf("\n");
             }
         }
-        currentUser.Weton=currentWord;
+        if(!emptystring){
+            currentUser.Weton=currentWord;
+        }
         printf("Profil anda sudah berhasil diperbarui!\n\n");
     }
 }
@@ -832,7 +857,7 @@ void PrintFoto(Pengguna p){
 }
 
 void PrintProfil(Pengguna p){
-    printf("| Nama: "); printWord(p.Nama); printf("\n");
+    printf("\n| Nama: "); printWord(p.Nama); printf("\n");
     printf("| Bio Akun: "); printWord(p.Bio); printf("\n");
     printf("| No HP: "); printWord(p.noHP); printf("\n");
     printf("| Weton: "); printWord(p.Weton); printf("\n\n");
@@ -938,7 +963,70 @@ boolean IsTeman(Word user1, Word user2) {
     return (ELMT_MATRIXCHAR(FriendGraph, idx1, idx2) == FRIEND_MARK);
 }
 
+void Daftar_Teman(Pengguna p) {
+    int jumlahTeman = 0;
+    if (!isLoggedIn) {
+        printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
+    } else {
+        printWord(p.Nama);
+        for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+            ElTypePengguna el = ELMTPengguna(listUsers, i);
+            if (IsTeman(p.Nama, el.Nama)) {
+                if (!WordEqual(p.Nama, el.Nama)) {
+                    jumlahTeman++;
+                }
+            }
+        }
+        if (jumlahTeman == 0) {
+            printf(" belum mempunyai teman\n");
+        }
+        else {
+            printf(" memiliki %d teman\nDaftar teman ", jumlahTeman);
+            printWord(p.Nama);
+            printf("\n");
+            for (int i = 0; i < listLengthPengguna(listUsers); i++) {
+                ElTypePengguna el = ELMTPengguna(listUsers, i);
+                if (IsTeman(p.Nama, el.Nama)) {
+                    if (!WordEqual(p.Nama, el.Nama)) {
+                        printf("| ");
+                        printWord(el.Nama);
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+}
+
+void Hapus_Teman(Pengguna p) {
+    printf("Masukkan nama pengguna:\n");
+    STARTWORD();
+    Word nama = currentWord;
+    if (!IsTeman(p.Nama,nama)) {
+        printf("/n");
+        printWord(nama);
+        printf(" bukan teman Anda.\n");
+    } else {
+        printf("Apakah anda yakin ingin menghapus ");
+        printWord(nama); 
+        printf(" dari daftar teman anda?(YA/TIDAK) ");
+        STARTWORD();
+        Word choice = currentWord;
+        if (choice.TabWord[0] == 'T') {
+            printf("Penghapusan teman dibatalkan.\n");
+        } else {
+            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
+            printWord(nama);
+            printf(" berhasil dihapus dari daftar teman Anda.\n");
+        }
+    }
+}
+
 // 4. Permintaan Pertemanan
+void Tambah_Teman(Pengguna p) {}
+void Batal_Tambah_Teman(Pengguna p) {}
+void Daftar_Permintaan_Perteman(Pengguna p) {}
+void Setujui_Pertemanan(Pengguna p) {}
 
 // 5. Kicauan
 void PrintKicauan(Kicauan k) {
@@ -1159,6 +1247,84 @@ void HapusBalasan() {
 }
 
 // 7. Draf Kicauan
+
+void BuatDraf(){ 
+    Stack DraftStack;
+    CreateEmptyDraf(&DraftStack);
+    printf("Masukkan draf:\n");
+    Kicauan submittedDraf = inputKicau();
+    printf("\n");
+    ProsesDraf(submittedDraf);
+
+}
+
+void ProsesDraf(Kicauan Draf){
+    Stack DraftStack;
+    printf("Apakah anda ingin menghapus, menyimpan, atau menerbitkan draf ini?\n");
+
+    STARTSENTENCE();
+    Word input = currentWord;
+
+    Word HAPUS = {"HAPUS", 5};
+    Word SIMPAN = {"SIMPAN", 6};
+
+    if(WordEqual(input, HAPUS)){
+        printf("Draf telah berhasil dihapus!\n");
+    }else if(WordEqual(input, SIMPAN)){
+        PushDraf(&DraftStack, Draf);
+        printf("Draf telah berhasil disimpan!\n");
+    }else{
+        printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
+        PrintKicauan(Draf);
+    }
+}
+
+void PrintDraf(Kicauan Draf){
+    Word text = Draf.text;
+    DATETIME datetime = Draf.datetime;
+
+    printf("\n");
+    printTab(1);
+    TulisDATETIME(datetime);
+    
+    printTab(1);
+    printWordNewline(text);
+    printf("\n");   
+}
+
+void LihatDraf(){
+    Stack DraftStack;
+    if(IsEmptyDraf(DraftStack)){
+        printf("Yah, anda belum memiliki draf apapun! Buat dulu ya :D\n");
+        BuatDraf();     // apa gaperlu ini ??
+    }else{
+        printf("Ini draf terakhir anda: \n");
+        PrintDraf(InfoTop(DraftStack));
+
+        printf("Apakah anda ingin mengubah, menghapus, atau menerbitkan draf ini? (KEMBALI jika ingin kembali)\n");
+
+        STARTSENTENCE();
+        Word input = currentWord;
+
+        Word HAPUS = {"HAPUS", 5};
+        Word UBAH = {"UBAH", 4};
+
+        Kicauan temp;
+        if(WordEqual(input, HAPUS)){
+            PopDraf(&DraftStack, &temp);
+            printf("Draf telah berhasil dihapus!\n");
+        }else if(WordEqual(input, UBAH)){
+            PopDraf(&DraftStack, &temp);
+            printf("Masukkan draf yang baru: \n");
+            Kicauan submittedDraf = inputKicau();
+            printf("\n");
+            ProsesDraf(submittedDraf);
+        }else{
+            printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
+            PrintKicauan(InfoTop(DraftStack));
+        }
+    }
+}
 
 // 8. Utas
 void printUtas(List l)
