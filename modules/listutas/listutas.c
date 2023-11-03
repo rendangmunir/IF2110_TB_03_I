@@ -211,3 +211,28 @@ int lengthUtas(List l)
 
 /****************** PROSES TERHADAP LIST ******************/
 
+int IDUtasTerakhir(ListDinKicauan listKicau)
+/*Mengirim idUtasTerakhir dari list kicauan*/
+{
+    int neff =  listKicau.nEff;
+    int count = 1;
+    for(int i =0; i <neff;i++){
+        if(listKicau.buffer[i].idUtas > count){
+            count = listKicau.buffer[i].idUtas;
+        }
+    }
+    return count;
+}
+
+
+Kicauan KicauandenganIdUtas (ListDinKicauan listKicau,int IDUtas)
+/*Mengirim Kicauan dengan IDUtas yang sama*/
+/*Pre kondisi pasti ada kicau dengan IDUtas*/
+{
+    int neff =  listKicau.nEff;
+    for(int i =0; i <neff;i++){
+        if(listKicau.buffer[i].idUtas == IDUtas ){
+            return listKicau.buffer[i];
+        }
+    }
+}

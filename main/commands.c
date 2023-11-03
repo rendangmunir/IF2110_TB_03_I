@@ -84,7 +84,7 @@ void FYB();
 Pengguna currentUser;
 boolean isLoggedIn;
 boolean runProgram;
-
+int JumlahUtas = 0;
 // Data Structures
 ListStatikPengguna listUsers;
 ListDinKicauan listKicauan;
@@ -1327,7 +1327,7 @@ void LihatDraf(){
 }
 
 // 8. Utas
-void printUtas(List l)
+void printUtas(List l,Kicauan k)
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -1336,6 +1336,26 @@ void printUtas(List l)
 /* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
 {
     Address p = l;
+    int id = k.id;
+    Word text = k.text;
+    int likes = k.likes;
+    Word author = k.author;
+    DATETIME datetime = k.datetime;
+    
+    printf("\n");
+    printTab(1);
+    printf("ID = %d\n", id);
+    
+    printTab(1);
+    printWordNewline(author);
+
+    printTab(1);
+    TulisDATETIME(datetime);
+    printf("\n");
+
+    printTab(1);
+    printWordNewline(text);
+    
     while (p != NULL){
         int index = INDEX(p);
         Word author = AUTHOR(p);
@@ -1359,14 +1379,14 @@ void printUtas(List l)
     }
 }
 
-nodeUtas inputUtas(){
+Address inputUtas(){
     Kicauan k = inputKicau();
-    nodeUtas u;
-    u.author = k.author;
-    u.index = IDX_UNDEF;
-    u.datetime = k.datetime;
-    u.text = k.text;
-    u.next = NULL;
+    Address u;
+    AUTHOR(u) = k.author;
+    INDEX(u) = IDX_UNDEF;
+    DATETIME(u) = k.datetime;
+    TEXT(u) = k.text;
+    NEXT(u) = NULL;
     return u;
 }
 
@@ -1379,6 +1399,8 @@ void Utas(){
         printf("Kicauan tidak ditemukan!\n");
     }else{
         Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        k.idUtas = JumlahUtas+1;
+        JumlahUtas++;
         List l = k.nextUtas;
         Pengguna p = currentUser;
         Word author = k.author;
@@ -1387,9 +1409,15 @@ void Utas(){
         if (!WordEqual(author,Username)){
             printf("Utas ini bukan milik anda\n");
         }else{
-
+            Address utas = inputUtas();
+            utas->index = 1;
+            k.nextUtas = utas;
         }
     }
+}
+
+void SambungUtas(){
+    ADVWORD();
 }
 
 void CetakUtas(){
@@ -1407,8 +1435,7 @@ void CetakUtas(){
         if(p.JenisAkun.TabWord[1] == privat.TabWord[1]){
             printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
         }else {
-            PrintKicauan(k);
-            printUtas(l);
+            printUtas(l,k);
         }
     }
 }

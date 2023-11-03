@@ -106,5 +106,10 @@ void deleteAtUtas(List *l, int idx);
 int lengthUtas(List l);
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
 
+int IDUtasTerakhir(ListDinKicauan listKicau);
+/*Mengirim idUtasTerakhir dari list kicauan*/
 /****************** PROSES TERHADAP LIST ******************/
+
+Kicauan KicauandenganIdUtas (ListDinKicauan listKicau,int IDUtas);
+/*Mengirim Kicauan dengan IDUtas yang sama*/
 #endif
