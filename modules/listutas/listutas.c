@@ -192,31 +192,6 @@ void deleteLastUtas(List *l)
     free(p);
 }
 
-void deleteAtUtas(List *l, int idx)
-/* I.S. list tidak kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
-/* F.S. val diset dengan elemen l pada indeks ke-idx. */
-/*      Elemen l pada indeks ke-idx dihapus dari l */
-{
-    if (idx == 1){
-        deleteFirstUtas(l);
-    }else{
-        Address p = *l;
-        Address temp;
-        while (INDEX(p) < idx-1){
-            p = NEXT(p);
-        }
-        temp = NEXT(p);
-        NEXT(p) = NEXT(temp);
-        free(temp);
-        p = NEXT(p);
-        while(p != NULL){
-            INDEX(p)--;
-            p = NEXT(p);
-    }
-    }
-}
-
-
 /****************** PROSES SEMUA ELEMEN LIST ******************/
 int lengthUtas(List l)
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */
@@ -235,9 +210,4 @@ int lengthUtas(List l)
 }
 
 /****************** PROSES TERHADAP LIST ******************/
-List concat(List l1, List l2);
-/* I.S. l1 dan l2 sembarang */
-/* F.S. l1 dan l2 kosong, l3 adalah hasil konkatenasi l1 & l2 */
-/* Konkatenasi dua buah list : l1 dan l2    */
-/* menghasilkan l3 yang baru (dengan elemen list l1 dan l2 secara beurutan). */
-/* Tidak ada alokasi/dealokasi pada prosedur ini */
+
