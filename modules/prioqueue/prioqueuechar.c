@@ -1,18 +1,18 @@
 #include "prioqueuechar.h"
 
-boolean IsEmpty (PrioQueueChar Q)
+boolean IsEmpty_PQueue (PrioQueueChar Q)
 {
     return(Head_PQueue(Q) == Nil && Tail_PQueue(Q) == Nil); 
 }
 
-boolean IsFull (PrioQueueChar Q)
+boolean IsFull_PQueue (PrioQueueChar Q)
 {
-    return NBElmt(Q) == MaxEl_PQueue(Q);
+    return NBElmt_PQueue(Q) == MaxEl_PQueue(Q);
 }
 
-int NBElmt (PrioQueueChar Q)
+int NBElmt_PQueue (PrioQueueChar Q)
 {
-    if (IsEmpty(Q)) {
+    if (IsEmpty_PQueue(Q)) {
         return 0;
     }
     else {
@@ -26,27 +26,27 @@ int NBElmt (PrioQueueChar Q)
     }
 }
 
-void MakeEmpty (PrioQueueChar * Q, int Max)
+void MakeEmpty_PQueue (PrioQueueChar * Q, int Max)
 {
-    (*Q).T = (infotype *) malloc (Max * sizeof(infotype));
+    (*Q).T = (infotype_PQueue *) malloc (Max * sizeof(infotype_PQueue));
 	MaxEl_PQueue(*Q) = Max;
 	Head_PQueue(*Q) = Nil;
 	Tail_PQueue(*Q) = Nil;
 }
 
-void DeAlokasi(PrioQueueChar * Q)
+void DeAlokasi_PQueue (PrioQueueChar * Q)
 {
     free((*Q).T);
 	MaxEl_PQueue(*Q)=0;
 }
 
-void Enqueue (PrioQueueChar * Q, infotype X)
+void Enqueue_PQueue (PrioQueueChar * Q, infotype_PQueue X)
 {
-    if(!IsEmpty(*Q)){
-		Tail_PQueue(*Q) = (Tail(*Q) + 1) % MaxEl(*Q);
+    if(!IsEmpty_PQueue(*Q)){
+		Tail_PQueue(*Q) = (Tail_PQueue(*Q) + 1) % MaxEl_PQueue(*Q);
 		InfoTail_PQueue(*Q) = X;
 		int i = (Tail_PQueue(*Q));
-		infotype temp;
+		infotype_PQueue temp;
 
 		while (i != Head_PQueue(*Q))
 		{
@@ -65,10 +65,10 @@ void Enqueue (PrioQueueChar * Q, infotype X)
     }
 }
 
-void Dequeue (PrioQueueChar * Q, infotype * X)
+void Dequeue_PQueue (PrioQueueChar * Q, infotype_PQueue * X)
 {
     *X = InfoHead_PQueue(*Q);
-	if (NBElmt(*Q)==1) {
+	if (NBElmt_PQueue(*Q)==1) {
         Head_PQueue(*Q) = Nil;
         Tail_PQueue(*Q) = Nil;
     } else {
@@ -80,9 +80,9 @@ void Dequeue (PrioQueueChar * Q, infotype * X)
     }
 }
 
-void PrintPrioQueueChar (PrioQueueChar Q)
+void PrintPrioQueueChar_PQueue (PrioQueueChar Q)
 {
-    if (IsEmpty(Q)) {
+    if (IsEmpty_PQueue(Q)) {
  		printf("#\n");
 	} else {
 		int i,j;
