@@ -11,6 +11,7 @@
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
 #include "../matrixchar/matrixchar.h"
+#include "../prioqueue/prioqueuechar.h"
 
 // Tipe data Pengguna
 typedef struct {
@@ -21,6 +22,7 @@ typedef struct {
    Word Weton;
    Word JenisAkun;
    MatrixChar FotoProfil;
+   PrioQueueChar FriendReq;
    int id;
 } Pengguna;
 

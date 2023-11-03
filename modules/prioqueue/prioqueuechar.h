@@ -26,7 +26,7 @@ typedef struct {
     infotype_PQueue * T;   /* tabel penyimpan elemen */
     address HEAD;  /* alamat penghapusan */
     address TAIL;  /* alamat penambahan */
-    int MaxEl;     /* Max elemen queue */
+    int MaxEl_PQueue;     /* Max elemen queue */
 } PrioQueueChar;
 /* Definisi PrioQueueChar kosong: HEAD=Nil; TAIL=Nil. */
 /* Catatan implementasi: T[0] tidak pernah dipakai */
@@ -39,7 +39,7 @@ typedef struct {
 #define Tail_PQueue(Q)     (Q).TAIL
 #define InfoHead_PQueue(Q) (Q).T[(Q).HEAD]
 #define InfoTail_PQueue(Q) (Q).T[(Q).TAIL]
-#define MaxEl_PQueue(Q)    (Q).MaxEl
+#define MaxEl_PQueue(Q)    (Q).MaxEl_PQueue
 #define Elmt_PQueue(Q,i)   (Q).T[(i)]
 
 /* ********* Prototype ********* */
@@ -87,5 +87,7 @@ void PrintPrioQueueChar_PQueue (PrioQueueChar Q);
 <prio-n> <elemen-n>
 #
 */
+
+boolean IsElmt_PQueue (PrioQueueChar Q, Word X);
 
 #endif

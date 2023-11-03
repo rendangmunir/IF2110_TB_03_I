@@ -83,30 +83,75 @@ void Dequeue_PQueue (PrioQueueChar * Q, infotype_PQueue * X)
 void PrintPrioQueueChar_PQueue (PrioQueueChar Q)
 {
     if (IsEmpty_PQueue(Q)) {
- 		printf("#\n");
+ 		printf("Tidak ada permintaan pertemanan untuk Anda.\n");
 	} else {
 		int i,j;
 		if (Tail_PQueue(Q) - Head_PQueue(Q) < 0) {
 	            for (i = Head_PQueue(Q); i < MaxEl_PQueue(Q); i++) {
-	                printf("%d %c\n", Prio_PQueue(Elmt_PQueue(Q,i)), Info_PQueue(Elmt_PQueue(Q,i)));
+	                printf("| ");
+                    printWord(Info_PQueue(Elmt_PQueue(Q,i)));
+                    printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(Q,i)));
 	            }
 	            for (j = 0; j < Tail_PQueue(Q) + 1; j++) {
 	                if (j != Tail_PQueue(Q)) {
-	                    printf("%d %c\n", Prio_PQueue(Elmt_PQueue(Q,j)), Info_PQueue(Elmt_PQueue(Q,j)));
+	                    printf("| ");
+                        printWord(Info_PQueue(Elmt_PQueue(Q,i)));
+                        printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(Q,i)));
 	                } else {
-	                    printf("%d %c\n", Prio_PQueue(Elmt_PQueue(Q,j)), Info_PQueue(Elmt_PQueue(Q,j)));
+	                    printf("| ");
+                        printWord(Info_PQueue(Elmt_PQueue(Q,i)));
+                        printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(Q,i)));
 	                }
 	            }
 	            printf("#\n");
         } else {
             for (i = Head_PQueue(Q); i < Tail_PQueue(Q) + 1; i++){
                 if (i!=Tail_PQueue(Q)) {
-                    printf("%d %c\n", Prio_PQueue(Elmt_PQueue(Q,i)), Info_PQueue(Elmt_PQueue(Q,i)));
+                    printf("| ");
+                    printWord(Info_PQueue(Elmt_PQueue(Q,i)));
+                    printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(Q,i)));
                 } else {
-                    printf("%d %c\n", Prio_PQueue(Elmt_PQueue(Q,i)), Info_PQueue(Elmt_PQueue(Q,i)));
+                    printf("| ");
+                    printWord(Info_PQueue(Elmt_PQueue(Q,i)));
+                    printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(Q,i)));
                 }
             }
-            printf("#\n");
         }
     }
+}
+
+boolean IsElmt_PQueue (PrioQueueChar Q, Word X)
+{
+    boolean cek = false;
+    if (Tail_PQueue(Q) - Head_PQueue(Q) < 0) {
+        for (int i = Head_PQueue(Q); i < MaxEl_PQueue(Q); i++) {
+            if (WordEqual(X, Info_PQueue(Elmt_PQueue(Q,i)))) {
+                cek = true;
+            }
+        }
+        for (int j = 0; j < Tail_PQueue(Q) + 1; j++) {
+            if (j != Tail_PQueue(Q)) {
+                if (WordEqual(X, Info_PQueue(Elmt_PQueue(Q,j)))) {
+                    cek = true;
+                }
+            } else {
+                if (WordEqual(X, Info_PQueue(Elmt_PQueue(Q,j)))) {
+                    cek = true;
+                }
+            }
+        }
+    } else {
+        for (int i = Head_PQueue(Q); i < Tail_PQueue(Q) + 1; i++){
+            if (i!=Tail_PQueue(Q)) {
+                if (WordEqual(X, Info_PQueue(Elmt_PQueue(Q,i)))) {
+                    cek = true;
+                }
+            } else {
+                if (WordEqual(X, Info_PQueue(Elmt_PQueue(Q,i)))) {
+                    cek = true;
+                }
+            }
+        }
+    }
+    return cek;     
 }
