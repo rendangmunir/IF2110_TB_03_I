@@ -61,6 +61,7 @@
     "datetime.h": "c",
     "wordmachine.h": "c",
     "charmachine.h": "c",
-    "matrixchar.h": "c"
+    "matrixchar.h": "c",
+    "algorithm": "c"
   }
 }

@@ -24,6 +24,7 @@ typedef struct Kicauan {
    TreeBalasan tree;
    int jumlahBalasan;
 
+   int idUtas;
    nodeUtas* nextUtas;
 } Kicauan;
 
