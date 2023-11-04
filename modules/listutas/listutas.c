@@ -192,6 +192,32 @@ void deleteLastUtas(List *l)
     free(p);
 }
 
+void deleteAtUtas(List *l, int idx)
+/* I.S. list tidak kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
+/* F.S. val diset dengan elemen l pada indeks ke-idx. */
+/*      Elemen l pada indeks ke-idx dihapus dari l */
+{
+    if(idx==1){
+        deleteFirstUtas(l);
+    }
+    else{
+        Address p = *l;
+        Address q;
+        while (INDEX(p) < idx-1){
+            p = NEXT(p);
+        }
+        q = NEXT(p);
+        NEXT(p) = NEXT(q);
+        free(q);
+        int i = idx;
+        while(p != NULL){
+            INDEX(p) = i;
+            i++;
+            p = NEXT(p);
+        }
+    }
+}
+
 /****************** PROSES SEMUA ELEMEN LIST ******************/
 int lengthUtas(List l)
 /* Mengirimkan banyaknya elemen list; mengirimkan 0 jika list kosong */

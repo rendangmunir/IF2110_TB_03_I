@@ -1379,28 +1379,29 @@ void printUtas(List l,Kicauan k)
     }
 }
 
-Address inputUtas(){
+nodeUtas inputUtas(){
     Kicauan k = inputKicau();
-    Address u;
-    AUTHOR(u) = k.author;
-    INDEX(u) = IDX_UNDEF;
-    DATETIME(u) = k.datetime;
-    TEXT(u) = k.text;
-    NEXT(u) = NULL;
+    nodeUtas u;
+    u.author = k.author;
+    u.index = IDX_UNDEF;
+    u.datetime = k.datetime;
+    u.text = k.text;
+    u.next = NULL;
     return u;
 }
 
 void Utas(){
     ADVWORD();
-    int IDUtas = WordToInt(currentWord);
-    int indexKicauan = indexOfKicauan(IDUtas);
+    int IDKicau = WordToInt(currentWord);
+    int indexKicauan = indexOfKicauan(IDKicau);
     
     if (indexKicauan == IDX_UNDEF_KICAUAN) {
         printf("Kicauan tidak ditemukan!\n");
     }else{
+        printf("Utas berhasil dibuat!\n");
         Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
-        k.idUtas = JumlahUtas+1;
         JumlahUtas++;
+        k.idUtas = JumlahUtas;
         List l = k.nextUtas;
         Pengguna p = currentUser;
         Word author = k.author;
@@ -1409,15 +1410,74 @@ void Utas(){
         if (!WordEqual(author,Username)){
             printf("Utas ini bukan milik anda\n");
         }else{
-            Address utas = inputUtas();
-            utas->index = 1;
-            k.nextUtas = utas;
+            insertFirstUtas(&l,inputUtas());
+        }
+
+        // Melakukan lanjutan utas
+        printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK) ");
+        // Asumsi yang di input selalu benar
+        ADVWORD();printf("\n");
+        Word YA = {"Ya", 2};
+        Word  TIDAK = {"TIDAK", 5};
+        while (WordEqual(currentWord,YA))
+        {
+            insertLastUtas(&l,inputUtas());
+            printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK) ");
+            ADVWORD();printf("\n");
+
         }
     }
 }
 
 void SambungUtas(){
     ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    ADVWORD();
+    int index = WordToInt(currentWord);
+    if(IDUtas > JumlahUtas){
+        printf("Utas tidak ditemukan!\n");
+    }else{
+        Kicauan k = KicauandenganIdUtas(listKicauan,IDUtas);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        Word author = k.author;
+        Word Username = p.Nama;
+        if(index>lengthUtas(l)){
+            printf("Index terlalu tinggi!\n");
+        }else{
+            if (!WordEqual(author,Username)){
+                printf("Utas ini bukan milik anda\n");
+            }else{
+                insertAtUtas(&l,inputUtas(),index);
+            }
+        }
+    }
+}
+
+void HapusUtas(){
+    ADVWORD();
+    int IDUtas = WordToInt(currentWord);
+    ADVWORD();
+    int index = WordToInt(currentWord);
+    if(IDUtas>JumlahUtas){
+        printf("Utas tidak ditemukan!\n");
+    }else{
+        Kicauan k = KicauandenganIdUtas(listKicauan,IDUtas);
+        List l = k.nextUtas;
+        Pengguna p = currentUser;
+        Word author = k.author;
+        Word Username = p.Nama;
+        if(index>lengthUtas(l)){
+            printf("Kicauan sambungan dengan index 3 tidak ditemukan pada utas!\n");
+        }else{
+            if (!WordEqual(author,Username)){
+                printf("Anda tidak bisa menghapus kicauan utama!\n");
+            }else{
+                deleteAtUtas(&l,index);
+            }
+        }
+    }
+
 }
 
 void CetakUtas(){
