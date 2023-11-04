@@ -1434,7 +1434,7 @@ void SambungUtas(){
     int IDUtas = WordToInt(currentWord);
     ADVWORD();
     int index = WordToInt(currentWord);
-    if(IDUtas > JumlahUtas){
+    if(IDUtas > JumlahUtas || IDUtas <= 0){
         printf("Utas tidak ditemukan!\n");
     }else{
         Kicauan k = KicauandenganIdUtas(listKicauan,IDUtas);
@@ -1459,7 +1459,7 @@ void HapusUtas(){
     int IDUtas = WordToInt(currentWord);
     ADVWORD();
     int index = WordToInt(currentWord);
-    if(IDUtas>JumlahUtas){
+    if(IDUtas>JumlahUtas || IDUtas <= 0){
         printf("Utas tidak ditemukan!\n");
     }else{
         Kicauan k = KicauandenganIdUtas(listKicauan,IDUtas);
@@ -1469,9 +1469,11 @@ void HapusUtas(){
         Word Username = p.Nama;
         if(index>lengthUtas(l)){
             printf("Kicauan sambungan dengan index 3 tidak ditemukan pada utas!\n");
+        }else if(index == 0){
+            printf("Anda tidak bisa menghapus kicauan utama!");printf("\n");    
         }else{
             if (!WordEqual(author,Username)){
-                printf("Anda tidak bisa menghapus kicauan utama!\n");
+                printf("Anda tidak bisa menghapus kicauan dalam utas ini!\n");printf("\n");
             }else{
                 deleteAtUtas(&l,index);
             }
@@ -1483,13 +1485,12 @@ void HapusUtas(){
 void CetakUtas(){
     ADVWORD();
     int IDUtas = WordToInt(currentWord);
-    int indexKicauan = indexOfKicauan(IDUtas);
     Word privat = {"Privat", 6};
     Word publik = {"Publik", 6};
-    if (indexKicauan == IDX_UNDEF_KICAUAN) {
+    if(IDUtas>JumlahUtas || IDUtas <= 0){
         printf("Utas tidak ditemukan!\n");
     } else {
-        Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+        Kicauan k = KicauandenganIdUtas(listKicauan,IDUtas);
         List l = k.nextUtas;
         Pengguna p = currentUser;
         if(p.JenisAkun.TabWord[1] == privat.TabWord[1]){
