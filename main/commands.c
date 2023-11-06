@@ -1295,22 +1295,34 @@ void BuatDraf(){
 }
 
 void ProsesDraf(Kicauan Draf){
-    printf("Apakah anda ingin menghapus, menyimpan, atau menerbitkan draf ini?\n");
+    printf("Apakah anda ingin menghapus, menyimpan, atau menerbitkan draf ini? (HAPUS / SIMPAN / TERBIT)\n");
 
     STARTSENTENCE();
     Word input = currentWord;
 
     Word HAPUS = {"HAPUS", 5};
     Word SIMPAN = {"SIMPAN", 6};
+    Word TERBIT = {"TERBIT", 6};
 
-    if(WordEqual(input, HAPUS)){
-        printf("Draf telah berhasil dihapus!\n");
-    }else if(WordEqual(input, SIMPAN)){
-        PushDraf(&currentUser.StackDraf, Draf);
-        printf("Draf telah berhasil disimpan!\n");
-    }else{
-        printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
-        PrintKicauan(Draf);
+    boolean inputValid = false;
+    while (!inputValid) {        
+        if(WordEqual(input, HAPUS)){
+            printf("Draf telah berhasil dihapus!\n");
+            inputValid = true;
+        }else if(WordEqual(input, SIMPAN)){
+            PushDraf(&currentUser.StackDraf, Draf);
+            printf("Draf telah berhasil disimpan!\n");
+            inputValid = true;
+        }else if (WordEqual(input, TERBIT)){
+            printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
+            PrintKicauan(Draf);
+            
+            Draf.id = listLengthKicauan(listKicauan) + 1;
+            insertLastKicauan(&listKicauan, Draf);
+            inputValid = true;
+        } else {
+            printf("Masukkan tidak valid! Silahkan masukkan HAPUS, SIMPAN, atau TERBIT.\n");
+        }
     }
 }
 
