@@ -103,19 +103,19 @@ void Inisialisasi() {
     char prefix[] = "./config/";
     char filepath[100];
     concatStrings(prefix, dir, filepath);
-    printf("Filepath: %s\n", filepath);
+    // printf("Filepath: %s\n", filepath);
     // Check if folder exists
     if (!directoryExists(filepath)) {
         printf("Nama folder yang Anda masukkan tidak ditemukan! Mohon masukkan ulang nama folder.\n");
         Inisialisasi();
     } else {
-        printf("Masuk pembacaan\n");
+        // printf("Masuk pembacaan\n");
         BacaDataConfig(filepath, 1, "/pengguna.config");
-        printf("Success Pengguna\n");
+        // printf("Success Pengguna\n");
         BacaDataConfig(filepath, 2, "/kicauan.config");
-        printf("Success Kicauan\n");
+        // printf("Success Kicauan\n");
         BacaDataConfig(filepath, 3, "/balasan.config");
-        printf("Success Balasan\n");
+        // printf("Success Balasan\n");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -362,11 +362,11 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
     } else {
         itemCount = 0;
     }
-    printf("Success Baca Config\n");
+    // printf("Success Baca Config\n");
     for (int i = 0; i < itemCount; i++) {
         switch (op) {
         case 1:
-            printf("Success Switch \n");
+            // printf("Success Switch \n");
             BacaProfilPengguna();
             break;
         case 2:
@@ -390,10 +390,10 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
 }
 
 void BacaProfilPengguna() {
-    printf("Masuk Baca Profil\n");
+    // printf("Masuk Baca Profil\n");
     Pengguna p;
     Word empty = {";", 1};
-    printf("Success 1\n");
+    // printf("Success 1\n");
     // 1 Nama
     ADVNEWLINE();
     Word nama = currentWord;
@@ -423,13 +423,11 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
-    printf("Success 2\n");
     // Miscellaneous
     int id = listLengthPengguna(listUsers) + 1;
     Stack stackDraf;
     CreateEmptyDraf(&stackDraf);
 
-    printf("Success 3\n");
     // printWord(nama); printf("\n");
     // printWord(pass); printf("\n");
     // printWord(bio); printf("\n");
@@ -440,14 +438,13 @@ void BacaProfilPengguna() {
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic, id, stackDraf};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
-    printf("Success 4\n");
 }
 
 void BacaGrafPertemanan() {
     int n = listLengthPengguna(listUsers);
     readMatrixChar(&FriendGraph, n, n);
 
-    displayMatrixChar(FriendGraph);
+    // displayMatrixChar(FriendGraph);
 }
 
 void BacaKicauan() {
@@ -1325,41 +1322,59 @@ void PrintDraf(Kicauan Draf){
     printTab(1);
     TulisDATETIME(datetime);
     
+    printf("\n");
     printTab(1);
     printWordNewline(text);
-    printf("\n");   
+    printf("\n");
 }
 
 void LihatDraf(){
-    Stack stackPengguna = currentUser.StackDraf;
-    if(IsEmptyDraf(stackPengguna)){
+    if(IsEmptyDraf(currentUser.StackDraf)){
         printf("Yah, anda belum memiliki draf apapun! Buat dulu ya :D\n");
         // BuatDraf();     // apa gaperlu ini ??
     }else{
+        Kicauan k = InfoTop(currentUser.StackDraf);
         printf("Ini draf terakhir anda: \n");
-        PrintDraf(InfoTop(stackPengguna));
-
-        printf("Apakah anda ingin mengubah, menghapus, atau menerbitkan draf ini? (KEMBALI jika ingin kembali)\n");
-
-        STARTSENTENCE();
-        Word input = currentWord;
+        PrintDraf(k);
 
         Word HAPUS = {"HAPUS", 5};
         Word UBAH = {"UBAH", 4};
+        Word TERBIT = {"TERBIT", 6};
+        Word KEMBALI = {"KEMBALI", 7};
 
         Kicauan temp;
-        if(WordEqual(input, HAPUS)){
-            PopDraf(&stackPengguna, &temp);
-            printf("Draf telah berhasil dihapus!\n");
-        }else if(WordEqual(input, UBAH)){
-            PopDraf(&stackPengguna, &temp);
-            printf("Masukkan draf yang baru: \n");
-            Kicauan submittedDraf = inputKicau();
-            printf("\n");
-            ProsesDraf(submittedDraf);
-        }else{
-            printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
-            PrintKicauan(InfoTop(stackPengguna));
+        boolean inputValid = false;
+
+        while(!inputValid) {
+            printf("Apakah anda ingin mengubah, menghapus, atau menerbitkan draf ini? (HAPUS / UBAH / TERBIT / KEMBALI)\n");
+
+            STARTSENTENCE();
+            Word input = currentWord;
+            if(WordEqual(input, HAPUS)){
+                PopDraf(&currentUser.StackDraf, &temp);
+                printf("Draf telah berhasil dihapus!\n");
+                inputValid = true;
+            }else if(WordEqual(input, UBAH)){
+                PopDraf(&currentUser.StackDraf, &temp);
+                printf("Masukkan draf yang baru: \n");
+                Kicauan submittedDraf = inputKicau();
+                printf("\n");
+                ProsesDraf(submittedDraf);
+                inputValid = true;
+            } else if (WordEqual(input, TERBIT)) {
+                PopDraf(&currentUser.StackDraf, &k);
+                k.id = listLengthKicauan(listKicauan) + 1;
+                insertLastKicauan(&listKicauan, k);
+
+                printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
+                PrintKicauan(k);
+                inputValid = true;
+            } else if (WordEqual(input, KEMBALI)) {
+                printf("Modifikasi draf dibatalkan. Kembali ke menu!\n");
+                inputValid = true;
+            } else{
+                printf("Perintah tidak valid! Masukkan HAPUS, UBAH, TERBIT, atau KEMBALI.\n");
+            }
         }
     }
 }
