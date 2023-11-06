@@ -88,11 +88,11 @@ void insertFirstUtas(List *l, EltypeUtas val)
 {
     Address newUtas,p;
     int idx;
-    newUtas = newNodeUtas(val);
+    // newUtas = newNodeUtas(val);
     if (newUtas != NULL){
         p = *l;
-        NEXT(newUtas) = *l;
-        *l = newUtas;
+        val.next = *l;
+        *l = &val;
         // Set idx
         idx = 1;
         while(p != NULL){
@@ -248,17 +248,4 @@ int IDUtasTerakhir(ListDinKicauan listKicau)
         }
     }
     return count;
-}
-
-
-Kicauan KicauandenganIdUtas (ListDinKicauan listKicau,int IDUtas)
-/*Mengirim Kicauan dengan IDUtas yang sama*/
-/*Pre kondisi pasti ada kicau dengan IDUtas*/
-{
-    int neff =  listKicau.nEff;
-    for(int i =0; i <neff;i++){
-        if(listKicau.buffer[i].idUtas == IDUtas ){
-            return listKicau.buffer[i];
-        }
-    }
 }
