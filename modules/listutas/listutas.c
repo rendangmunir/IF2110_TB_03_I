@@ -114,7 +114,7 @@ void insertLastUtas(List *l, EltypeUtas val)
         insertFirstUtas(l,val);
     }else{
         Address p = newNodeUtas(val);
-        INDEX(p) = lengthUtas(*l);
+        INDEX(p) = lengthUtas(*l) + 1 ;
         Address last = *l;
         if(p != NULL){
             while(NEXT(last) != NULL){
