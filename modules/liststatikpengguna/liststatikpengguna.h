@@ -11,6 +11,7 @@
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
 #include "../matrixchar/matrixchar.h"
+#include "../stackkicauan/stackDraf.h"
 
 // Tipe data Pengguna
 typedef struct {
@@ -22,6 +23,9 @@ typedef struct {
    Word JenisAkun;
    MatrixChar FotoProfil;
    int id;
+
+   // Struktur Data
+   Stack StackDraf;
 } Pengguna;
 
 /*  Kamus Umum */
@@ -126,11 +130,11 @@ boolean isListEqualPengguna(ListStatikPengguna l1, ListStatikPengguna l2);
 
 // /* ********** SEARCHING ********** */
 // /* ***  Perhatian : List boleh kosong!! *** */
-// int indexOf(ListStatikPengguna l, ElTypePengguna val);
-// /* Search apakah ada elemen List l yang bernilai val */
-// /* Jika ada, menghasilkan indeks i terkecil, dengan ELMT(l,i) = val */
-// /* Jika tidak ada atau jika l kosong, mengirimkan IDX_UNDEF_PENGGUNA */
-// /* Skema Searching yang digunakan bebas */
+// int indexOfPengguna(ListStatikPengguna l, ElTypePengguna val);
+/* Search apakah ada elemen List l yang bernilai val */
+/* Jika ada, menghasilkan indeks i terkecil, dengan ELMT(l,i) = val */
+/* Jika tidak ada atau jika l kosong, mengirimkan IDX_UNDEF_PENGGUNA */
+/* Skema Searching yang digunakan bebas */
 
 // /* ********** NILAI EKSTREM ********** */
 // void extremeValues(ListStatikPengguna l, ElTypePengguna *max, ElTypePengguna *min);

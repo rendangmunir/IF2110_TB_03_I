@@ -10,29 +10,30 @@
 #include "../wordmachine/charmachine.h"
 #include "../wordmachine/wordmachine.h"
 #include "../datetime/datetime.h"
+#include "../listdinkicauan/listdinkicauan.h"
 
 /* Definisi Utas : */
-typedef struct nodeUtas* Address;
+// typedef struct nodeUtas* Address;
 
-typedef struct nodeUtas {
-    int index;
-    Word author;
-    DATETIME datetime;
-    Word text;
+// typedef struct nodeUtas {
+//     int index;
+//     Word author;
+//     DATETIME datetime;
+//     Word text;
 
-    Address next;
-} nodeUtas;
-typedef nodeUtas EltypeUtas;
+//     Address next;
+// } nodeUtas;
+// typedef nodeUtas EltypeUtas;
 
-#define INDEX(p) (p)->index
-#define AUTHOR(P) (P)->author
-#define DATETIME(p) (p)->datetime
-#define TEXT(P) (P)->text
-#define NEXT(p) (p)->next
+// #define INDEX(p) (p)->index
+// #define AUTHOR(P) (P)->author
+// #define DATETIME(p) (p)->datetime
+// #define TEXT(P) (P)->text
+// #define NEXT(p) (p)->next
 
 Address newNodeUtas();
 
-typedef Address List;
+// typedef Address List;
 /* Definisi List : */
 /* List kosong : FIRST(l) = NULL */
 /* Setiap elemen dengan Address p dapat diacu INFO(p), NEXT(p) */
@@ -109,7 +110,4 @@ int lengthUtas(List l);
 int IDUtasTerakhir(ListDinKicauan listKicau);
 /*Mengirim idUtasTerakhir dari list kicauan*/
 /****************** PROSES TERHADAP LIST ******************/
-
-Kicauan KicauandenganIdUtas (ListDinKicauan listKicau,int IDUtas);
-/*Mengirim Kicauan dengan IDUtas yang sama*/
 #endif

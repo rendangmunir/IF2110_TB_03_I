@@ -62,6 +62,10 @@
     "wordmachine.h": "c",
     "charmachine.h": "c",
     "matrixchar.h": "c",
-    "algorithm": "c"
+    "algorithm": "c",
+    "stdio.h": "c",
+    "listdinkicauan.h": "c",
+    "stackdraf.h": "c",
+    "boolean.h": "c"
   }
 }
