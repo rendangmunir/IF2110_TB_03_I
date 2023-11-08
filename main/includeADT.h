@@ -25,6 +25,9 @@
 //  6. ADT Linked List
 #include "../modules/listutas/listutas.c"
 
+// 7. ADT Prioqueue
+#include "../modules/prioqueue/prioqueuechar.c"
+
 // X. ADT Tree
 #include "../modules/treebalasan/treebalasan.c"
 

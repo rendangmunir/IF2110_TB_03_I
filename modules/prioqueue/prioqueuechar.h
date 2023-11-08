@@ -8,6 +8,7 @@
 
 #include "boolean.h"
 #include "../grafteman/grafteman.h"
+#include "../wordmachine/wordmachine.h"
 #include <stdlib.h>
 
 #define Nil -1
@@ -16,16 +17,16 @@
 /* Definisi elemen dan address */
 typedef struct {
     int prio;
-    char info;  /* elemen karakter */
-} infotype;
+    Word info;  /* elemen karakter */
+} infotype_PQueue;
 typedef int address;   /* indeks tabel */
 /* Contoh deklarasi variabel bertype PrioQueueChar : */
 /* Versi I : tabel dinamik, Head dan Tail eksplisit, ukuran disimpan */
 typedef struct {
-    infotype * T;   /* tabel penyimpan elemen */
+    infotype_PQueue * T;   /* tabel penyimpan elemen */
     address HEAD;  /* alamat penghapusan */
     address TAIL;  /* alamat penambahan */
-    int MaxEl;     /* Max elemen queue */
+    int MaxEl_PQueue;     /* Max elemen queue */
 } PrioQueueChar;
 /* Definisi PrioQueueChar kosong: HEAD=Nil; TAIL=Nil. */
 /* Catatan implementasi: T[0] tidak pernah dipakai */
@@ -38,20 +39,20 @@ typedef struct {
 #define Tail_PQueue(Q)     (Q).TAIL
 #define InfoHead_PQueue(Q) (Q).T[(Q).HEAD]
 #define InfoTail_PQueue(Q) (Q).T[(Q).TAIL]
-#define MaxEl_PQueue(Q)    (Q).MaxEl
+#define MaxEl_PQueue(Q)    (Q).MaxEl_PQueue
 #define Elmt_PQueue(Q,i)   (Q).T[(i)]
 
 /* ********* Prototype ********* */
-boolean IsEmpty (PrioQueueChar Q);
+boolean IsEmpty_PQueue (PrioQueueChar Q);
 /* Mengirim true jika Q kosong: lihat definisi di atas */
-boolean IsFull (PrioQueueChar Q);
+boolean IsFull_PQueue (PrioQueueChar Q);
 /* Mengirim true jika tabel penampung elemen Q sudah penuh */
 /* yaitu mengandung elemen sebanyak MaxEl */
-int NBElmt (PrioQueueChar Q);
+int NBElmt_PQueue (PrioQueueChar Q);
 /* Mengirimkan banyaknya elemen queue. Mengirimkan 0 jika Q kosong. */
 
 /* *** Kreator *** */
-void MakeEmpty (PrioQueueChar * Q, int Max);
+void MakeEmpty_PQueue (PrioQueueChar * Q, int Max);
 /* I.S. sembarang */
 /* F.S. Sebuah Q kosong terbentuk dan salah satu kondisi sbb: */
 /* Jika alokasi berhasil, Tabel memori dialokasi berukuran Max+1 */
@@ -59,25 +60,25 @@ void MakeEmpty (PrioQueueChar * Q, int Max);
 /* Proses : Melakukan alokasi, membuat sebuah Q kosong */
 
 /* *** Destruktor *** */
-void DeAlokasi(PrioQueueChar * Q);
+void DeAlokasi_PQueue (PrioQueueChar * Q);
 /* Proses: Mengembalikan memori Q */
 /* I.S. Q pernah dialokasi */
 /* F.S. Q menjadi tidak terdefinisi lagi, MaxEl(Q) diset 0 */
 
 /* *** Primitif Add/Delete *** */
-void Enqueue (PrioQueueChar * Q, infotype X);
+void Enqueue_PQueue (PrioQueueChar * Q, infotype_PQueue X);
 /* Proses: Menambahkan X pada Q dengan aturan priority queue, terurut membesar berdasarkan prio */
 /* I.S. Q mungkin kosong, tabel penampung elemen Q TIDAK penuh */
 /* F.S. X disisipkan pada posisi yang tepat sesuai dengan prioritas,
         TAIL "maju" dengan mekanisme circular buffer; */
-void Dequeue (PrioQueueChar * Q, infotype * X);
+void Dequeue_PQueue (PrioQueueChar * Q, infotype_PQueue * X);
 /* Proses: Menghapus X pada Q dengan aturan FIFO */
 /* I.S. Q tidak mungkin kosong */
 /* F.S. X = nilai elemen HEAD pd I.S., HEAD "maju" dengan mekanisme circular buffer;
         Q mungkin kosong */
 
 /* Operasi Tambahan */
-void PrintPrioQueueChar (PrioQueueChar Q);
+void PrintPrioQueueChar_PQueue (PrioQueueChar Q);
 /* Mencetak isi queue Q ke layar */
 /* I.S. Q terdefinisi, mungkin kosong */
 /* F.S. Q tercetak ke layar dengan format:
@@ -86,5 +87,7 @@ void PrintPrioQueueChar (PrioQueueChar Q);
 <prio-n> <elemen-n>
 #
 */
+
+boolean IsElmt_PQueue (PrioQueueChar Q, Word X);
 
 #endif
