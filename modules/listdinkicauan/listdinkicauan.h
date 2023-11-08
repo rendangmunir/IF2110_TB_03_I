@@ -12,7 +12,27 @@
 #include "../wordmachine/wordmachine.h"
 #include "../datetime/datetime.h"
 #include "../treebalasan/treebalasan.h"
-#include "../listutas/listutas.h"
+
+/* Definisi Utas : */
+typedef struct nodeUtas* Address;
+
+typedef struct nodeUtas {
+    int index;
+    Word author;
+    DATETIME datetime;
+    Word text;
+
+    Address next;
+} nodeUtas;
+typedef nodeUtas EltypeUtas;
+
+#define INDEX(p) (p)->index
+#define AUTHOR(P) (P)->author
+#define DATETIME(p) (p)->datetime
+#define TEXT(P) (P)->text
+#define NEXT(p) (p)->next
+
+typedef Address List;
 
 typedef struct Kicauan {
    int id;
