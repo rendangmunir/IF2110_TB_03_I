@@ -445,7 +445,8 @@ void BacaProfilPengguna() {
     // printWord(noHP); printf("\n");
     // printWord(weton); printf("\n");
     // printWord(jenis); printf("\n");
-    // displayMatrixChar(profilepic);
+    printf("Nama: "); printWordNewline(nama);
+    displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic, id, stackDraf};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
@@ -1342,7 +1343,7 @@ void ProsesDraf(Kicauan Draf){
         }else if(WordEqual(input, SIMPAN)){
             PushDraf(&currentUser.StackDraf, Draf);
             ELMTPengguna(listUsers, userIndex) = currentUser;
-            
+
             printf("Draf telah berhasil disimpan!\n");
             inputValid = true;
         }else if (WordEqual(input, TERBIT)){
@@ -1388,6 +1389,7 @@ void LihatDraf(){
         Kicauan temp;
         boolean inputValid = false;
 
+        int indexUser = indexOfPengguna(currentUser.Nama);
         while(!inputValid) {
             printf("Apakah anda ingin mengubah, menghapus, atau menerbitkan draf ini? (HAPUS / UBAH / TERBIT / KEMBALI)\n");
 
@@ -1395,10 +1397,14 @@ void LihatDraf(){
             Word input = currentWord;
             if(WordEqual(input, HAPUS)){
                 PopDraf(&currentUser.StackDraf, &temp);
+                ELMTPengguna(listUsers, indexUser) = currentUser;
+
                 printf("Draf telah berhasil dihapus!\n");
                 inputValid = true;
             }else if(WordEqual(input, UBAH)){
                 PopDraf(&currentUser.StackDraf, &temp);
+                ELMTPengguna(listUsers, indexUser) = currentUser;
+
                 printf("Masukkan draf yang baru: \n");
                 Kicauan submittedDraf = inputKicau();
                 printf("\n");
@@ -1406,6 +1412,7 @@ void LihatDraf(){
                 inputValid = true;
             } else if (WordEqual(input, TERBIT)) {
                 PopDraf(&currentUser.StackDraf, &k);
+                ELMTPengguna(listUsers, indexUser) = currentUser;
                 k.id = listLengthKicauan(listKicauan) + 1;
                 insertLastKicauan(&listKicauan, k);
 
