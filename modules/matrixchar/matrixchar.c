@@ -58,7 +58,10 @@ void readMatrixChar(MatrixChar *m, int nRow, int nCol) {
             ELMT_MATRIXCHAR(*m, i ,j) = currentChar;
             ADV();
             IgnoreBlanks();
+            IgnoreR();
         }
+        IgnoreBlanks();
+        IgnoreR();
         ADV();
     }
     /* I.S. isIdxValid(nRow,nCol) */
