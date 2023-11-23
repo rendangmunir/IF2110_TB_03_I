@@ -74,7 +74,7 @@ void CetakUtas();
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
-void Utas();
+void Utas(ListDinKicauan* L);
 
 // 9. Tagar
 
@@ -240,7 +240,7 @@ void RunCommand(Word command) {
     }
     // 8. Utas
     else if (WordEqual(command, UTAS)) {
-        Utas();
+        Utas(&listKicauan);
     } else if (WordEqual(command, SAMBUNG_UTAS)) {
         SambungUtas();
     } else if (WordEqual(command, HAPUS_UTAS)) {
@@ -1537,14 +1537,14 @@ Kicauan KicauandenganIdUtas (int IDUtas)
 /*Pre kondisi pasti ada kicau dengan IDUtas*/
 {
     int n = listLengthKicauan(listKicauan);
-    for(int i =0; i < n;i++) {
+    for(int i = 0; i < n; i++) {
         if(ELMT_Kicauan(listKicauan, i).idUtas == IDUtas){
             return ELMT_Kicauan(listKicauan, i);
         }
     }
 }
 
-void printUtas(List l,Kicauan k)
+void printUtas(Kicauan k)
 // void printInfo(List l);
 /* I.S. List mungkin kosong */
 /* F.S. Jika list tidak kosong, iai list dicetak ke kanan: [e1,e2,...,en] */
@@ -1552,7 +1552,7 @@ void printUtas(List l,Kicauan k)
 /* Jika list kosong : menulis [] */
 /* Tidak ada tambahan karakter apa pun di awal, akhir, atau di tengah */
 {
-    Address p = l;
+    Address p = k.nextUtas;
     int id = k.id;
     Word text = k.text;
     int likes = k.likes;
@@ -1608,7 +1608,7 @@ nodeUtas inputUtas(){
     return u;
 }
 
-void Utas(){
+void Utas(ListDinKicauan* L){
     ADVWORD();
     int IDKicau = WordToInt(currentWord);
     int indexKicauan = indexOfKicauan(IDKicau);
@@ -1621,12 +1621,13 @@ void Utas(){
         Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
         JumlahUtas++;
         k.idUtas = JumlahUtas;
+        List utasList = k.nextUtas;
         Word author = k.author;
         if (!WordEqual(author,currentUser.Nama)){
             printf("Utas ini bukan milik anda\n");
         }else{
             printf("Utas berhasil dibuat!\n");
-            insertLastUtas(&(ELMT_Kicauan(listKicauan, indexKicauan).nextUtas),inputUtas());
+            insertLastUtas(&utasList, inputUtas());
         }
 
         // Melakukan lanjutan utas
@@ -1637,11 +1638,14 @@ void Utas(){
         Word TIDAK = {"TIDAK", 5};
         while (WordEqual(currentWord,YA))
         {
-            insertLastUtas(&(ELMT_Kicauan(listKicauan, indexKicauan).nextUtas),inputUtas());
+            insertLastUtas(&utasList, inputUtas());
             printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK) ");
             STARTSENTENCE();
         }
         printf("\nUtas selesai!");
+        k.nextUtas = utasList;
+        ELMT_Kicauan(*L, indexKicauan) = k;
+        // printf("Utas List: %d\n", utasList);
     }
 }
 
@@ -1715,7 +1719,7 @@ void CetakUtas(){
         if (WordEqual(authorStatus, privat) && !IsTeman(authorUtas, currentUser.Nama)){
             printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
         }else {
-            printUtas(l,k);
+            printUtas(k);
         }
     }
 }

@@ -88,7 +88,7 @@ void insertFirstUtas(List *l, EltypeUtas val)
 {
     Address newUtas,p;
     int idx;
-    // newUtas = newNodeUtas(val);
+    newUtas = newNodeUtas(val);
     if (newUtas != NULL){
         p = *l;
         val.next = *l;
