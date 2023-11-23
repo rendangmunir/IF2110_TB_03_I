@@ -16,6 +16,7 @@ void BacaProfilPengguna();
 void BacaGrafPertemanan();
 void BacaKicauan();
 void BacaBalasan();
+void BacaDraf();
 
 void simpanDATETIME(FILE* file, DATETIME t);
 void SimpanDataConfig(char* foldername, int op, char* suffix);
@@ -120,6 +121,7 @@ void Inisialisasi() {
         // printf("Success Kicauan\n");
         BacaDataConfig(filepath, 3, "/balasan.config");
         // printf("Success Balasan\n");
+        BacaDataConfig(filepath, 4, "/draf.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -386,12 +388,9 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         case 3:
             BacaBalasan();
             break;
-        // case 4:
-        //     char suffix[] = "/draf.config";
-        //     break;
-        // default:
-        //     char suffix[] = "/utas.config";
-        //     break;
+        case 4:
+            BacaDraf();
+            break;
         }        
     }
 
@@ -534,6 +533,77 @@ void BacaBalasan() {
     }
 }
 
+Word ReverseWord(Word w) {
+    int len = w.Length;
+
+    Word result = w;
+    for (int i = 1; i <= len; i++) {
+        result.TabWord[i - 1] = w.TabWord[len - i];
+    }
+    return result;
+}
+
+void BacaKarakterTerakhir(Word w, Word* res, int* num) {
+    int len = w.Length;
+
+    Word rev = ReverseWord(w);
+    Word revNum = rev;
+    Word result = rev;
+    
+    int iNum = 0;
+    int iWord = 0;
+    boolean atNum = true;
+    for (int i = 0; i < len; i++) {
+        if ((rev.TabWord[i] == BLANK) && atNum) {
+            atNum = false;
+            revNum.Length = iNum;
+        } else if (atNum) {
+            iNum += 1;
+        } else {
+            result.TabWord[iWord] = rev.TabWord[i];
+            iWord += 1;
+        }
+    }
+
+    result.Length = iWord;
+    *res = ReverseWord(result);
+    *num = WordToInt(ReverseWord(revNum));
+}
+
+void BacaDraf() {
+    // Nama dan Jumlah Draf
+    ADVNEWLINE();
+
+    Word Nama;
+    int JumlahDraf;
+    BacaKarakterTerakhir(currentWord, &Nama, &JumlahDraf);
+
+    // Isi dan Tanggal
+    int indexPengguna = indexOfUser(listUsers, Nama);
+    Stack s = ELMTPengguna(listUsers, indexPengguna).StackDraf;
+    
+    for (int i = 0; i < JumlahDraf; i++) {
+        // Isi Draf
+        ADVNEWLINE();
+        Word text = currentWord;
+
+        // Datetime
+        DATETIME time = parseDATETIME();
+
+        // Create Kicauan
+        int id = 0;
+        int likes = 0;
+        Balasan b = {-1, text, Nama, time};
+        TreeBalasan tree = NewTreeBalasan(b, Nil_BALASAN);
+        
+        Kicauan k = {id, text, likes, Nama, time, tree};
+        PushDraf(&s, k);
+    }
+
+    Stack rev = reverseStackDraf(s);
+    ELMTPengguna(listUsers, indexPengguna).StackDraf = rev; 
+}
+
 void simpanDATETIME(FILE* file, DATETIME t) {
     // Day
     fprintf(file, "%02d/", t.DD);
@@ -650,7 +720,38 @@ void SimpanTreeBalasan(FILE* file, TreeBalasan t) {
 }
 
 void SimpanDraf(char* filepath) {
+    // 1. Open filepath kicauan.config
+    FILE *configFile = fopen(filepath, "w");
 
+    if (configFile == NULL) {
+        perror("Unable to open config file.\n");
+    }
+
+    // 2. Write to file
+    int n = JumlahPenggunaDenganDraf();
+    fprintf(configFile, "%d", n);
+
+    int len = listLengthPengguna(listUsers);
+    for (int i = 0; i < len; i++) {
+        Pengguna p = ELMTPengguna(listUsers, i);
+        if (!IsEmptyDraf(p.StackDraf)) {
+            int depth = StackLengthDraf(p.StackDraf);
+            fprintf(configFile, "\n");
+            WriteWord(configFile, p.Nama); fprintf(configFile, " %d", depth);
+            
+            Stack drafts = p.StackDraf;
+            Kicauan k;
+            while (!IsEmptyDraf(drafts)) {
+                fprintf(configFile, "\n");
+
+                PopDraf(&drafts, &k);
+                WriteWord(configFile, k.text); fprintf(configFile, "\n");
+                simpanDATETIME(configFile, k.datetime);
+            }
+        }
+    }
+    // 3. Close file
+    fclose(configFile);
 }
 
 // 1. Pengguna
@@ -800,6 +901,7 @@ void Simpan() {
 
     SimpanDataConfig(folderpath, 2, "/kicauan.config");
     SimpanDataConfig(folderpath, 3, "/balasan.config");
+    SimpanDataConfig(folderpath, 4, "/draf.config");
 }
 
 // 2. Profil

@@ -57,4 +57,8 @@ void PopDraf(Stack * S, infotype* X);
 /* I.S. S  tidak mungkin kosong */
 /* F.S. X adalah nilai elemen TOP yang lama, TOP berkurang 1 */
 
+int StackLengthDraf(Stack s);
+
+Stack reverseStackDraf(Stack s);
+
 #endif
