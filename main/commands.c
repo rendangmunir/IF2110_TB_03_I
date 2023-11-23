@@ -433,6 +433,10 @@ void BacaProfilPengguna() {
     MatrixChar profilepic;
     readMatrixChar(&profilepic, 5, 10);
 
+    // Friend Request
+    PrioQueueChar friendreq;
+    MakeEmpty_PQueue(&friendreq, 20);
+
     // Miscellaneous
     int id = listLengthPengguna(listUsers) + 1;
     Stack stackDraf;
@@ -446,7 +450,7 @@ void BacaProfilPengguna() {
     // printWord(jenis); printf("\n");
     printf("Nama: "); printWordNewline(nama);
     displayMatrixChar(profilepic);
-    Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic, id, stackDraf};
+    Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic, friendreq, id, stackDraf};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
 }
