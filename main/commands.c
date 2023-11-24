@@ -918,7 +918,7 @@ void Ganti_Profil(){
         id = indexOfUser(listUsers, currentUser.Nama);
         printf("\n| Nama: "); printWord(currentUser.Nama); printf("\n");
         printf("| Bio Akun: "); printWord(currentUser.Bio); printf("\n");
-        printf("| Bio Akun: "); printWord(currentUser.noHP); printf("\n");
+        printf("| No. HP: "); printWord(currentUser.noHP); printf("\n");
         printf("| Weton: "); printWord(currentUser.Weton); printf("\n\n");
         Word weton[] = {{"Pahing", 6}, {"Kliwon", 6}, {"Wage", 6}, {"Pon",3}, {"Legi", 4}};
         Word empty = {';',1};
