@@ -49,6 +49,10 @@ void Daftar_Teman(Pengguna p);
 void Hapus_Teman(Pengguna p);
 
 // 4. Permintaan Pertemanan
+void Make_Pqueue(PrioQueueChar p);
+void Tambah_Teman(Pengguna p);
+void Daftar_Permintaan_Perteman(Pengguna p);
+void Setujui_Pertemanan(Pengguna p);
 
 // 5. Kicauan
 int indexOfKicauan(int id);
@@ -152,6 +156,9 @@ void RunCommand(Word command) {
     Word HAPUS_TEMAN = {"HAPUS_TEMAN", 11};
 
     // 4. Permintaan Pertemanan
+    Word TAMBAH_TEMAN = {"TAMBAH_TEMAN", 12};
+    Word DAFTAR_PERMINTAAN_PERTEMANAN = {"DAFTAR_PERMINTAAN_PERTEMANAN", 28};
+    Word SETUJUI_PERTEMANAN = {"SETUJUI_PERTEMANAN", 18};
 
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
@@ -219,6 +226,14 @@ void RunCommand(Word command) {
     }
 
     // 4. Permintaan Pertemanan
+        // 4. Permintaan Pertemanan
+    else if (WordEqual(command, TAMBAH_TEMAN)){
+        Tambah_Teman(currentUser);
+    } else if (WordEqual(command, DAFTAR_PERMINTAAN_PERTEMANAN)){
+        Daftar_Permintaan_Perteman(currentUser);
+    } else if (WordEqual(command, SETUJUI_PERTEMANAN)){
+        Setujui_Pertemanan(currentUser);
+    }
 
     // 5. Kicauan
     else if (WordEqual(command, KICAU)) {
@@ -1264,17 +1279,16 @@ void Daftar_Teman(Pengguna p) {
 
 void Hapus_Teman(Pengguna p) {
     printf("Masukkan nama pengguna:\n");
-    STARTWORD();
+    STARTSENTENCE();
     Word nama = currentWord;
     if (!IsTeman(p.Nama,nama)) {
-        printf("/n");
         printWord(nama);
         printf(" bukan teman Anda.\n");
     } else {
         printf("Apakah anda yakin ingin menghapus ");
         printWord(nama); 
         printf(" dari daftar teman anda?(YA/TIDAK) ");
-        STARTWORD();
+        STARTSENTENCE();
         Word choice = currentWord;
         if (choice.TabWord[0] == 'T') {
             printf("Penghapusan teman dibatalkan.\n");
@@ -1294,7 +1308,7 @@ void Make_Pqueue(PrioQueueChar p) {
 void Tambah_Teman(Pengguna p) {
     if (IsEmpty_PQueue(p.FriendReq)) {
         printf("Masukkan nama pengguna:\n");
-        STARTWORD();
+        STARTSENTENCE();
         Word nama = currentWord;
         if (indexOfUser(listUsers, nama) == IDX_UNDEF_PENGGUNA) {
             printf("\nPengguna bernama ");
@@ -1304,8 +1318,9 @@ void Tambah_Teman(Pengguna p) {
             printf("\nPermintaan pertemanan kepada ");
             printWord(nama);
             printf(" telah dikirim. Tunggu beberapa saat hingga permintaan Anda disetujui.\n");
-            infotype_PQueue req = {Jumlah_Teman(nama), nama};
-            Enqueue_PQueue(&p.FriendReq, req);
+            infotype_PQueue req = {Jumlah_Teman(p.Nama), p.Nama};
+            Pengguna calon = ELMTPengguna(listUsers, indexOfPengguna(nama));
+            Enqueue_PQueue(&calon.FriendReq, req);
         }
     } else {
         printf("Terdapat permintaan pertemanan yang belum Anda setujui. Silakan kosongkan daftar permintaan pertemanan untuk Anda terlebih dahulu.\n");
@@ -1313,33 +1328,37 @@ void Tambah_Teman(Pengguna p) {
 }
 
 void Daftar_Permintaan_Perteman(Pengguna p) {
-    PrintPrioQueueChar_PQueue(p.FriendReq);
+    PrintPrioQueueChar_PQueue(&p.FriendReq);
 }
 
 void Setujui_Pertemanan(Pengguna p) {
-    infotype_PQueue X;
-    printf("Permintaan pertemanan teratas dari ");
-    printWordNewline(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-    printf("| ");
-    printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-    printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-
-    printf("Apakah Anda ingin menyetujui permintaan pertemanan ini? (YA/TIDAK) ");
-    STARTWORD();
-    Word choice = currentWord;
-    if (choice.TabWord[0] == 'Y') {
-        ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))))) = 1;
-        printf("Permintaan pertemanan dari ");
-        printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-        printf(" telah disetujui. Selamat! Anda telah berteman dengan ");
-        printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-        printf(".\n");
-        Dequeue_PQueue(&p.FriendReq, &X);
+    if (IsEmpty_PQueue(p.FriendReq)) {
+        printf("Anda belum punya permintaan pertemanan.\n");
     } else {
-        printf("Permintaan pertemanan dari ");
+        infotype_PQueue X;
+        printf("Permintaan pertemanan teratas dari ");
+        printWordNewline(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+        printf("| ");
         printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-        printf(" telah ditolak.\n");
-        Dequeue_PQueue(&p.FriendReq, &X);
+        printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+
+        printf("Apakah Anda ingin menyetujui permintaan pertemanan ini? (YA/TIDAK) ");
+        STARTSENTENCE();
+        Word choice = currentWord;
+        if (choice.TabWord[0] == 'Y') {
+            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))))) = 1;
+            printf("Permintaan pertemanan dari ");
+            printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            printf(" telah disetujui. Selamat! Anda telah berteman dengan ");
+            printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            printf(".\n");
+            Dequeue_PQueue(&p.FriendReq, &X);
+        } else {
+            printf("Permintaan pertemanan dari ");
+            printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            printf(" telah ditolak.\n");
+            Dequeue_PQueue(&p.FriendReq, &X);
+        }
     }
 }
 
@@ -1607,7 +1626,7 @@ void ProsesDraf(Kicauan Draf){
         }else if (WordEqual(input, TERBIT)){
             printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
             PrintKicauan(Draf);
-
+            
             Draf.id = listLengthKicauan(listKicauan) + 1;
             insertLastKicauan(&listKicauan, Draf);
             inputValid = true;
