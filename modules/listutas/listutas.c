@@ -1,10 +1,14 @@
 #include "listutas.h"
 #include <stdlib.h>
 
-Address newNodeUtas(){
+Address newNodeUtas(Word author, int index, DATETIME time, Word text){
     Address p = (Address) malloc (sizeof(nodeUtas));
     if (p != NULL){
-        NEXT(p) = NULL;
+        p->author = author;
+        p->index = index;
+        p->datetime = time;
+        p->text = text;
+        p->next = NULL;
     }
     return p;
 }
@@ -81,78 +85,75 @@ void setUtas(List *l, int idx, EltypeUtas val);
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
-void insertFirstUtas(List *l, EltypeUtas val)
+void insertFirstUtas(List *l, EltypeUtas* node)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen pertama dengan nilai val jika alokasi berhasil. */
 {
     Address newUtas,p;
     int idx;
-    newUtas = newNodeUtas(val);
-    if (newUtas != NULL){
-        p = *l;
-        val.next = *l;
-        *l = &val;
-        // Set idx
-        idx = 1;
-        while(p != NULL){
-            INDEX(p) = idx;
-            p = NEXT(p);
-            idx++;
-        }
+    // if (newUtas != NULL){
+    //     }
+    p = *l;
+    node->next = *l;
+    *l = node;
+
+    // Set idx
+    p = NEXT(node);
+    idx = 2;
+    while(p != NULL){
+        INDEX(p) = idx;
+        p = NEXT(p);
+        idx++;
     }
 }
 /* Jika alokasi gagal: I.S.= F.S. */
 
-void insertLastUtas(List *l, EltypeUtas val)
+void insertLastUtas(List *l, EltypeUtas* node)
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen list di akhir: elemen terakhir yang baru */
 /* bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 {
     if(isEmptyUtas(*l)){
-        insertFirstUtas(l,val);
+        insertFirstUtas(l, node);
     }else{
-        Address p = newNodeUtas(val);
-        INDEX(p) = lengthUtas(*l) + 1 ;
+        INDEX(node) = lengthUtas(*l) + 1;
         Address last = *l;
-        if(p != NULL){
-            while(NEXT(last) != NULL){
-                last = NEXT(last);
-            }
-            NEXT(last) = p;
+
+        while(NEXT(last) != NULL){
+            last = NEXT(last);
         }
+        NEXT(last) = node;
     }
 }
 
-void insertAtUtas(List *l, EltypeUtas val, int idx)
+void insertAtUtas(List *l, EltypeUtas* node, int idx)
 /* I.S. l tidak mungkin kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menyisipkan elemen dalam list pada indeks ke-idx (bukan menimpa elemen di i) */
 /* yang bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 {
-    Address p, loc;
+    Address loc;
     int i;
     if(idx==1){
-        insertFirstUtas(l, val);
+        insertFirstUtas(l, node);
     }
     else{
-        p = newNodeUtas(val);
-        INDEX(p) = idx;
-        if(p != NULL){
-            loc = *l;
-            while(INDEX(loc) <idx-1){
-                loc = NEXT(loc);
-            }
-            NEXT(p) = NEXT(loc);
-            NEXT(loc) = p;
+        INDEX(node) = idx;
+        loc = *l;
+        while(INDEX(loc) < idx-1){
             loc = NEXT(loc);
-            i = idx;
-            while(loc != NULL){
-                INDEX(loc) = i;
-                i++;
-                loc = NEXT(loc);
-            }
+        }
+        NEXT(node) = NEXT(loc);
+        NEXT(loc) = node;
+
+        i = idx + 1;
+        loc = NEXT(node);
+        while(loc != NULL){
+            INDEX(loc) = i;
+            i++;
+            loc = NEXT(loc);
         }
     }
 }
@@ -164,12 +165,13 @@ void deleteFirstUtas(List *l)
 /*      dan alamat elemen pertama di-dealokasi */
 {
     Address p = *l;
-    NEXT(*l) = NEXT(p);
+    *l = NEXT(p);
     free(p);
-    p = NEXT(p);
-    while(p != NULL){
-        INDEX(p)--;
-        p = NEXT(p);
+
+    Address node = *l;
+    while(node != NULL){
+        INDEX(node)--;
+        node = NEXT(node);
     }
 }
 void deleteLastUtas(List *l)
@@ -202,18 +204,18 @@ void deleteAtUtas(List *l, int idx)
     }
     else{
         Address p = *l;
-        Address q;
+        Address del;
         while (INDEX(p) < idx-1){
             p = NEXT(p);
         }
-        q = NEXT(p);
-        NEXT(p) = NEXT(q);
-        free(q);
-        int i = idx;
-        while(p != NULL){
-            INDEX(p) = i;
-            i++;
-            p = NEXT(p);
+        del = NEXT(p);
+        NEXT(p) = NEXT(del);
+        free(del);
+
+        Address node = NEXT(p);
+        while(node != NULL){
+            INDEX(node)--;
+            node = NEXT(node);
         }
     }
 }
@@ -227,7 +229,7 @@ int lengthUtas(List l)
     }else{
         int i = 0;
         Address p = l;
-        while (NEXT(p) != NULL){
+        while (p != NULL){
             i++;
             p = NEXT(p);
         }
