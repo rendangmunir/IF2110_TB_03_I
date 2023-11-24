@@ -44,7 +44,7 @@ BurBir adalah program simulasi berbasis CLI (command-line interface) dengan baha
 
 
 
-#Pembagian Tugas
+## Pembagian Tugas
 13522145 / Farel Natha Saskoro
 Membuat:
  - struct FriendRequest
@@ -79,5 +79,5 @@ Membuat:
 - FYB
 
 
-#HOW TO USE
+## HOW TO USE
 Run in main.c
