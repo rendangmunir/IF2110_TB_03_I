@@ -1206,13 +1206,15 @@ void Hapus_Teman(Pengguna p) {
         printf(" dari daftar teman anda?(YA/TIDAK) ");
         STARTSENTENCE();
         Word choice = currentWord;
-        if (choice.TabWord[0] == 'T') {
+        if (WordEqual(choice, "TIDAK") {
             printf("Penghapusan teman dibatalkan.\n");
-        } else {
+        } else if (WordEqual(choice, "YA") {
             ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
             printWord(nama);
             printf(" berhasil dihapus dari daftar teman Anda.\n");
-        }
+        } else {
+		printf("command tidak dikenal\n");
+	}
     }
 }
 
