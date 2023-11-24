@@ -287,6 +287,7 @@ void RunCommand(Word command) {
 // 0a. Additional Functions
 void printHeaders() {
     printf("\n==================================================\n");
+    displayMatrixChar(FriendGraph);
     if (isLoggedIn) {
         printf("Nama User: ");
         printWordNewline(currentUser.Nama); printf("\n");
@@ -472,8 +473,6 @@ void BacaProfilPengguna() {
     // printWord(noHP); printf("\n");
     // printWord(weton); printf("\n");
     // printWord(jenis); printf("\n");
-    printf("Nama: "); printWordNewline(nama);
-    displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic, friendreq, id, stackDraf};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
@@ -482,8 +481,6 @@ void BacaProfilPengguna() {
 void BacaGrafPertemanan() {
     int n = listLengthPengguna(listUsers);
     readMatrixChar(&FriendGraph, n, n);
-
-    // displayMatrixChar(FriendGraph);
 }
 
 void BacaKicauan() {
@@ -900,6 +897,24 @@ void Daftar() {
             Pengguna newUser = {name, pass};
             insertLastPengguna(&listUsers, newUser);
 
+            GrafTeman NewFriendGraph;
+            int n = listLengthPengguna(listUsers);
+            createMatrixChar(n, n, &NewFriendGraph);
+
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
+                    if (i == j) {
+                        ELMT_MATRIXCHAR(NewFriendGraph, i - 1, j - 1) = FRIEND_MARK;
+                    } else if (i == n || j == n) {
+                        ELMT_MATRIXCHAR(NewFriendGraph, i - 1, j - 1) = NOTFRIEND_MARK;
+                    } else {
+                        ELMT_MATRIXCHAR(NewFriendGraph, i - 1, j - 1) = ELMT_MATRIXCHAR(FriendGraph, i - 1, j - 1);
+                    }
+                }
+            }
+            FriendGraph = NewFriendGraph;
+            // displayMatrixChar(FriendGraph);
+
             printf("Pengguna telah berhasil terdaftar! Silahkan ketik MASUK; untuk menikmati fitur-fitur BurBir.\n");
         }
 
@@ -1252,8 +1267,9 @@ int Jumlah_Teman(Word p) {
 void Daftar_Teman(Pengguna p) {
     int jumlahTeman = 0;
     if (!isLoggedIn) {
-        printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
+        printf("\nAnda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
     } else {
+        printf("\n");
         printWord(p.Nama);
         jumlahTeman = Jumlah_Teman(p.Nama);
         if (jumlahTeman == 0) {
@@ -1289,11 +1305,16 @@ void Hapus_Teman(Pengguna p) {
         printWord(nama); 
         printf(" dari daftar teman anda?(YA/TIDAK) ");
         STARTSENTENCE();
+
         Word choice = currentWord;
-        if (choice.TabWord[0] == 'T') {
+        Word TIDAK = {"TIDAK", 5};
+        if (WordEqual(choice, TIDAK)) {
             printf("Penghapusan teman dibatalkan.\n");
         } else {
-            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
+            int i = indexOfUser(listUsers, p.Nama);
+            int j = indexOfUser(listUsers, nama);
+            ELMT_MATRIXCHAR(FriendGraph, i, j) = NOTFRIEND_MARK;
+            ELMT_MATRIXCHAR(FriendGraph, j, i) = NOTFRIEND_MARK;
             printWord(nama);
             printf(" berhasil dihapus dari daftar teman Anda.\n");
         }
@@ -1307,7 +1328,7 @@ void Make_Pqueue(PrioQueueChar p) {
 
 void Tambah_Teman(Pengguna p) {
     if (IsEmpty_PQueue(p.FriendReq)) {
-        printf("Masukkan nama pengguna:\n");
+        printf("Masukkan nama pengguna: \n");
         STARTSENTENCE();
         Word nama = currentWord;
         if (indexOfUser(listUsers, nama) == IDX_UNDEF_PENGGUNA) {
@@ -1318,9 +1339,12 @@ void Tambah_Teman(Pengguna p) {
             printf("\nPermintaan pertemanan kepada ");
             printWord(nama);
             printf(" telah dikirim. Tunggu beberapa saat hingga permintaan Anda disetujui.\n");
+            
             infotype_PQueue req = {Jumlah_Teman(p.Nama), p.Nama};
             Pengguna calon = ELMTPengguna(listUsers, indexOfPengguna(nama));
             Enqueue_PQueue(&calon.FriendReq, req);
+            
+            ELMTPengguna(listUsers, indexOfPengguna(nama)) = calon;
         }
     } else {
         printf("Terdapat permintaan pertemanan yang belum Anda setujui. Silakan kosongkan daftar permintaan pertemanan untuk Anda terlebih dahulu.\n");
@@ -1342,22 +1366,39 @@ void Setujui_Pertemanan(Pengguna p) {
         printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
         printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
 
-        printf("Apakah Anda ingin menyetujui permintaan pertemanan ini? (YA/TIDAK) ");
+        printf("Apakah Anda ingin menyetujui permintaan pertemanan ini? (YA/TIDAK): ");
         STARTSENTENCE();
         Word choice = currentWord;
-        if (choice.TabWord[0] == 'Y') {
-            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))))) = 1;
+        Word YA = {"YA", 2};
+        if (WordEqual(choice, YA)) {
+            int i = indexOfUser(listUsers, p.Nama);
+            int j = indexOfUser(listUsers, Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            ELMT_MATRIXCHAR(FriendGraph, i, j) = FRIEND_MARK;
+            ELMT_MATRIXCHAR(FriendGraph, j, i) = FRIEND_MARK;
+
             printf("Permintaan pertemanan dari ");
             printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
             printf(" telah disetujui. Selamat! Anda telah berteman dengan ");
             printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
             printf(".\n");
-            Dequeue_PQueue(&p.FriendReq, &X);
+
+            PrioQueueChar FR = p.FriendReq;
+            Dequeue_PQueue(&FR, &X);
+            p.FriendReq = FR;
+            int indexPengguna = indexOfPengguna(p.Nama);
+            ELMTPengguna(listUsers, indexPengguna) = p;
+            currentUser = p;
         } else {
             printf("Permintaan pertemanan dari ");
             printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
             printf(" telah ditolak.\n");
-            Dequeue_PQueue(&p.FriendReq, &X);
+            
+            PrioQueueChar FR = p.FriendReq;
+            Dequeue_PQueue(&FR, &X);
+            p.FriendReq = FR;
+            int indexPengguna = indexOfPengguna(p.Nama);
+            ELMTPengguna(listUsers, indexPengguna) = p;
+            currentUser = p;
         }
     }
 }
@@ -1777,7 +1818,7 @@ Address inputUtas(){
     Address u = newNodeUtas(k.author, JumlahUtas, k.datetime, k.text);
     return u;
 }
-
+ 
 void Utas(){
     ADVWORD();
     int IDKicau = WordToInt(currentWord);
