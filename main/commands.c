@@ -977,7 +977,7 @@ void Simpan() {
     // 2. Create folder if it doesn't exist
     if (!directoryExists(folderpath)) {
         printf("Belum terdapat folder tersebut. Akan dilakukan pembuatan folder terlebih dahulu.\n");
-        mkdir(folderpath, 0777);
+        // mkdir(folderpath, 0777);
 
         printf("Mohon tunggu...\n1...\n2...\n3...\nFolder sudah berhasil dibuat.\n");
     }
