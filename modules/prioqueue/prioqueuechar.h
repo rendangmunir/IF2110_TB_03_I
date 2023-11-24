@@ -78,7 +78,7 @@ void Dequeue_PQueue (PrioQueueChar * Q, infotype_PQueue * X);
         Q mungkin kosong */
 
 /* Operasi Tambahan */
-void PrintPrioQueueChar_PQueue (PrioQueueChar Q);
+void PrintPrioQueueChar_PQueue (PrioQueueChar * Q);
 /* Mencetak isi queue Q ke layar */
 /* I.S. Q terdefinisi, mungkin kosong */
 /* F.S. Q tercetak ke layar dengan format:
