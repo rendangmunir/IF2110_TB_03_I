@@ -66,6 +66,8 @@
     "stdio.h": "c",
     "listdinkicauan.h": "c",
     "stackdraf.h": "c",
-    "boolean.h": "c"
+    "boolean.h": "c",
+    "listutas.h": "c",
+    "stdlib.h": "c"
   }
 }

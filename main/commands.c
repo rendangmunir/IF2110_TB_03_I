@@ -17,12 +17,14 @@ void BacaGrafPertemanan();
 void BacaKicauan();
 void BacaBalasan();
 void BacaDraf();
+void BacaUtas(int IDUtas);
 
 void simpanDATETIME(FILE* file, DATETIME t);
 void SimpanDataConfig(char* foldername, int op, char* suffix);
 void SimpanKicauan(char* filepath);
 void SimpanBalasan(char* filepath);
 void SimpanDraf(char* filepath);
+void SimpanUtas(char* filepath);
 
 // 1. Pengguna
 int indexOfPengguna(Word nama);
@@ -47,6 +49,10 @@ void Daftar_Teman(Pengguna p);
 void Hapus_Teman(Pengguna p);
 
 // 4. Permintaan Pertemanan
+void Make_Pqueue(PrioQueueChar p);
+void Tambah_Teman(Pengguna p);
+void Daftar_Permintaan_Perteman(Pengguna p);
+void Setujui_Pertemanan(Pengguna p);
 
 // 5. Kicauan
 int indexOfKicauan(int id);
@@ -74,7 +80,7 @@ void CetakUtas();
 void SambungUtas();
 void HapusUtas();
 void CetakUtas();
-void Utas(ListDinKicauan* L);
+void Utas();
 
 // 9. Tagar
 
@@ -122,6 +128,7 @@ void Inisialisasi() {
         BacaDataConfig(filepath, 3, "/balasan.config");
         // printf("Success Balasan\n");
         BacaDataConfig(filepath, 4, "/draf.config");
+        BacaDataConfig(filepath, 5, "/utas.config");
 
         printf("File konfigurasi berhasil dimuat! Selamat berkicau!\n");
     }
@@ -149,6 +156,9 @@ void RunCommand(Word command) {
     Word HAPUS_TEMAN = {"HAPUS_TEMAN", 11};
 
     // 4. Permintaan Pertemanan
+    Word TAMBAH_TEMAN = {"TAMBAH_TEMAN", 12};
+    Word DAFTAR_PERMINTAAN_PERTEMANAN = {"DAFTAR_PERMINTAAN_PERTEMANAN", 28};
+    Word SETUJUI_PERTEMANAN = {"SETUJUI_PERTEMANAN", 18};
 
     // 5. Kicauan
     Word KICAU = {"KICAU", 5};
@@ -216,6 +226,14 @@ void RunCommand(Word command) {
     }
 
     // 4. Permintaan Pertemanan
+        // 4. Permintaan Pertemanan
+    else if (WordEqual(command, TAMBAH_TEMAN)){
+        Tambah_Teman(currentUser);
+    } else if (WordEqual(command, DAFTAR_PERMINTAAN_PERTEMANAN)){
+        Daftar_Permintaan_Perteman(currentUser);
+    } else if (WordEqual(command, SETUJUI_PERTEMANAN)){
+        Setujui_Pertemanan(currentUser);
+    }
 
     // 5. Kicauan
     else if (WordEqual(command, KICAU)) {
@@ -269,6 +287,7 @@ void RunCommand(Word command) {
 // 0a. Additional Functions
 void printHeaders() {
     printf("\n==================================================\n");
+    displayMatrixChar(FriendGraph);
     if (isLoggedIn) {
         printf("Nama User: ");
         printWordNewline(currentUser.Nama); printf("\n");
@@ -376,6 +395,7 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
         itemCount = 0;
     }
     // printf("Success Baca Config\n");
+    int IDUtas = 1;
     for (int i = 0; i < itemCount; i++) {
         switch (op) {
         case 1:
@@ -390,6 +410,11 @@ void BacaDataConfig(char* prefix, int op, char* suffix) {
             break;
         case 4:
             BacaDraf();
+            break;
+        case 5:
+            BacaUtas(IDUtas);
+            IDUtas += 1;
+            JumlahUtas += 1;
             break;
         }        
     }
@@ -448,8 +473,6 @@ void BacaProfilPengguna() {
     // printWord(noHP); printf("\n");
     // printWord(weton); printf("\n");
     // printWord(jenis); printf("\n");
-    printf("Nama: "); printWordNewline(nama);
-    displayMatrixChar(profilepic);
     Pengguna user = {nama, pass, bio, noHP, weton, jenis, profilepic, friendreq, id, stackDraf};
     // PrintFoto(user);
     insertLastPengguna(&listUsers, user);
@@ -458,8 +481,6 @@ void BacaProfilPengguna() {
 void BacaGrafPertemanan() {
     int n = listLengthPengguna(listUsers);
     readMatrixChar(&FriendGraph, n, n);
-
-    // displayMatrixChar(FriendGraph);
 }
 
 void BacaKicauan() {
@@ -608,6 +629,39 @@ void BacaDraf() {
     ELMTPengguna(listUsers, indexPengguna).StackDraf = rev; 
 }
 
+void BacaUtas(int IDUtas) {
+    // ID Kicauan
+    ADVNEWLINE();
+    int IDKicau = WordToInt(currentWord);
+
+    // Jumlah Utas
+    ADVNEWLINE();
+    int n = WordToInt(currentWord);
+
+    int indexKicauan = indexOfKicauan(IDKicau);
+    Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
+    // Baca Utas
+    for (int i = 0; i < n; i++) {
+        // Text
+        ADVNEWLINE();
+        Word text = currentWord;
+
+        // Author
+        ADVNEWLINE();
+        Word author = currentWord;
+
+        // Datetime
+        DATETIME time = parseDATETIME();
+
+        // Add to database
+        Address node = newNodeUtas(author, i + 1, time, text);
+
+        insertLastUtas(&((&k)->nextUtas), node);
+    }
+    k.idUtas = IDUtas;
+    ELMT_Kicauan(listKicauan, indexKicauan) = k;
+}
+
 void simpanDATETIME(FILE* file, DATETIME t) {
     // Day
     fprintf(file, "%02d/", t.DD);
@@ -643,6 +697,10 @@ void SimpanDataConfig(char* folderpath, int op, char* suffix) {
             break;
         case 4:
             SimpanDraf(filepath);
+            break;
+        case 5:
+            SimpanUtas(filepath);
+            break;
     }
 }
 
@@ -758,6 +816,43 @@ void SimpanDraf(char* filepath) {
     fclose(configFile);
 }
 
+void SimpanUtas(char* filepath) {
+    // 1. Open filepath kicauan.config
+    FILE *configFile = fopen(filepath, "w");
+
+    if (configFile == NULL) {
+        perror("Unable to open config file.\n");
+    }
+
+    // 2. Write to file
+    int n = JumlahUtas;
+    fprintf(configFile, "%d", n);
+
+    int len = listLengthKicauan(listKicauan);
+    for (int i = 0; i < len; i++) {
+        Kicauan k = ELMT_Kicauan(listKicauan, i);
+
+        if (k.nextUtas != NULL) {
+            int id = k.id;
+            int nUtas = lengthUtas(k.nextUtas);
+
+            fprintf(configFile, "\n%d", id);
+            fprintf(configFile, "\n%d", nUtas);
+
+            Address p = k.nextUtas;
+            while (p != NULL) {
+                fprintf(configFile, "\n");
+                WriteWord(configFile, p->text); fprintf(configFile, "\n"); 
+                WriteWord(configFile, p->author); fprintf(configFile, "\n"); 
+                simpanDATETIME(configFile, p->datetime); 
+                p = NEXT(p);
+            }
+        }
+    }
+    // 3. Close file
+    fclose(configFile);
+}
+
 // 1. Pengguna
 int indexOfPengguna(Word nama) {
     int n = listLengthPengguna(listUsers);
@@ -801,6 +896,24 @@ void Daftar() {
             
             Pengguna newUser = {name, pass};
             insertLastPengguna(&listUsers, newUser);
+
+            GrafTeman NewFriendGraph;
+            int n = listLengthPengguna(listUsers);
+            createMatrixChar(n, n, &NewFriendGraph);
+
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
+                    if (i == j) {
+                        ELMT_MATRIXCHAR(NewFriendGraph, i - 1, j - 1) = FRIEND_MARK;
+                    } else if (i == n || j == n) {
+                        ELMT_MATRIXCHAR(NewFriendGraph, i - 1, j - 1) = NOTFRIEND_MARK;
+                    } else {
+                        ELMT_MATRIXCHAR(NewFriendGraph, i - 1, j - 1) = ELMT_MATRIXCHAR(FriendGraph, i - 1, j - 1);
+                    }
+                }
+            }
+            FriendGraph = NewFriendGraph;
+            // displayMatrixChar(FriendGraph);
 
             printf("Pengguna telah berhasil terdaftar! Silahkan ketik MASUK; untuk menikmati fitur-fitur BurBir.\n");
         }
@@ -906,6 +1019,7 @@ void Simpan() {
     SimpanDataConfig(folderpath, 2, "/kicauan.config");
     SimpanDataConfig(folderpath, 3, "/balasan.config");
     SimpanDataConfig(folderpath, 4, "/draf.config");
+    SimpanDataConfig(folderpath, 5, "/utas.config");
 }
 
 // 2. Profil
@@ -1153,8 +1267,9 @@ int Jumlah_Teman(Word p) {
 void Daftar_Teman(Pengguna p) {
     int jumlahTeman = 0;
     if (!isLoggedIn) {
-        printf("Anda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
+        printf("\nAnda belum masuk! Masuk terlebih dahulu untuk menikmati layanan BurBir.\n");
     } else {
+        printf("\n");
         printWord(p.Nama);
         jumlahTeman = Jumlah_Teman(p.Nama);
         if (jumlahTeman == 0) {
@@ -1180,22 +1295,26 @@ void Daftar_Teman(Pengguna p) {
 
 void Hapus_Teman(Pengguna p) {
     printf("Masukkan nama pengguna:\n");
-    STARTWORD();
+    STARTSENTENCE();
     Word nama = currentWord;
     if (!IsTeman(p.Nama,nama)) {
-        printf("/n");
         printWord(nama);
         printf(" bukan teman Anda.\n");
     } else {
         printf("Apakah anda yakin ingin menghapus ");
         printWord(nama); 
         printf(" dari daftar teman anda?(YA/TIDAK) ");
-        STARTWORD();
+        STARTSENTENCE();
+
         Word choice = currentWord;
-        if (choice.TabWord[0] == 'T') {
+        Word TIDAK = {"TIDAK", 5};
+        if (WordEqual(choice, TIDAK)) {
             printf("Penghapusan teman dibatalkan.\n");
         } else {
-            ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, nama)) = 0;
+            int i = indexOfUser(listUsers, p.Nama);
+            int j = indexOfUser(listUsers, nama);
+            ELMT_MATRIXCHAR(FriendGraph, i, j) = NOTFRIEND_MARK;
+            ELMT_MATRIXCHAR(FriendGraph, j, i) = NOTFRIEND_MARK;
             printWord(nama);
             printf(" berhasil dihapus dari daftar teman Anda.\n");
         }
@@ -1209,8 +1328,8 @@ void Make_Pqueue(PrioQueueChar p) {
 
 void Tambah_Teman(Pengguna p) {
     if (IsEmpty_PQueue(p.FriendReq)) {
-        printf("Masukkan nama pengguna:\n");
-        STARTWORD();
+        printf("Masukkan nama pengguna: \n");
+        STARTSENTENCE();
         Word nama = currentWord;
         if (indexOfUser(listUsers, nama) == IDX_UNDEF_PENGGUNA) {
             printf("\nPengguna bernama ");
@@ -1220,8 +1339,12 @@ void Tambah_Teman(Pengguna p) {
             printf("\nPermintaan pertemanan kepada ");
             printWord(nama);
             printf(" telah dikirim. Tunggu beberapa saat hingga permintaan Anda disetujui.\n");
-            infotype_PQueue req = {Jumlah_Teman(nama), nama};
-            Enqueue_PQueue(&p.FriendReq, req);
+            
+            infotype_PQueue req = {Jumlah_Teman(p.Nama), p.Nama};
+            Pengguna calon = ELMTPengguna(listUsers, indexOfPengguna(nama));
+            Enqueue_PQueue(&calon.FriendReq, req);
+            
+            ELMTPengguna(listUsers, indexOfPengguna(nama)) = calon;
         }
     } else {
         printf("Terdapat permintaan pertemanan yang belum Anda setujui. Silakan kosongkan daftar permintaan pertemanan untuk Anda terlebih dahulu.\n");
@@ -1229,33 +1352,54 @@ void Tambah_Teman(Pengguna p) {
 }
 
 void Daftar_Permintaan_Perteman(Pengguna p) {
-    PrintPrioQueueChar_PQueue(p.FriendReq);
+    PrintPrioQueueChar_PQueue(&p.FriendReq);
 }
 
 void Setujui_Pertemanan(Pengguna p) {
-    infotype_PQueue X;
-    printf("Permintaan pertemanan teratas dari ");
-    printWordNewline(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-    printf("| ");
-    printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-    printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-
-    printf("Apakah Anda ingin menyetujui permintaan pertemanan ini? (YA/TIDAK) ");
-    STARTWORD();
-    Word choice = currentWord;
-    if (choice.TabWord[0] == 'Y') {
-        ELMT_MATRIXCHAR(FriendGraph, indexOfUser(listUsers, p.Nama), indexOfUser(listUsers, Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))))) = 1;
-        printf("Permintaan pertemanan dari ");
-        printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-        printf(" telah disetujui. Selamat! Anda telah berteman dengan ");
-        printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-        printf(".\n");
-        Dequeue_PQueue(&p.FriendReq, &X);
+    if (IsEmpty_PQueue(p.FriendReq)) {
+        printf("Anda belum punya permintaan pertemanan.\n");
     } else {
-        printf("Permintaan pertemanan dari ");
+        infotype_PQueue X;
+        printf("Permintaan pertemanan teratas dari ");
+        printWordNewline(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+        printf("| ");
         printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
-        printf(" telah ditolak.\n");
-        Dequeue_PQueue(&p.FriendReq, &X);
+        printf("\n| Jumlah teman: %d\n", Prio_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+
+        printf("Apakah Anda ingin menyetujui permintaan pertemanan ini? (YA/TIDAK): ");
+        STARTSENTENCE();
+        Word choice = currentWord;
+        Word YA = {"YA", 2};
+        if (WordEqual(choice, YA)) {
+            int i = indexOfUser(listUsers, p.Nama);
+            int j = indexOfUser(listUsers, Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            ELMT_MATRIXCHAR(FriendGraph, i, j) = FRIEND_MARK;
+            ELMT_MATRIXCHAR(FriendGraph, j, i) = FRIEND_MARK;
+
+            printf("Permintaan pertemanan dari ");
+            printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            printf(" telah disetujui. Selamat! Anda telah berteman dengan ");
+            printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            printf(".\n");
+
+            PrioQueueChar FR = p.FriendReq;
+            Dequeue_PQueue(&FR, &X);
+            p.FriendReq = FR;
+            int indexPengguna = indexOfPengguna(p.Nama);
+            ELMTPengguna(listUsers, indexPengguna) = p;
+            currentUser = p;
+        } else {
+            printf("Permintaan pertemanan dari ");
+            printWord(Info_PQueue(Elmt_PQueue(p.FriendReq, Head_PQueue(p.FriendReq))));
+            printf(" telah ditolak.\n");
+            
+            PrioQueueChar FR = p.FriendReq;
+            Dequeue_PQueue(&FR, &X);
+            p.FriendReq = FR;
+            int indexPengguna = indexOfPengguna(p.Nama);
+            ELMTPengguna(listUsers, indexPengguna) = p;
+            currentUser = p;
+        }
     }
 }
 
@@ -1523,7 +1667,7 @@ void ProsesDraf(Kicauan Draf){
         }else if (WordEqual(input, TERBIT)){
             printf("Selamat! Draf kicauan telah diterbitkan!\nDetil kicauan:\n");
             PrintKicauan(Draf);
-
+            
             Draf.id = listLengthKicauan(listKicauan) + 1;
             insertLastKicauan(&listKicauan, Draf);
             inputValid = true;
@@ -1653,7 +1797,7 @@ void printUtas(Kicauan k)
         
         printf("\n");
         printTab(2);
-        printf("ID = %d\n", index);
+        printf("INDEX = %d\n", index);
         
         printTab(2);
         printWordNewline(author);
@@ -1668,19 +1812,14 @@ void printUtas(Kicauan k)
     }
 }
 
-nodeUtas inputUtas(){
+Address inputUtas(){
     printf("\nMasukkan kicauan: \n");
     Kicauan k = inputKicau();
-    nodeUtas u;
-    u.author = k.author;
-    u.index = JumlahUtas;
-    u.datetime = k.datetime;
-    u.text = k.text;
-    u.next = NULL;
+    Address u = newNodeUtas(k.author, JumlahUtas, k.datetime, k.text);
     return u;
 }
-
-void Utas(ListDinKicauan* L){
+ 
+void Utas(){
     ADVWORD();
     int IDKicau = WordToInt(currentWord);
     int indexKicauan = indexOfKicauan(IDKicau);
@@ -1689,35 +1828,37 @@ void Utas(ListDinKicauan* L){
         printf("Kicauan tidak ditemukan!\n");
     }else{
         // Compare Username dengan author
-
         Kicauan k = ELMT_Kicauan(listKicauan, indexKicauan);
         JumlahUtas++;
         k.idUtas = JumlahUtas;
-        List utasList = k.nextUtas;
         Word author = k.author;
         if (!WordEqual(author,currentUser.Nama)){
             printf("Utas ini bukan milik anda\n");
         }else{
             printf("Utas berhasil dibuat!\n");
-            insertLastUtas(&utasList, inputUtas());
-        }
+            Address p = inputUtas();
+            p->index = lengthUtas((&k)->nextUtas) + 1;
 
-        // Melakukan lanjutan utas
-        printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK) ");
-        // Asumsi yang di input selalu benar
-        STARTSENTENCE();
-        Word YA = {"YA", 2};
-        Word TIDAK = {"TIDAK", 5};
-        while (WordEqual(currentWord,YA))
-        {
-            insertLastUtas(&utasList, inputUtas());
-            printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK) ");
+            insertLastUtas(&((&k)->nextUtas), p);
+            
+            // Melakukan lanjutan utas
+            printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK): ");
+            // Asumsi yang di input selalu benar
             STARTSENTENCE();
+            Word YA = {"YA", 2};
+            Word TIDAK = {"TIDAK", 5};
+            while (WordEqual(currentWord,YA))
+            {
+                Address p = inputUtas();
+                p->index = lengthUtas((&k)->nextUtas) + 1;
+
+                insertLastUtas(&((&k)->nextUtas), p);
+                printf("Apakah Anda ingin melanjutkan utas ini? (YA/TIDAK): ");
+                STARTSENTENCE();
+            }
+            printf("\nUtas selesai!");
+            ELMT_Kicauan(listKicauan, indexKicauan) = k;
         }
-        printf("\nUtas selesai!");
-        k.nextUtas = utasList;
-        ELMT_Kicauan(*L, indexKicauan) = k;
-        // printf("Utas List: %d\n", utasList);
     }
 }
 
@@ -1730,17 +1871,26 @@ void SambungUtas(){
         printf("Utas tidak ditemukan!\n");
     }else{
         Kicauan k = KicauandenganIdUtas(IDUtas);
-        List l = k.nextUtas;
+        int indexKicauan = indexOfKicauan(k.id);
+
         Pengguna p = currentUser;
         Word author = k.author;
         Word Username = p.Nama;
-        if(index>lengthUtas(l)){
+        if(index > (lengthUtas((&k)->nextUtas) + 1)){
             printf("Index terlalu tinggi!\n");
         }else{
             if (!WordEqual(author,Username)){
                 printf("Utas ini bukan milik anda\n");
             }else{
-                insertAtUtas(&l,inputUtas(),index);
+                Address p = inputUtas();
+                if (index == (lengthUtas((&k)->nextUtas) + 1)) {
+                    insertLastUtas(&((&k)->nextUtas), p);
+                } else {
+                    insertAtUtas(&((&k)->nextUtas), p, index);
+                }
+
+                ELMT_Kicauan(listKicauan, indexKicauan) = k;
+                printf("Utas berhasil disambung!\n");
             }
         }
     }
@@ -1755,23 +1905,26 @@ void HapusUtas(){
         printf("Utas tidak ditemukan!\n");
     }else{
         Kicauan k = KicauandenganIdUtas(IDUtas);
-        List l = k.nextUtas;
+        int indexKicauan = indexOfKicauan(k.id);
+
         Pengguna p = currentUser;
         Word author = k.author;
         Word Username = p.Nama;
-        if(index>lengthUtas(l)){
-            printf("Kicauan sambungan dengan index 3 tidak ditemukan pada utas!\n");
+        if(index>lengthUtas((&k)->nextUtas)){
+            printf("Kicauan sambungan dengan index %d tidak ditemukan pada utas!\n", index);
         }else if(index == 0){
-            printf("Anda tidak bisa menghapus kicauan utama!");printf("\n");    
+            printf("Anda tidak bisa menghapus kicauan utama!\n");    
         }else{
             if (!WordEqual(author,Username)){
-                printf("Anda tidak bisa menghapus kicauan dalam utas ini!\n");printf("\n");
+                printf("Anda tidak bisa menghapus kicauan dalam utas ini!\n");
             }else{
-                deleteAtUtas(&l,index);
+                deleteAtUtas(&((&k)->nextUtas), index);
+
+                ELMT_Kicauan(listKicauan, indexKicauan) = k;
+                printf("Kicauan sambungan berhasil dihapus!\n");
             }
         }
     }
-
 }
 
 void CetakUtas(){
@@ -1788,7 +1941,7 @@ void CetakUtas(){
         int authorIndex = indexOfPengguna(k.author);
         Word authorStatus = ELMTPengguna(listUsers, authorIndex).JenisAkun;
 
-        if (WordEqual(authorStatus, privat) && !IsTeman(authorUtas, currentUser.Nama)){
+        if (WordEqual(authorStatus, privat) && !IsTeman(authorUtas, currentUser.Nama) && !WordEqual(authorUtas, currentUser.Nama)){
             printf("Akun yang membuat utas ini adalah akun privat! Ikuti dahulu akun ini untuk melihat utasnya!\n");
         }else {
             printUtas(k);

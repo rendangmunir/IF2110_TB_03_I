@@ -69,19 +69,19 @@ int indexOfUtas(List l, EltypeUtas val);
 
 /****************** PRIMITIF BERDASARKAN NILAI ******************/
 /*** PENAMBAHAN ELEMEN ***/
-void insertFirstUtas(List *l, EltypeUtas val);
+void insertFirstUtas(List *l, EltypeUtas* node);
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen pertama dengan nilai val jika alokasi berhasil. */
 /* Jika alokasi gagal: I.S.= F.S. */
 
-void insertLastUtas(List *l, EltypeUtas val);
+void insertLastUtas(List *l, EltypeUtas* node);
 /* I.S. l mungkin kosong */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menambahkan elemen list di akhir: elemen terakhir yang baru */
 /* bernilai val jika alokasi berhasil. Jika alokasi gagal: I.S.= F.S. */
 
-void insertAtUtas(List *l, EltypeUtas val, int idx);
+void insertAtUtas(List *l, EltypeUtas* node, int idx);
 /* I.S. l tidak mungkin kosong, idx indeks yang valid dalam l, yaitu 0..length(l) */
 /* F.S. Melakukan alokasi sebuah elemen dan */
 /* menyisipkan elemen dalam list pada indeks ke-idx (bukan menimpa elemen di i) */
